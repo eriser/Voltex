@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>${BINARY_NAME}</string>
+	<key>CFBundleGetInfoString</key>
+	<string>1.0.0, Copyright SamuelDewan, 2012</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.SamuelDewan.audiounit.${BINARY_NAME}</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${BINARY_NAME}</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleSignature</key>
+	<string>Vltx</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.0</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.5.0</string>
+	<key>NSPrincipalClass</key>
+	<string>Voltex_View</string>
+	<key>AudioComponents</key>
+	<array>
+		<dict>
+			<key>description</key>
+			<string>Voltex Description</string>
+			<key>factoryFunction</key>
+			<string>synthPlugFactory</string>
+			<key>manufacturer</key>
+			<string>Acme</string>
+			<key>name</key>
+			<string>Voltex</string>
+			<key>sandboxSafe</key>
+			<true/>
+			<key>subtype</key>
+			<string>synt</string>
+			<key>type</key>
+			<string>aumu</string>
+			<key>version</key>
+			<integer>4</integer>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,20 @@
+-x
+objective-c++
+-arch
+x86_64
+-std=c++11
+-stdlib=libc++
+-fpascal-strings
+-O0
+-D_DEBUG
+-isysroot
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk
+-fasm-blocks
+-mmacosx-version-min=10.8
+-g
+-fvisibility=hidden
+-fvisibility-inlines-hidden
+x86_64-apple-darwin14.3.0
+"4.2.1 Compatible Apple LLVM 6.1.0 (clang-602.0.49)"
+SDK_PRODUCT_BUILD_VERSION=14D125
+14D125
