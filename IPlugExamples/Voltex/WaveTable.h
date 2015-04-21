@@ -11,7 +11,9 @@
 
 #include "EnvelopeGenerator.h"
 
+
 #include <tr1/array>
+
 
 #define TWO_PI (4*acos(0.0))
 #define TABLE_LENGTH 2048
