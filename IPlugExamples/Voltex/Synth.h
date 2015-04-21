@@ -12,7 +12,12 @@
 #define __Voltex__Synth__
 
 #include <math.h>
+
+#ifdef _WINDOWS
+#include <array>
+#else
 #include <tr1/array>
+#endif
 
 #include "WaveTable.h"
 

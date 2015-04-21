@@ -12,7 +12,11 @@
 #include "EnvelopeGenerator.h"
 
 
+#ifdef _WINDOWS
+#include <array>
+#else
 #include <tr1/array>
+#endif
 
 
 #define TWO_PI (4*acos(0.0))
