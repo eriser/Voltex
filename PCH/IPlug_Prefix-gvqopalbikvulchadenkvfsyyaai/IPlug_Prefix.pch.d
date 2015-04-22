@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/samueldewan/plugin-development/wdl-ol/IPlugExamples/Voltex/../../WDL/IPlug/IPlug_Prefix.pch \
+  /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/../../WDL/IPlug/IPlug_Prefix.pch \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CoreFoundation.h \
