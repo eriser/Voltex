@@ -10,11 +10,14 @@
 #include <math.h>
 #include <algorithm>
 
-#ifdef _WINDOWS
+#ifdef WIN32
 #include <array>
+#include <functional>
 #else
 #include <tr1/array>
+#include <tr1/functional>
 #endif
+
 
 const int kNumPrograms = 5;
 const double parameterStep = 0.001;

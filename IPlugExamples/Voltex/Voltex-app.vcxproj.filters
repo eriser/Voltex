@@ -75,6 +75,12 @@
     <ClCompile Include="..\..\WDL\IPlug\IPlugStandalone.cpp">
       <Filter>app</Filter>
     </ClCompile>
+    <ClCompile Include="EnvelopeGenerator.cpp" />
+    <ClCompile Include="Synth.cpp" />
+    <ClCompile Include="Voice.cpp" />
+    <ClCompile Include="VoiceManager.cpp" />
+    <ClCompile Include="MIDIReceiver.cpp" />
+    <ClCompile Include="WaveTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Voltex.rc" />

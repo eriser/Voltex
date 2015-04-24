@@ -12,7 +12,7 @@
 #include "EnvelopeGenerator.h"
 
 
-#ifdef _WINDOWS
+#ifdef WIN32
 #include <array>
 #else
 #include <tr1/array>
@@ -36,6 +36,9 @@ public:
     WaveTable():
     gain(1.0){
         values = *new std::tr1::array<double, TABLE_LENGTH>();
+		for (int i = 0; i < TABLE_LENGTH; i++) {
+			values[i] = 0;
+		}
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_OFF] = 0.0;
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_ATTACK] = 0.01;
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_DECAY] = 0.5;

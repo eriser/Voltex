@@ -12,7 +12,11 @@
 #define __SpaceBass__VoiceManager__
 
 #include "Voice.h"
+#ifdef WIN32
+#include <functional>
+#else
 #include <tr1/functional>
+#endif
 
 class VoiceManager {
 public:

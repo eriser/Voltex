@@ -5,6 +5,13 @@
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST.cpp">
       <Filter>vst2</Filter>
     </ClCompile>
+    <ClCompile Include="EnvelopeGenerator.cpp" />
+    <ClCompile Include="MIDIReciever.cpp" />
+    <ClCompile Include="Synth.cpp" />
+    <ClCompile Include="Voice.cpp" />
+    <ClCompile Include="VoiceManager.cpp" />
+    <ClCompile Include="MIDIReceiver.cpp" />
+    <ClCompile Include="WaveTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Voltex.h" />

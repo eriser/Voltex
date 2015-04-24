@@ -13,7 +13,7 @@
 
 #include <math.h>
 
-#ifdef _WINDOWS
+#ifdef WIN32
 #include <array>
 #else
 #include <tr1/array>

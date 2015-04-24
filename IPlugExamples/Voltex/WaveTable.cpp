@@ -21,7 +21,6 @@ std::tr1::array<double, TABLE_LENGTH> WaveTable::getValues() {
 }
 
 double WaveTable::getValueAt(double location) {
-    
     double index = (location / TWO_PI) * TABLE_LENGTH;
     
     int a = (int)index;

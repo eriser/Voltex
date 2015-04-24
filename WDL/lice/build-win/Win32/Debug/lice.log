@@ -1,0 +1,100 @@
+﻿Build started 4/24/2015 8:56:05 AM.
+Project "\\vmware-host\Shared Folders\plugin-development\Voltex\WDL\lice\lice.vcxproj" on node 2 (Build target(s)).
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../zlib /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _LIB /D PNG_USE_PNGVCRD /D PNG_LIBPNG_SPECIALBUILD /D __MMX__ /D PNG_HAVE_MMX_COMBINE_ROW /D PNG_HAVE_MMX_READ_INTERLACE /D PNG_HAVE_MMX_READ_FILTER_ROW /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /arch:SSE2 /fp:precise /Zc:wchar_t /Zc:forScope /Fo"build-win\Win32\Debug\\" /Fd"build-win\Win32\Debug\vc120.pdb" /Gd /TC /wd4996 /wd4250 /wd4018 /wd4267 /analyze- /errorReport:prompt ..\libpng\png.c ..\libpng\pngerror.c ..\libpng\pngget.c ..\libpng\pngmem.c ..\libpng\pngpread.c ..\libpng\pngread.c ..\libpng\pngrio.c ..\libpng\pngrtran.c ..\libpng\pngrutil.c ..\libpng\pngset.c ..\libpng\pngtrans.c ..\libpng\pngwio.c ..\libpng\pngwrite.c ..\libpng\pngwtran.c ..\libpng\pngwutil.c ..\zlib\adler32.c ..\zlib\compress.c ..\zlib\crc32.c ..\zlib\deflate.c ..\zlib\gzclose.c ..\zlib\gzlib.c ..\zlib\gzread.c ..\zlib\gzwrite.c ..\zlib\infback.c ..\zlib\inffast.c ..\zlib\inflate.c ..\zlib\inftrees.c ..\zlib\trees.c ..\zlib\uncompr.c ..\zlib\zutil.c
+  zutil.c
+  uncompr.c
+  trees.c
+  inftrees.c
+  inflate.c
+  inffast.c
+  infback.c
+  gzwrite.c
+\\vmware-host\shared folders\plugin-development\voltex\wdl\zlib\gzwrite.c(84): warning C4013: 'write' undefined; assuming extern returning int
+\\vmware-host\shared folders\plugin-development\voltex\wdl\zlib\gzwrite.c(558): warning C4013: 'close' undefined; assuming extern returning int
+  gzread.c
+\\vmware-host\shared folders\plugin-development\voltex\wdl\zlib\gzread.c(30): warning C4013: 'read' undefined; assuming extern returning int
+\\vmware-host\shared folders\plugin-development\voltex\wdl\zlib\gzread.c(581): warning C4013: 'close' undefined; assuming extern returning int
+  gzlib.c
+\\vmware-host\shared folders\plugin-development\voltex\wdl\zlib\gzlib.c(180): warning C4013: 'open' undefined; assuming extern returning int
+\\vmware-host\shared folders\plugin-development\voltex\wdl\zlib\gzlib.c(204): warning C4013: '_lseeki64' undefined; assuming extern returning int
+  gzclose.c
+  deflate.c
+  crc32.c
+  compress.c
+  adler32.c
+  pngwutil.c
+  pngwtran.c
+  pngwrite.c
+  pngwio.c
+  pngtrans.c
+  Generating Code...
+  Compiling...
+  pngset.c
+  pngrutil.c
+  pngrtran.c
+  pngrio.c
+  pngread.c
+  pngpread.c
+  pngmem.c
+  pngget.c
+  pngerror.c
+  png.c
+  Generating Code...
+  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../zlib /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _LIB /D PNG_USE_PNGVCRD /D PNG_LIBPNG_SPECIALBUILD /D __MMX__ /D PNG_HAVE_MMX_COMBINE_ROW /D PNG_HAVE_MMX_READ_INTERLACE /D PNG_HAVE_MMX_READ_FILTER_ROW /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /arch:SSE2 /fp:precise /Zc:wchar_t /Zc:forScope /Fo"build-win\Win32\Debug\\" /Fd"build-win\Win32\Debug\vc120.pdb" /Gd /TP /wd4996 /wd4250 /wd4018 /wd4267 /analyze- /errorReport:prompt ..\lice\lice.cpp ..\lice\lice_arc.cpp ..\lice\lice_colorspace.cpp ..\lice\lice_line.cpp ..\lice\lice_palette.cpp ..\lice\lice_png.cpp ..\lice\lice_texgen.cpp ..\lice\lice_textnew.cpp
+  lice_textnew.cpp
+  lice_texgen.cpp
+\\vmware-host\shared folders\plugin-development\voltex\wdl\lice\lice_texgen.cpp(332): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+\\vmware-host\shared folders\plugin-development\voltex\wdl\lice\lice_texgen.cpp(333): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+  lice_png.cpp
+  lice_palette.cpp
+  lice_line.cpp
+  lice_colorspace.cpp
+  lice_arc.cpp
+  lice.cpp
+  Generating Code...
+Lib:
+  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"build-win\Win32\Debug\lice.lib" /NOLOGO "build-win\Win32\Debug\png.obj"
+  "build-win\Win32\Debug\pngerror.obj"
+  "build-win\Win32\Debug\pngget.obj"
+  "build-win\Win32\Debug\pngmem.obj"
+  "build-win\Win32\Debug\pngpread.obj"
+  "build-win\Win32\Debug\pngread.obj"
+  "build-win\Win32\Debug\pngrio.obj"
+  "build-win\Win32\Debug\pngrtran.obj"
+  "build-win\Win32\Debug\pngrutil.obj"
+  "build-win\Win32\Debug\pngset.obj"
+  "build-win\Win32\Debug\pngtrans.obj"
+  "build-win\Win32\Debug\pngwio.obj"
+  "build-win\Win32\Debug\pngwrite.obj"
+  "build-win\Win32\Debug\pngwtran.obj"
+  "build-win\Win32\Debug\pngwutil.obj"
+  "build-win\Win32\Debug\lice.obj"
+  "build-win\Win32\Debug\lice_arc.obj"
+  "build-win\Win32\Debug\lice_colorspace.obj"
+  "build-win\Win32\Debug\lice_line.obj"
+  "build-win\Win32\Debug\lice_palette.obj"
+  "build-win\Win32\Debug\lice_png.obj"
+  "build-win\Win32\Debug\lice_texgen.obj"
+  "build-win\Win32\Debug\lice_textnew.obj"
+  "build-win\Win32\Debug\adler32.obj"
+  "build-win\Win32\Debug\compress.obj"
+  "build-win\Win32\Debug\crc32.obj"
+  "build-win\Win32\Debug\deflate.obj"
+  "build-win\Win32\Debug\gzclose.obj"
+  "build-win\Win32\Debug\gzlib.obj"
+  "build-win\Win32\Debug\gzread.obj"
+  "build-win\Win32\Debug\gzwrite.obj"
+  "build-win\Win32\Debug\infback.obj"
+  "build-win\Win32\Debug\inffast.obj"
+  "build-win\Win32\Debug\inflate.obj"
+  "build-win\Win32\Debug\inftrees.obj"
+  "build-win\Win32\Debug\trees.obj"
+  "build-win\Win32\Debug\uncompr.obj"
+  "build-win\Win32\Debug\zutil.obj"
+  lice.vcxproj -> \\vmware-host\Shared Folders\plugin-development\Voltex\WDL\lice\build-win\Win32\Debug\lice.lib
+Done Building Project "\\vmware-host\Shared Folders\plugin-development\Voltex\WDL\lice\lice.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:02:04.12
