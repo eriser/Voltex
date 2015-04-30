@@ -37,10 +37,8 @@ double Synth::nextSample() {
     
     for ( auto &i : *tables ) {
         if (i != NULL) {
-            value += (i->getValueAt(mPhase) * i->getGain() /*TODO: multiplied by envelope*/);
+            value += (i->getValueAt(mPhase) * i->getGain() /*TODO: multiplied by envelope for each table*/);
             numTables++;
-        } else {
-            break;
         }
     }
     

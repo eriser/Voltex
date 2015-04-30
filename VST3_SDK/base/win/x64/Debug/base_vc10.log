@@ -1,0 +1,54 @@
+﻿Build started 4/27/2015 10:54:50 AM.
+Project "Z:\plugin-development\Voltex\VST3_SDK\base\win\base_vc10.vcxproj" on node 2 (Build target(s)).
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I..\.. /Zi /nologo /W3 /WX- /Od /D _DEBUG=1 /D DEVELOPMENT=1 /D FRAMEBASE=1 /D _VC80_UPGRADE=0x0710 /Gm- /EHsc /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\objects\\" /Fd"x64\Debug\base.pdb" /FR"x64\Debug\browse\\" /Gd /TP /errorReport:prompt ..\source\baseiids.cpp ..\source\classfactory.cpp ..\source\fatomic.cpp ..\source\fbitset.cpp ..\source\fbuffer.cpp ..\source\fcpu.cpp ..\source\fdebug.cpp ..\source\fdynlib.cpp ..\source\finitializer.cpp ..\source\fmemory.cpp ..\source\fobject.cpp ..\source\fpoint.cpp ..\source\frect.cpp ..\source\fstreamer.cpp ..\source\fstring.cpp ..\source\fthread.cpp ..\source\timer.cpp ..\source\updatehandler.cpp ..\..\pluginterfaces\base\conststringtable.cpp ..\..\pluginterfaces\base\funknown.cpp
+  baseiids.cpp
+  classfactory.cpp
+  fatomic.cpp
+  fbitset.cpp
+  fbuffer.cpp
+  fcpu.cpp
+  fdebug.cpp
+  fdynlib.cpp
+  finitializer.cpp
+  fmemory.cpp
+  fobject.cpp
+  fpoint.cpp
+  frect.cpp
+  fstreamer.cpp
+  fstring.cpp
+  fthread.cpp
+  timer.cpp
+  updatehandler.cpp
+  conststringtable.cpp
+  funknown.cpp
+  Generating Code...
+Lib:
+  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\Lib.exe /OUT:"x64\Debug\base.lib" /NOLOGO /MACHINE:X64 x64\Debug\objects\baseiids.obj
+  x64\Debug\objects\classfactory.obj
+  x64\Debug\objects\fatomic.obj
+  x64\Debug\objects\fbitset.obj
+  x64\Debug\objects\fbuffer.obj
+  x64\Debug\objects\fcpu.obj
+  x64\Debug\objects\fdebug.obj
+  x64\Debug\objects\fdynlib.obj
+  x64\Debug\objects\finitializer.obj
+  x64\Debug\objects\fmemory.obj
+  x64\Debug\objects\fobject.obj
+  x64\Debug\objects\fpoint.obj
+  x64\Debug\objects\frect.obj
+  x64\Debug\objects\fstreamer.obj
+  x64\Debug\objects\fstring.obj
+  x64\Debug\objects\fthread.obj
+  x64\Debug\objects\timer.obj
+  x64\Debug\objects\updatehandler.obj
+  x64\Debug\objects\conststringtable.obj
+  x64\Debug\objects\funknown.obj
+  base_vc10.vcxproj -> Z:\plugin-development\Voltex\VST3_SDK\base\win\x64\Debug\base.lib
+BscMake:
+  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\bscmake.exe /nologo /o"x64\Debug\base.bsc" x64\Debug\browse\baseiids.sbr x64\Debug\browse\classfactory.sbr x64\Debug\browse\fatomic.sbr x64\Debug\browse\fbitset.sbr x64\Debug\browse\fbuffer.sbr x64\Debug\browse\fcpu.sbr x64\Debug\browse\fdebug.sbr x64\Debug\browse\fdynlib.sbr x64\Debug\browse\finitializer.sbr x64\Debug\browse\fmemory.sbr x64\Debug\browse\fobject.sbr x64\Debug\browse\fpoint.sbr x64\Debug\browse\frect.sbr x64\Debug\browse\fstreamer.sbr x64\Debug\browse\fstring.sbr x64\Debug\browse\fthread.sbr x64\Debug\browse\timer.sbr x64\Debug\browse\updatehandler.sbr x64\Debug\browse\conststringtable.sbr x64\Debug\browse\funknown.sbr
+Done Building Project "Z:\plugin-development\Voltex\VST3_SDK\base\win\base_vc10.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:03:22.35

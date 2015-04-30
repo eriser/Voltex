@@ -42,7 +42,6 @@
       <Filter>vst3</Filter>
     </ClCompile>
     <ClCompile Include="EnvelopeGenerator.cpp" />
-    <ClCompile Include="MIDIReciever.cpp" />
     <ClCompile Include="Synth.cpp" />
     <ClCompile Include="Voice.cpp" />
     <ClCompile Include="VoiceManager.cpp" />

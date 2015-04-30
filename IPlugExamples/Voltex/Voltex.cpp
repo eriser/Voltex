@@ -41,7 +41,14 @@ enum ELayout {
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
     TRACE;
     
-    WaveTable* squareTable;
+    //initialize wavetables
+    for (int i = 0; i < 8; i++) {
+        waveTables[i] = new WaveTable();
+    }
+    
+    
+    //test tables
+/*    WaveTable* squareTable;
     squareTable = new WaveTable();
     
     std::tr1::array<double, 2048> values;
@@ -53,7 +60,7 @@ Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumProg
         }
     }
     squareTable->setValues(values);
-    waveTables[0] = squareTable;
+    waveTables[0] = squareTable; */
 
     WaveTable* sineTable;
     sineTable = new WaveTable();

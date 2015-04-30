@@ -18,10 +18,11 @@
 #include <tr1/array>
 #endif
 
+#include <iostream>
 
 #define TWO_PI (4*acos(0.0))
 #define TABLE_LENGTH 2048
-#define INTERP_MODE 2 //The number of points to interpolate decimal phase values bassed from. Valid values are 2 and 4. 2 should be less cpu intensive, but it will give a lower quality result.
+#define INTERP_MODE 2 //The number of points to interpolate decimal phase values with. Valid values are 2 and 4. 2 should be less cpu intensive, but it will give a lower quality result.
 
 class WaveTable {
 public:
@@ -33,8 +34,9 @@ public:
     
     double getValueAt (double index);
     
-    WaveTable():
-    gain(1.0){
+    WaveTable(): gain(1.0) //initialization list
+	{
+		//Constructor Body
         values = *new std::tr1::array<double, TABLE_LENGTH>();
 		for (int i = 0; i < TABLE_LENGTH; i++) {
 			values[i] = 0;

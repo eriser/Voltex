@@ -47,8 +47,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "55"
             endingLineNumber = "55"
-            landmarkName = "ThirdInterp(const float x,const float L1,const float L0,const float H0,const float H1)"
-            landmarkType = "5">
+            landmarkName = "class WaveTable"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

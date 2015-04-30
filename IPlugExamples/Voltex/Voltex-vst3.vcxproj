@@ -341,7 +341,6 @@ if exist "%programfiles(x86)%" (copy /y "$(TargetPath)" "$(VST3_64_PATH)\Voltex.
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST3.cpp" />
     <ClCompile Include="EnvelopeGenerator.cpp" />
     <ClCompile Include="MIDIReceiver.cpp" />
-    <ClCompile Include="MIDIReciever.cpp" />
     <ClCompile Include="Synth.cpp" />
     <ClCompile Include="Voice.cpp" />
     <ClCompile Include="VoiceManager.cpp" />
