@@ -1,1 +1,9 @@
-﻿
+﻿Build started 4/30/2015 9:08:18 AM.
+Project "\\vmware-host\Shared Folders\plugin-development\Voltex\WDL\lice\lice.vcxproj" on node 2 (Build target(s)).
+Lib:
+  lice.vcxproj -> \\vmware-host\Shared Folders\plugin-development\Voltex\WDL\lice\build-win\x64\Debug\lice.lib
+Done Building Project "\\vmware-host\Shared Folders\plugin-development\Voltex\WDL\lice\lice.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.84

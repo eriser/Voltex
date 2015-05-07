@@ -36,10 +36,8 @@ double Synth::nextSample() {
     int numTables = 0;
     
     for ( auto &i : *tables ) {
-        if (i != NULL) {
-            value += (i->getValueAt(mPhase) * i->getGain() /*TODO: multiplied by envelope for each table*/);
-            numTables++;
-        }
+		value += (i->getValueAt(mPhase) * i->getGain() /*TODO: multiplied by envelope for each table*/);
+		numTables++;
     }
     
     value = value / numTables; //If we didn't do this the synth would clip if there was more than one wavtable (in phase). This keeps the volume the same no matter how many tables are in use.

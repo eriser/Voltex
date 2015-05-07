@@ -23,7 +23,7 @@ public:
     mVelocity(0),
     isActive(false)
     {
-        // Set free everytime volume envelope has fully faded out of RELEASE stage:
+        // Set free everytime volume envelope has fully faded out of RELEASE stage: (connect the setFree method to the finishedEnvelopeCycle signal)
         mEnvelope.finishedEnvelopeCycle.Connect(this, &Voice::setFree);
     };;
     

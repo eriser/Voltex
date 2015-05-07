@@ -28,7 +28,8 @@ class WaveTable {
 public:
     void setValues (std::tr1::array<double, TABLE_LENGTH> newValues);
     std::tr1::array<double, TABLE_LENGTH> getValues ();
-    void setEnvelopeValue (int stage, double value);
+    void setEnvelopeValue (EnvelopeGenerator::EnvelopeStage stage, double value);
+    double getEnvelopeValue (EnvelopeGenerator::EnvelopeStage stage);
     void setGain(double newGain);
     double getGain();
     
@@ -41,6 +42,7 @@ public:
 		for (int i = 0; i < TABLE_LENGTH; i++) {
 			values[i] = 0;
 		}
+        //Default envelope values
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_OFF] = 0.0;
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_ATTACK] = 0.01;
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_DECAY] = 0.5;

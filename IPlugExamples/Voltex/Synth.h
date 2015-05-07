@@ -35,7 +35,9 @@ public:
     mFrequency(440.0),
     mPhase(0.0),
     mPhaseIncrement(1.0)
-    {};
+    {
+        
+    };
     
     void reset();
 private:
@@ -48,6 +50,7 @@ private:
     
     void calculatePhaseIncrement();
     
+    std::tr1::array<EnvelopeGenerator, 8> envelopes;
     
     std::tr1::array<WaveTable*, 8> *tables;
 };

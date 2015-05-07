@@ -42,6 +42,8 @@ private:
     
     void CreateParams();
     void CreateGraphics();
+    
+    double gain;
 };
 
 #endif

@@ -62,8 +62,8 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define KNOB_FN       "resources/img/knob.png"
 
 // GUI default dimensions
-#define GUI_WIDTH   434
-#define GUI_HEIGHT  300
+#define GUI_WIDTH   960
+#define GUI_HEIGHT  680
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API) && !defined(OS_IOS)
 #include "app_wrapper/app_resource.h"

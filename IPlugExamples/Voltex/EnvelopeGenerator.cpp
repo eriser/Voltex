@@ -81,8 +81,7 @@ void EnvelopeGenerator::setSampleRate(double newSampleRate) {
     sampleRate = newSampleRate;
 }
 
-void EnvelopeGenerator::setStageValue(EnvelopeStage stage,
-                                      double value) {
+void EnvelopeGenerator::setStageValue(EnvelopeStage stage, double value) {
     stageValue[stage] = value;
     if (stage == currentStage) {
         // Re-calculate the multiplier and nextStageSampleIndex

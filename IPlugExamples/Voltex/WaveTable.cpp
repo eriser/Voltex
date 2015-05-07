@@ -8,8 +8,12 @@
 
 #include "WaveTable.h"
 
-void WaveTable::setEnvelopeValue(int stage, double value) {
+void WaveTable::setEnvelopeValue(EnvelopeGenerator::EnvelopeStage stage, double value) {
     envelopeValues[stage] = value;
+}
+
+double WaveTable::getEnvelopeValue(EnvelopeGenerator::EnvelopeStage stage) {
+    return envelopeValues[stage];
 }
 
 void WaveTable::setValues(std::tr1::array<double, TABLE_LENGTH> newValues) {
@@ -32,7 +36,7 @@ double WaveTable::getValueAt(double location) {
     int b = a + 1;
     if (b > (TABLE_LENGTH - 1)) {b -= TABLE_LENGTH;} // if we are looking for a sample that is above the end of the array (a decimal between (length) and (length + 1)), then the next value is actually the first value in the array, since the system is cyclical.
     
-    //     Base        Fraction      Difference
+    //     Base               Fraction      Difference
     double out = values[a] + (index - a) * (values[b] - values[a]);
     return out;
 #elif INTERP_MODE == 4
