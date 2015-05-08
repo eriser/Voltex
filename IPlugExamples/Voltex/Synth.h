@@ -51,7 +51,6 @@ private:
     void calculatePhaseIncrement();
     
     std::tr1::array<EnvelopeGenerator, 8> envelopes;
-    
     std::tr1::array<WaveTable*, 8> *tables;
 };
 

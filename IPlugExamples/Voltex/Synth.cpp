@@ -49,6 +49,11 @@ double Synth::nextSample() {
     return value;
 }
 
-void Synth::setWavetables(std::tr1::array<WaveTable *, 8> *newTables) {
+void Synth::setWavetables(std::tr1::array<WaveTable*, 8> *newTables) {
     tables = newTables;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < EnvelopeGenerator::kNumEnvelopeStages; j++) {
+            envelopes[i].setStageValue((EnvelopeGenerator::EnvelopeStage)j, (*tables)[i]->getEnvelopeValue((EnvelopeGenerator::EnvelopeStage)j));
+        }
+    }
 }

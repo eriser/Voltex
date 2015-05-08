@@ -89,21 +89,21 @@ enum ELayout {
     kKeybY = 614,
     
     //Master Section:
-    kMasterX = 790,
-    kMasterY = 50,
+    kMasterX = 793,
+    kMasterY = 53,
     
-    kMasterAttackX = 690,
+    kMasterAttackX = 693,
     kMasterDecayX = kMasterAttackX + 65,
-    kMasterSustainX = kMasterDecayX + 65,
-    kMasterReleaseX = kMasterSustainX + 65,
+    kMasterSustainX = kMasterDecayX + 66,
+    kMasterReleaseX = kMasterSustainX + 66,
     
-    kMasterEnvelopeY = 225,
+    kMasterEnvelopeY = 231,
     
     
     //Table:
-    kTableX = 225,
-    kTableY = 90,
-    kTableSpaceX = 45,
+    kTableX = 232,
+    kTableY = 98,
+    kTableSpaceX = 43,
     kTableSpaceY = 40,
     kTableSpaceGainY = 50
 };
@@ -174,7 +174,7 @@ void Voltex::CreateParams() {
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Attack", 0.01, 0.01, 10.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Attack", 1, 0.01, 10.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Decay

@@ -45,9 +45,9 @@ public:
         //Default envelope values
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_OFF] = 0.0;
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_ATTACK] = 0.01;
-        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_DECAY] = 0.5;
+        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_DECAY] = 0.01;
         envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN] = 0.1;
-        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_RELEASE] = 1.0;
+        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_RELEASE] = .01;
     };
     
 private:
