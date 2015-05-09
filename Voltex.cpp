@@ -237,8 +237,8 @@ void Voltex::CreateGraphics() {
 
 	x = kSwitchX;
 	for (int v = 0; v < TabNum; v++) {
-			pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attach tabs
-			pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &switches)); //attach switches
+			pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attached tabs
+			pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &switches)); //attached switches
 
 		x = kSwitchSpaceX + x;
 		
