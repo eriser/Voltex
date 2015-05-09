@@ -234,7 +234,6 @@ void Voltex::CreateGraphics() {
 	IBitmap tabs = pGraphics->LoadIBitmap(TABS_ID, TABS_FN, 8);
 	IBitmap switches = pGraphics->LoadIBitmap(SWITCH_ID, SWITCH_FN, 2);
 
-
 	x = kSwitchX;
 	for (int v = 0; v < TabNum; v++) {
 			pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attached tabs
