@@ -24,7 +24,10 @@ public:
     void onNoteOff(int noteNumber, int velocity);
     double nextSample();
     
+    Voice getVoice(int index);
+    
     void setSampleRate(double sampleRate) {
+        //Update all of the members sample rates.
         EnvelopeGenerator::setSampleRate(sampleRate);
         for (int i = 0; i < NumberOfVoices; i++) {
             Voice& voice = voices[i];
@@ -39,6 +42,8 @@ public:
         }
     }
     
+    //When changing paramaters in all of the voices we use the functional library. This would have been more worth it if there where more paramters to change. Soemthing bery similar was done in some of the tutorials I use to learn about the WDL-OL library and it seemed like a good idea.
+    //Basicaly we create a VoiceChangerFunction by filling in all of the paramaters in the setVolumeEnvelopeStageValue() function except for the voice paramater. The function with filled in the values that we want to update then the changeAllVoices() function just has to iterate through the voices and pass the voice argument. This means that the code changing the paramaters does nto have to be aware of the voices.
     typedef std::tr1::function<void (Voice&)> VoiceChangerFunction;
     
     inline void changeAllVoices(VoiceChangerFunction changer) {
@@ -50,8 +55,9 @@ public:
     static void setVolumeEnvelopeStageValue(Voice& voice, EnvelopeGenerator::EnvelopeStage stage, double value) {
         voice.mEnvelope.setStageValue(stage, value);
     }
-private:
+    
     static const int NumberOfVoices = 64;
+private:
     Voice voices[NumberOfVoices];
     Voice* findFreeVoice();
 };

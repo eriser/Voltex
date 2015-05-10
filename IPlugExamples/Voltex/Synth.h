@@ -23,6 +23,9 @@
 
 class Synth {
 public:
+    void onNoteOn(int noteNumber, int velocity);
+    void onNoteOff(int noteNumber, int velocity);
+    
     void setFrequency(double frequency);
     void setSampleRate(double sampleRate);
     void setWavetables(std::tr1::array<WaveTable*, 8> *tables);
@@ -36,7 +39,10 @@ public:
     mPhase(0.0),
     mPhaseIncrement(1.0)
     {
-        
+        printf("**Synth Constructor**\n");
+        for (int i = 0; i < 8; i++) {
+            envelopes[i].emitSignalsEh(false);
+        }
     };
     
     void reset();
@@ -50,7 +56,7 @@ private:
     
     void calculatePhaseIncrement();
     
-    std::tr1::array<EnvelopeGenerator, 8> envelopes;
+    std::tr1::array<EnvelopeGenerator, 8> envelopes; //The envelopes need to be at the synth level so that if a wave table is being played from multiple voices each voice can have its own possition in the envelope.
     std::tr1::array<WaveTable*, 8> *tables;
 };
 

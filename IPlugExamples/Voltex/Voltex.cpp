@@ -151,6 +151,11 @@ Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumProg
     //Connect noteOn and noteOff signals to slots in the voice manager, this way they voice manager does not need to know anything about the midi reciever and vice versa.
     mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
     mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
+    
+    for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
+        mMIDIReceiver.noteOn.Connect(voiceManager.getVoice(i).getSynth(), &Synth::onNoteOn);
+        mMIDIReceiver.noteOff.Connect(voiceManager.getVoice(i).getSynth(), &Synth::onNoteOff);
+    }
 }
 
 void Voltex::CreateParams() {
@@ -174,7 +179,7 @@ void Voltex::CreateParams() {
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Attack", 1, 0.01, 10.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Attack", 0.01, 0.01, 10.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Decay
@@ -189,7 +194,7 @@ void Voltex::CreateParams() {
     }
     //Release
     for (int i = mReleaseOne; i <= mReleaseEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Release", 0.001, 0.001, 15.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Release", 1.0, 0.001, 15.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Gain

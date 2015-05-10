@@ -3,7 +3,7 @@
 
 #define PLUG_CLASS_NAME Voltex
 
-#define BUNDLE_MFR "SamuelDewan"
+#define BUNDLE_MFR "SamuelDewan" //TODO: find out how to change this without breaking all fo the graphics
 #define BUNDLE_NAME "Voltex"
 
 #define PLUG_ENTRY Voltex_Entry
@@ -23,7 +23,7 @@
 // 4 chars, single quotes. At least one capital letter
 #define PLUG_UNIQUE_ID '3tri'
 // make sure this is not the same as BUNDLE_MFR
-#define PLUG_MFR_ID 'Acme'
+#define PLUG_MFR_ID 'Acme' //TODO: find out how to change this without breaking all fo the graphics
 
 // ProTools stuff
 #if (defined(AAX_API) || defined(RTAS_API)) && !defined(_PIDS_)

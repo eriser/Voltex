@@ -52,7 +52,6 @@ double WaveTable::getValueAt(double location) {
     
 //    double out = ThirdInterp(index, aValue, bValue, cValue, dValue);
     double out = bValue + 0.5 * index*(cValue - aValue + index*(2.0*aValue - 5.0*bValue + 4.0*cValue - dValue + index*(3.0*(bValue - cValue) + dValue - aValue)));
-//    printf("%f:%f\n", out, aValue);
     return out;
 #endif
 }

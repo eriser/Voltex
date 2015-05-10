@@ -25,7 +25,9 @@ public:
     {
         // Set free everytime volume envelope has fully faded out of RELEASE stage: (connect the setFree method to the finishedEnvelopeCycle signal)
         mEnvelope.finishedEnvelopeCycle.Connect(this, &Voice::setFree);
-    };;
+    };
+    
+    Synth* getSynth();
     
     inline void setNoteNumber(int noteNumber) {
         mNoteNumber = noteNumber;
