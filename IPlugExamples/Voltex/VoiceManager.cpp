@@ -24,7 +24,6 @@ Voice* VoiceManager::findFreeVoice() {
 }
 
 void VoiceManager::onNoteOn(int noteNumber, int velocity) {
-    printf("VoiceManager Note On\n");
     //Find a free voice, if there are no free voices it means that someone is either playing a black MIDI file of leaning on a MIDI keyboard, either way they won't notice that the 65th note didn't play so implementing vocie "stealing" (forcing a voice to become free) is not a priority. If it becomes a problem we could go up to 96 voices.
     Voice* voice = findFreeVoice();
     if (!voice) {
@@ -42,7 +41,6 @@ void VoiceManager::onNoteOn(int noteNumber, int velocity) {
 }
 
 void VoiceManager::onNoteOff(int noteNumber, int velocity) {
-    printf("VoiceManager Note Off\n");
     // Find the voice(s) with the given noteNumber:
     for (int i = 0; i < NumberOfVoices; i++) {
         Voice& voice = voices[i];

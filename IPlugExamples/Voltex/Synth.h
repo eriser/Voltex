@@ -26,6 +26,8 @@ public:
     void onNoteOn(int noteNumber, int velocity);
     void onNoteOff(int noteNumber, int velocity);
     
+    void updateEnvelope(int index);
+    
     void setFrequency(double frequency);
     void setSampleRate(double sampleRate);
     void setWavetables(std::tr1::array<WaveTable*, 8> *tables);

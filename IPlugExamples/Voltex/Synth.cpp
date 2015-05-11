@@ -15,6 +15,13 @@ void Synth::reset() {
     mPhaseIncrement = 0.0;
 }
 
+void Synth::updateEnvelope(int index) {
+    for (int i = 0; i < EnvelopeGenerator::kNumEnvelopeStages; i++) {
+//        printf("Actuall: %f\n", (*tables)[i]->getEnvelopeValue((EnvelopeGenerator::EnvelopeStage)i));
+        envelopes[index].setStageValue((EnvelopeGenerator::EnvelopeStage)i, (*tables)[i]->getEnvelopeValue((EnvelopeGenerator::EnvelopeStage)i));
+    }
+}
+
 void Synth::setFrequency(double frequency) {
     mFrequency = frequency;
     calculatePhaseIncrement();
@@ -41,7 +48,7 @@ double Synth::nextSample() {
     int numTables = 0;
     
     for (int i = 0 ; i < 8; i++) {
-		value += ((*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() * envelopes[i].nextSample());
+		value += ((*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() /** envelopes[i].nextSample()*/);
 		numTables++;
     }
     
@@ -64,15 +71,13 @@ void Synth::setWavetables(std::tr1::array<WaveTable*, 8> *newTables) {
 }
 
 void Synth::onNoteOn(int noteNumber, int velocity) {
-    printf("Synth Note On\n");
     for (int i = 0; i < 8; i++) {
-        envelopes[i].enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+//        envelopes[i].enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
     }
 }
 
 void Synth::onNoteOff(int noteNumber, int velocity) {
-    printf("Synth Note Off\n");
     for (int i = 0; i < 8; i++) {
-        envelopes[i].enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
+//        envelopes[i].enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
     }
 }

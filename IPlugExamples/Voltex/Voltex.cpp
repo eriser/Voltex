@@ -151,18 +151,13 @@ Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumProg
     //Connect noteOn and noteOff signals to slots in the voice manager, this way they voice manager does not need to know anything about the midi reciever and vice versa.
     mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
     mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
-    
-//    for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
-//        mMIDIReceiver.noteOn.Connect(voiceManager.getVoice(i).getSynth(), &Synth::onNoteOn);
-//        mMIDIReceiver.noteOff.Connect(voiceManager.getVoice(i).getSynth(), &Synth::onNoteOff);
-//    }
 }
 
 void Voltex::CreateParams() {
     //GetParam(int param)->InitDouble(defaultVal, minVal, maxVal, step, label);
     
     //Envelope
-    GetParam(mVolumeEnvAttack)->InitDouble("Volume Env Attack", 0.01, 0.01, 10.0, parameterStep);
+    GetParam(mVolumeEnvAttack)->InitDouble("Volume Env Attack", 0.01, 0.01, 5.0, parameterStep);
     GetParam(mVolumeEnvDecay)->InitDouble("Volume Env Decay", 0.5, 0.01, 15.0, parameterStep);
     GetParam(mVolumeEnvSustain)->InitDouble("Volume Env Sustain", 0.1, 0.001, 1.0, parameterStep);
     GetParam(mVolumeEnvRelease)->InitDouble("Volume Env Release", 1.0, 0.001, 15.0, parameterStep);
@@ -179,7 +174,7 @@ void Voltex::CreateParams() {
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Attack", 0.01, 0.01, 10.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Attack", 0.01, 0.01, 5.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Decay
@@ -194,7 +189,7 @@ void Voltex::CreateParams() {
     }
     //Release
     for (int i = mReleaseOne; i <= mReleaseEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Release", 1.0, 0.001, 15.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Release", 15.0, 0.001, 15.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Gain
@@ -345,15 +340,28 @@ void Voltex::OnParamChange(int paramIdx) {
             if (paramIdx >= mAttackOne && paramIdx <= mAttackEight) {
                 //Attack
                 waveTables[paramIdx - (mAttackOne)]->setEnvelopeValue(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Value());
+//                printf("GUI: %f\n", param->Value());
+                for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
+                    voiceManager.getVoice(i).getSynth()->updateEnvelope(paramIdx - (mAttackOne));
+                }
             } else if (paramIdx >= mDecayOne && paramIdx <= mDecayEight) {
                 //Decay
                 waveTables[paramIdx - (mDecayOne)]->setEnvelopeValue(EnvelopeGenerator::ENVELOPE_STAGE_DECAY, param->Value());
+                for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
+                    voiceManager.getVoice(i).getSynth()->updateEnvelope(paramIdx - (mAttackOne));
+                }
             } else if (paramIdx >= mSustainOne && paramIdx <= mSustainEight) {
                 //Sustain
                 waveTables[paramIdx - (mSustainOne)]->setEnvelopeValue(EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, param->Value());
+                for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
+                    voiceManager.getVoice(i).getSynth()->updateEnvelope(paramIdx - (mAttackOne));
+                }
             } else if (paramIdx >= mReleaseOne && paramIdx <= mReleaseEight) {
                 //Release
                 waveTables[paramIdx - (mReleaseOne)]->setEnvelopeValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Value());
+                for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
+                    voiceManager.getVoice(i).getSynth()->updateEnvelope(paramIdx - (mAttackOne));
+                }
             } else if (paramIdx >= mGainOne && paramIdx <= mGainEight) {
                 //Gain
                 waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
