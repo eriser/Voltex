@@ -166,6 +166,8 @@ Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumProg
 void Voltex::CreateParams() {
     //GetParam(int param)->InitDouble(defaultVal, minVal, maxVal, step, label);
     
+	//First Button is on by default (Code needs to be developed right below)
+
     //Envelope
     GetParam(mVolumeEnvAttack)->InitDouble("Volume Env Attack", 0.01, 0.01, 10.0, parameterStep);
     GetParam(mVolumeEnvDecay)->InitDouble("Volume Env Decay", 0.5, 0.01, 15.0, parameterStep);
@@ -234,10 +236,28 @@ void Voltex::CreateGraphics() {
 	IBitmap tabs = pGraphics->LoadIBitmap(TABS_ID, TABS_FN, 8);
 	IBitmap switches = pGraphics->LoadIBitmap(SWITCH_ID, SWITCH_FN, 2);
 
+
+
 	x = kSwitchX;
 	for (int v = 0; v < TabNum; v++) {
-			pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attached tabs
-			pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &switches)); //attached switches
+		if (v == 2 || v == 1 || v == 0) {
+			if (v == 2) {
+				pGraphics->AttachControl(new ISwitchControl(this, x-1, kSwitchY, 1, &switches));
+		}
+			if (v == 1) {
+				pGraphics->AttachControl(new ISwitchControl(this, x-2, kSwitchY, 1, &switches));
+			}
+			if (v == 0) {
+				pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, -1, &switches));
+			}
+		}
+		else {
+			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 1, &switches)); //IChannelBlend
+			//pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &switches)); //attached switches
+
+			//pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attached tabs
+			
+		}
 
 		x = kSwitchSpaceX + x;
 		

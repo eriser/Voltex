@@ -29,6 +29,8 @@ public:
     static const int virtualKeyboardMinimumNoteNumber = 48;
     int lastVirtualKeyboardNoteNumber;
     
+	
+
 private:
     void CreatePresets();
     MIDIReceiver mMIDIReceiver;
