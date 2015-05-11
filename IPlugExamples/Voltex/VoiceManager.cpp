@@ -38,6 +38,7 @@ void VoiceManager::onNoteOn(int noteNumber, int velocity) {
     voice->isActive = true;
     //Start the envelope
     voice->mEnvelope.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+    voice->mSynth.onNoteOn(noteNumber, velocity);
 }
 
 void VoiceManager::onNoteOff(int noteNumber, int velocity) {
@@ -48,6 +49,7 @@ void VoiceManager::onNoteOff(int noteNumber, int velocity) {
         if (voice.isActive && voice.mNoteNumber == noteNumber) {
             //The voice does not turn off when the key is not being pressed, it goes into the release stage so that the sound can be faded out. If the note didn't fade their would be a sharp click whenever a note stoped playing since the waveform would be cut. The release phase of the envelope is also used for effect, it is alot like the right pedal of a piano.
             voice.mEnvelope.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
+            voice.mSynth.onNoteOff(noteNumber, velocity);
         }
     }
 }

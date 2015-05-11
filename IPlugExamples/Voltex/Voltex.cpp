@@ -152,10 +152,10 @@ Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumProg
     mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
     mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
     
-    for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
-        mMIDIReceiver.noteOn.Connect(voiceManager.getVoice(i).getSynth(), &Synth::onNoteOn);
-        mMIDIReceiver.noteOff.Connect(voiceManager.getVoice(i).getSynth(), &Synth::onNoteOff);
-    }
+//    for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
+//        mMIDIReceiver.noteOn.Connect(voiceManager.getVoice(i).getSynth(), &Synth::onNoteOn);
+//        mMIDIReceiver.noteOff.Connect(voiceManager.getVoice(i).getSynth(), &Synth::onNoteOff);
+//    }
 }
 
 void Voltex::CreateParams() {
