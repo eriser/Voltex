@@ -66,6 +66,7 @@ void Synth::setWavetables(std::tr1::array<WaveTable*, 8> *newTables) {
 void Synth::onNoteOn(int noteNumber, int velocity) {
     printf("Synth Note On\n");
     for (int i = 0; i < 8; i++) {
+        printf("%d\n", envelopes[i].getCurrentStage());
         envelopes[i].enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
     }
 }
