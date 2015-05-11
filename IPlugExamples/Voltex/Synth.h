@@ -23,6 +23,15 @@
 
 class Synth {
 public:
+    enum MixStage {
+        MIX_STAGE_OFF = 0,
+        MIX_STAGE_ATTACK,
+        MIX_STAGE_DECAY,
+        MIX_STAGE_SUSTAIN,
+        MIX_STAGE_RELEASE,
+        kNumMixStages
+    };
+    
     void onNoteOn(int noteNumber, int velocity);
     void onNoteOff(int noteNumber, int velocity);
     
