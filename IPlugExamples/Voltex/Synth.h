@@ -7,7 +7,7 @@
 //  Inspired by the Oscillator class from Martin Finke's "Making Audio Plugins"
 //      http://martin-finke.de/blog/tags/making_audio_plugins.html
 //
-// Do you get this?
+
 #ifndef __Voltex__Synth__
 #define __Voltex__Synth__
 
