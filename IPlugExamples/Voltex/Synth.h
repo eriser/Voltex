@@ -50,11 +50,7 @@ public:
     mPhase(0.0),
     mPhaseIncrement(1.0)
     {
-        for (int i = 0; i < 8; i++) {
-            printf("Initilizing envelope: %d\n", i);
-            envelopes[i] = *(new EnvelopeGenerator());
-            envelopes[i].emitSignalsEh(false);
-        }
+        
     };
     
     void reset();
