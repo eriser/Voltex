@@ -30,9 +30,10 @@ public:
     double nextSample();
     static void setSampleRate(double newSampleRate);
     inline EnvelopeStage getCurrentStage() const { return currentStage; };
-    const static double minimumLevel = 0.0001;
+    const double minimumLevel;
     
     EnvelopeGenerator() :
+    minimumLevel(0.0001),
     currentStage(ENVELOPE_STAGE_OFF),
     currentLevel(minimumLevel),
     multiplier(1.0),
