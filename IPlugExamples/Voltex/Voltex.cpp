@@ -226,7 +226,7 @@ void Voltex::CreateGraphics() {
     
     //Create on/off buttons
 
-	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 6);
+	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
 
 	int x = 0, y = 0;
 	x = kSwitchX;
@@ -239,7 +239,7 @@ void Voltex::CreateGraphics() {
 				pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, 1, &switches));
 			}
 			if (v == 0) {
-				pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 2, &switches)); //Init. Switch with 2nd frame
+				pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 1, &switches)); //Init. Switch with 2nd frame
 			}
 		}
 		else {
