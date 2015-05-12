@@ -83,29 +83,35 @@ enum EParams {
 
 //Layout paramaters
 enum ELayout {
-    kWidth = GUI_WIDTH,
-    kHeight = GUI_HEIGHT,
-    kKeybX = 166,
-    kKeybY = 614,
-    
-    //Master Section:
-    kMasterX = 793,
-    kMasterY = 53,
-    
-    kMasterAttackX = 693,
-    kMasterDecayX = kMasterAttackX + 65,
-    kMasterSustainX = kMasterDecayX + 66,
-    kMasterReleaseX = kMasterSustainX + 66,
-    
-    kMasterEnvelopeY = 231,
-    
-    
-    //Table:
-    kTableX = 232,
-    kTableY = 98,
-    kTableSpaceX = 43,
-    kTableSpaceY = 40,
-    kTableSpaceGainY = 50
+	kWidth = GUI_WIDTH,
+	kHeight = GUI_HEIGHT,
+	kKeybX = 166,
+	kKeybY = 614,
+
+	//Master Section:
+	kMasterX = 793,
+	kMasterY = 53,
+
+	kMasterAttackX = 693,
+	kMasterDecayX = kMasterAttackX + 65,
+	kMasterSustainX = kMasterDecayX + 66,
+	kMasterReleaseX = kMasterSustainX + 66,
+
+	kMasterEnvelopeY = 231,
+
+
+	//Table:
+	kTableX = 232,
+	kTableY = 98,
+	kTableSpaceX = 43,
+	kTableSpaceY = 40,
+	kTableSpaceGainY = 50,
+
+	//On/off Buttons
+	kSwitchX = 325,
+	TabNum = 8, 
+	kSwitchY = 357,
+	kSwitchSpaceX = 85
 };
 
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -218,7 +224,31 @@ void Voltex::CreateGraphics() {
     mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
     pGraphics->AttachControl(mVirtualKeyboard);
     
-    
+    //Create on/off buttons
+
+	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 6);
+
+	int x = 0, y = 0;
+	x = kSwitchX;
+	for (int v = 0; v < TabNum; v++) {
+		if (v == 2 || v == 1 || v == 0) {
+			if (v == 2) {
+				pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, 1, &switches));
+			}
+			if (v == 1) {
+				pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, 1, &switches));
+			}
+			if (v == 0) {
+				pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 2, &switches)); //Init. Switch with 2nd frame
+			}
+		}
+		else {
+			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 1, &switches)); 
+			//pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attached tabs
+		}
+		x = kSwitchSpaceX + x;
+	}
+
     //Create knobs
     IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
     
@@ -233,7 +263,7 @@ void Voltex::CreateGraphics() {
     
     
     //Table:
-    int x = kTableX, y = kTableY;
+    x = kTableX, y = kTableY;
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
