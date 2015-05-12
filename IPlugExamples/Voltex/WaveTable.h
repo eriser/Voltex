@@ -28,8 +28,8 @@ class WaveTable {
 public:
     void setValues (std::tr1::array<double, TABLE_LENGTH> newValues);
     std::tr1::array<double, TABLE_LENGTH> getValues ();
-    void setEnvelopeValue (EnvelopeGenerator::EnvelopeStage stage, double value);
-    double getEnvelopeValue (EnvelopeGenerator::EnvelopeStage stage);
+    void setMixValue (EnvelopeGenerator::EnvelopeStage stage, double value);
+    double getMixValue (EnvelopeGenerator::EnvelopeStage stage);
     void setGain(double newGain);
     double getGain();
     
@@ -43,17 +43,17 @@ public:
 			values[i] = 0;
 		}
         //Default envelope values
-        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_OFF] = 0.0;
-        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_ATTACK] = 0.01;
-        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_DECAY] = 0.01;
-        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN] = 0.1;
-        envelopeValues[EnvelopeGenerator::ENVELOPE_STAGE_RELEASE] = .01;
+        mix[EnvelopeGenerator::ENVELOPE_STAGE_OFF] = 0.0;
+        mix[EnvelopeGenerator::ENVELOPE_STAGE_ATTACK] = 1.0;
+        mix[EnvelopeGenerator::ENVELOPE_STAGE_DECAY] = 1.0;
+        mix[EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN] = 1.0;
+        mix[EnvelopeGenerator::ENVELOPE_STAGE_RELEASE] = 1.0;
     };
     
 private:
     std::tr1::array<double, TABLE_LENGTH> values;
     double gain;
-    double envelopeValues[EnvelopeGenerator::kNumEnvelopeStages];
+    double mix[EnvelopeGenerator::kNumEnvelopeStages];
     
     //interpolates between L0 and H0 taking the previous (L1) and next (H1) points into account
     inline float ThirdInterp(const float x,const float L1,const float L0,const

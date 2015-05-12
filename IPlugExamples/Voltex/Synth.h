@@ -23,20 +23,6 @@
 
 class Synth {
 public:
-    enum MixStage {
-        MIX_STAGE_OFF = 0,
-        MIX_STAGE_ATTACK,
-        MIX_STAGE_DECAY,
-        MIX_STAGE_SUSTAIN,
-        MIX_STAGE_RELEASE,
-        kNumMixStages
-    };
-    
-    void onNoteOn(int noteNumber, int velocity);
-    void onNoteOff(int noteNumber, int velocity);
-    
-    void updateEnvelope(int index);
-    
     void setFrequency(double frequency);
     void setSampleRate(double sampleRate);
     void setWavetables(std::tr1::array<WaveTable*, 8> *tables);
@@ -64,7 +50,6 @@ private:
     
     void calculatePhaseIncrement();
   
-    std::tr1::array<EnvelopeGenerator, 8> envelopes; //The envelopes need to be at the synth level so that if a wave table is being played from multiple voices each voice can have its own possition in the envelope.
     std::tr1::array<WaveTable*, 8> *tables;
 };
 

@@ -8,12 +8,12 @@
 
 #include "WaveTable.h"
 
-void WaveTable::setEnvelopeValue(EnvelopeGenerator::EnvelopeStage stage, double value) {
-    envelopeValues[stage] = value;
+void WaveTable::setMixValue(EnvelopeGenerator::EnvelopeStage stage, double value) {
+    mix[stage] = value;
 }
 
-double WaveTable::getEnvelopeValue(EnvelopeGenerator::EnvelopeStage stage) {
-    return envelopeValues[stage];
+double WaveTable::getMixValue(EnvelopeGenerator::EnvelopeStage stage) {
+    return mix[stage];
 }
 
 void WaveTable::setValues(std::tr1::array<double, TABLE_LENGTH> newValues) {

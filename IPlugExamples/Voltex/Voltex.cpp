@@ -339,29 +339,16 @@ void Voltex::OnParamChange(int paramIdx) {
         default:
             if (paramIdx >= mAttackOne && paramIdx <= mAttackEight) {
                 //Attack
-                waveTables[paramIdx - (mAttackOne)]->setEnvelopeValue(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Value());
-//                printf("GUI: %f\n", param->Value());
-                for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
-                    voiceManager.getVoice(i).getSynth()->updateEnvelope(paramIdx - (mAttackOne));
-                }
+                waveTables[paramIdx - (mAttackOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Value());
             } else if (paramIdx >= mDecayOne && paramIdx <= mDecayEight) {
                 //Decay
-                waveTables[paramIdx - (mDecayOne)]->setEnvelopeValue(EnvelopeGenerator::ENVELOPE_STAGE_DECAY, param->Value());
-                for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
-                    voiceManager.getVoice(i).getSynth()->updateEnvelope(paramIdx - (mAttackOne));
-                }
+                waveTables[paramIdx - (mDecayOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_DECAY, param->Value());
             } else if (paramIdx >= mSustainOne && paramIdx <= mSustainEight) {
                 //Sustain
-                waveTables[paramIdx - (mSustainOne)]->setEnvelopeValue(EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, param->Value());
-                for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
-                    voiceManager.getVoice(i).getSynth()->updateEnvelope(paramIdx - (mAttackOne));
-                }
+                waveTables[paramIdx - (mSustainOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, param->Value());
             } else if (paramIdx >= mReleaseOne && paramIdx <= mReleaseEight) {
                 //Release
-                waveTables[paramIdx - (mReleaseOne)]->setEnvelopeValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Value());
-                for (int i = 0; i < VoiceManager::NumberOfVoices; i++) {
-                    voiceManager.getVoice(i).getSynth()->updateEnvelope(paramIdx - (mAttackOne));
-                }
+                waveTables[paramIdx - (mReleaseOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Value());
             } else if (paramIdx >= mGainOne && paramIdx <= mGainEight) {
                 //Gain
                 waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
