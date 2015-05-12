@@ -174,22 +174,22 @@ void Voltex::CreateParams() {
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Attack", 0.01, 0.01, 5.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Attack", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Decay
     for (int i = mDecayOne; i <= mDecayEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Decay", 0.01, 0.01, 15.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Decay", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Sustain
     for (int i = mSustainOne; i <= mSustainEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Sustain", 0.1, 0.001, 1.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Sustain", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(2);
     }
     //Release
     for (int i = mReleaseOne; i <= mReleaseEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Release", 15.0, 0.001, 15.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Release", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Gain

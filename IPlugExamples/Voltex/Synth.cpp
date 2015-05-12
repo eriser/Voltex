@@ -38,7 +38,7 @@ double Synth::nextSample() {
     int numTables = 0;
     
     for (int i = 0 ; i < 8; i++) {
-		value += (*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() /* (*tables)[i]->getMixValue()*/;
+		value += (*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() /*(*tables)[i]->getMixValue()*/;
 		numTables++;
     }
     
