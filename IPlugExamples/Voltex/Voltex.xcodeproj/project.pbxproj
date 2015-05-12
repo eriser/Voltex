@@ -275,6 +275,12 @@
 		BC35A33D1AC981E900C4ED2D /* MIDIReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC35A3341AC981E900C4ED2D /* MIDIReceiver.cpp */; };
 		BC35A33E1AC981E900C4ED2D /* MIDIReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC35A3351AC981E900C4ED2D /* MIDIReceiver.h */; };
 		BC35A33F1AC981E900C4ED2D /* MIDIReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC35A3351AC981E900C4ED2D /* MIDIReceiver.h */; };
+		BC7206861B0236F900F6CE1C /* switch.png in Resources */ = {isa = PBXBuildFile; fileRef = BC7206851B0236F900F6CE1C /* switch.png */; };
+		BC7206871B0236F900F6CE1C /* switch.png in Resources */ = {isa = PBXBuildFile; fileRef = BC7206851B0236F900F6CE1C /* switch.png */; };
+		BC7206881B0236F900F6CE1C /* switch.png in Resources */ = {isa = PBXBuildFile; fileRef = BC7206851B0236F900F6CE1C /* switch.png */; };
+		BC7206891B0236F900F6CE1C /* switch.png in Resources */ = {isa = PBXBuildFile; fileRef = BC7206851B0236F900F6CE1C /* switch.png */; };
+		BC72068A1B0236F900F6CE1C /* switch.png in Resources */ = {isa = PBXBuildFile; fileRef = BC7206851B0236F900F6CE1C /* switch.png */; };
+		BC72068B1B0236F900F6CE1C /* switch.png in Resources */ = {isa = PBXBuildFile; fileRef = BC7206851B0236F900F6CE1C /* switch.png */; };
 		BC9DEE511AD6C16500F7F88C /* EnvelopeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9DEE501AD6C16500F7F88C /* EnvelopeGenerator.h */; };
 		BC9DEE521AD6C16500F7F88C /* EnvelopeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9DEE501AD6C16500F7F88C /* EnvelopeGenerator.h */; };
 		BC9DEE541AD6C17B00F7F88C /* EnvelopeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9DEE531AD6C17B00F7F88C /* EnvelopeGenerator.cpp */; };
@@ -721,6 +727,7 @@
 		BC35A32B1AC981C500C4ED2D /* Voltex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voltex.h; sourceTree = "<group>"; };
 		BC35A3341AC981E900C4ED2D /* MIDIReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIDIReceiver.cpp; sourceTree = "<group>"; };
 		BC35A3351AC981E900C4ED2D /* MIDIReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIReceiver.h; sourceTree = "<group>"; };
+		BC7206851B0236F900F6CE1C /* switch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = switch.png; path = resources/img/switch.png; sourceTree = "<group>"; };
 		BC9DEE501AD6C16500F7F88C /* EnvelopeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnvelopeGenerator.h; sourceTree = "<group>"; };
 		BC9DEE531AD6C17B00F7F88C /* EnvelopeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvelopeGenerator.cpp; sourceTree = "<group>"; };
 		BCAB792F1AD55782003532CA /* Voice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Voice.cpp; sourceTree = "<group>"; };
@@ -1357,6 +1364,7 @@
 				BCE96CFF1ADF569300CE2960 /* blackkey.png */,
 				BCE96D001ADF569300CE2960 /* whitekey.png */,
 				BCE96D221AE1546200CE2960 /* knob.png */,
+				BC7206851B0236F900F6CE1C /* switch.png */,
 			);
 			name = img;
 			sourceTree = "<group>";
@@ -1770,6 +1778,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC7206871B0236F900F6CE1C /* switch.png in Resources */,
 				BCE96D021ADF569300CE2960 /* bg.png in Resources */,
 				BCE96D241AE1546200CE2960 /* knob.png in Resources */,
 				BCE96D081ADF569300CE2960 /* blackkey.png in Resources */,
@@ -1781,6 +1790,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC7206891B0236F900F6CE1C /* switch.png in Resources */,
 				BCE96D041ADF569300CE2960 /* bg.png in Resources */,
 				BCE96D261AE1546200CE2960 /* knob.png in Resources */,
 				BCE96D0A1ADF569300CE2960 /* blackkey.png in Resources */,
@@ -1792,6 +1802,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC72068A1B0236F900F6CE1C /* switch.png in Resources */,
 				BCE96D051ADF569300CE2960 /* bg.png in Resources */,
 				BCE96D271AE1546200CE2960 /* knob.png in Resources */,
 				BCE96D0B1ADF569300CE2960 /* blackkey.png in Resources */,
@@ -1803,6 +1814,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC7206881B0236F900F6CE1C /* switch.png in Resources */,
 				BCE96D031ADF569300CE2960 /* bg.png in Resources */,
 				BCE96D251AE1546200CE2960 /* knob.png in Resources */,
 				BCE96D091ADF569300CE2960 /* blackkey.png in Resources */,
@@ -1814,6 +1826,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC72068B1B0236F900F6CE1C /* switch.png in Resources */,
 				BCE96D061ADF569300CE2960 /* bg.png in Resources */,
 				BCE96D281AE1546200CE2960 /* knob.png in Resources */,
 				BCE96D0C1ADF569300CE2960 /* blackkey.png in Resources */,
@@ -1832,6 +1845,7 @@
 				BCE96D071ADF569300CE2960 /* blackkey.png in Resources */,
 				4F78D89913B639100032E0F3 /* InfoPlist.strings in Resources */,
 				BCE96D0D1ADF569300CE2960 /* whitekey.png in Resources */,
+				BC7206861B0236F900F6CE1C /* switch.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

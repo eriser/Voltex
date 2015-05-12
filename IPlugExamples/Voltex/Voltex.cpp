@@ -29,8 +29,19 @@ enum EParams {
     mVolumeEnvDecay,
     mVolumeEnvSustain,
     mVolumeEnvRelease,
+    
     // Master
     mGain,
+    
+    //Switches
+    mSwitchOne,
+    mSwitchTwo,
+    mSwitchThree,
+    mSwitchFour,
+    mSwitchFive,
+    mSwitchSix,
+    mSwitchSeven,
+    mSwitchEight,
     
     // Table
     mAttackOne,
@@ -114,6 +125,12 @@ enum ELayout {
 	kSwitchSpaceX = 85
 };
 
+enum ESwitch {
+    switchOff = 0,
+    switchOn,
+    switchNumOptions
+};
+
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
     TRACE;
     
@@ -177,25 +194,36 @@ void Voltex::CreateParams() {
     GetParam(mGain)->InitDouble("Gain", 80.0, 0.0, 100.0, parameterStep);
     GetParam(mGain)->SetShape(2);
     
+    //Switches
+    for (int i = mSwitchOne; i <= mSwitchEight; i++) {
+        if (i == mSwitchOne) {
+             GetParam(i)->InitEnum("Wavetable Switch", switchOn, switchNumOptions);
+        } else {
+             GetParam(i)->InitEnum("Wavetable Switch", switchOff, switchNumOptions);
+        }
+        GetParam(i)->SetDisplayText(0, "Wavetable Switch");
+        
+    }
+    
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Attack", 0.01, 0.01, 5.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Attack", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Decay
     for (int i = mDecayOne; i <= mDecayEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Decay", 0.01, 0.01, 15.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Decay", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Sustain
     for (int i = mSustainOne; i <= mSustainEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Sustain", 0.1, 0.001, 1.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Sustain", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(2);
     }
     //Release
     for (int i = mReleaseOne; i <= mReleaseEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Release", 15.0, 0.001, 15.0, parameterStep);
+        GetParam(i)->InitDouble("Volume Env Release", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Gain
@@ -230,20 +258,17 @@ void Voltex::CreateGraphics() {
 
 	int x = 0, y = 0;
 	x = kSwitchX;
-	for (int v = 0; v < TabNum; v++) {
-		if (v == 2 || v == 1 || v == 0) {
-			if (v == 2) {
-				pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, 1, &switches));
-			}
-			if (v == 1) {
-				pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, 1, &switches));
-			}
-			if (v == 0) {
-				pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 1, &switches)); //Init. Switch with 2nd frame
-			}
-		}
-		else {
-			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 1, &switches)); 
+	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
+        if (v == mSwitchThree) {
+            pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
+        }
+        else if (v == mSwitchTwo) {
+            pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, v, &switches));
+        }
+        else if (v == mSwitchOne) {
+            pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches)); //Init. Switch with 2nd frame
+        } else {
+			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
 			//pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attached tabs
 		}
 		x = kSwitchSpaceX + x;

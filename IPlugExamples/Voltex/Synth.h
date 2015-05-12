@@ -35,9 +35,11 @@ public:
     mFrequency(440.0),
     mPhase(0.0),
     mPhaseIncrement(1.0)
+//    mEnvelopeStage()
     {
         
-    };
+    }
+    
     
     void reset();
 private:
@@ -46,6 +48,7 @@ private:
     double mFrequency;
     double mPhase;
     double mPhaseIncrement;
+    double mEnvelopeStage;
     static double mSampleRate;
     
     void calculatePhaseIncrement();
