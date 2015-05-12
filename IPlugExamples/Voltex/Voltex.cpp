@@ -29,8 +29,19 @@ enum EParams {
     mVolumeEnvDecay,
     mVolumeEnvSustain,
     mVolumeEnvRelease,
+    
     // Master
     mGain,
+    
+    //Switches
+    mSwitchOne,
+    mSwitchTwo,
+    mSwitchThree,
+    mSwitchFour,
+    mSwitchFive,
+    mSwitchSix,
+    mSwitchSeven,
+    mSwitchEight,
     
     // Table
     mAttackOne,
@@ -114,6 +125,12 @@ enum ELayout {
 	kSwitchSpaceX = 85
 };
 
+enum ESwitch {
+    switchOff = 0,
+    switchOn,
+    switchNumOptions
+};
+
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
     TRACE;
     
@@ -177,6 +194,17 @@ void Voltex::CreateParams() {
     GetParam(mGain)->InitDouble("Gain", 80.0, 0.0, 100.0, parameterStep);
     GetParam(mGain)->SetShape(2);
     
+    //Switches
+    for (int i = mSwitchOne; i <= mSwitchEight; i++) {
+        if (i == mSwitchOne) {
+             GetParam(i)->InitEnum("Wavetable Switch", switchOn, switchNumOptions);
+        } else {
+             GetParam(i)->InitEnum("Wavetable Switch", switchOff, switchNumOptions);
+        }
+        GetParam(i)->SetDisplayText(0, "Wavetable Switch");
+        
+    }
+    
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
@@ -226,24 +254,21 @@ void Voltex::CreateGraphics() {
     
     //Create on/off buttons
 
-	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 6);
+	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
 
 	int x = 0, y = 0;
 	x = kSwitchX;
-	for (int v = 0; v < TabNum; v++) {
-		if (v == 2 || v == 1 || v == 0) {
-			if (v == 2) {
-				pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, 1, &switches));
-			}
-			if (v == 1) {
-				pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, 1, &switches));
-			}
-			if (v == 0) {
-				pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 2, &switches)); //Init. Switch with 2nd frame
-			}
-		}
-		else {
-			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, 1, &switches)); 
+	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
+        if (v == mSwitchThree) {
+            pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
+        }
+        else if (v == mSwitchTwo) {
+            pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, v, &switches));
+        }
+        else if (v == mSwitchOne) {
+            pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches)); //Init. Switch with 2nd frame
+        } else {
+			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
 			//pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attached tabs
 		}
 		x = kSwitchSpaceX + x;

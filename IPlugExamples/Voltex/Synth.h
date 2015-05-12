@@ -35,7 +35,7 @@ public:
     mFrequency(440.0),
     mPhase(0.0),
     mPhaseIncrement(1.0)
-    mEnvelopeStage(EnvelopeGenerator::)
+//    mEnvelopeStage()
     {
         
     }
