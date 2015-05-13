@@ -33,6 +33,16 @@ enum EParams {
     // Master
     mGain,
     
+	//Tabs
+	mTabOne,
+	mTabTwo,
+	mTabThree,
+	mTabFour, 
+	mTabFive,
+	mTabSix,
+	mTabSeven,
+	mTabEight,
+
     //Switches
     mSwitchOne,
     mSwitchTwo,
@@ -120,15 +130,25 @@ enum ELayout {
 
 	//On/off Buttons
 	kSwitchX = 325,
-	TabNum = 8, 
-	kSwitchY = 357,
-	kSwitchSpaceX = 85
+	kSwitchY = 358,
+	kSwitchSpaceX = 86,
+
+	//tabs
+	kTabX = 272,
+	kTabY = 344,
+	TabNum = 8,
+	kTabXDifference = kSwitchX - kTabX
+
 };
 
 enum ESwitch {
     switchOff = 0,
     switchOn,
     switchNumOptions
+};
+
+enum ETab {
+	
 };
 
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -194,6 +214,12 @@ void Voltex::CreateParams() {
     GetParam(mGain)->InitDouble("Gain", 80.0, 0.0, 100.0, parameterStep);
     GetParam(mGain)->SetShape(2);
     
+	//Tabs
+	for (int i = mTabOne; i <= mTabEight; i++) {
+		GetParam(i)->InitEnum("Wavetable Tab", switchOff, switchNumOptions);
+		GetParam(i)->SetDisplayText(0, "Wavetable Tab");
+	}
+
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
         if (i == mSwitchOne) {
@@ -252,24 +278,26 @@ void Voltex::CreateGraphics() {
     mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
     pGraphics->AttachControl(mVirtualKeyboard);
     
-    //Create on/off buttons
-
+    //Create on/off buttons and tabs
+	
 	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
+	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 8);
 
 	int x = 0, y = 0;
 	x = kSwitchX;
 	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
         if (v == mSwitchThree) {
+			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab));
             pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
         }
         else if (v == mSwitchTwo) {
+			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 2, kTabY, v, &tab));
             pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, v, &switches));
-        }
-        else if (v == mSwitchOne) {
-            pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches)); //Init. Switch with 2nd frame
-        } else {
+
+        } 
+		else {
+			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference, kTabY, v, &tab));
 			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
-			//pGraphics->AttachControl(new IKnobMultiControl(this, x, kSwitchY, 1, &tabs)); //attached tabs
 		}
 		x = kSwitchSpaceX + x;
 	}
@@ -323,11 +351,8 @@ void Voltex::CreateGraphics() {
         x += kTableSpaceX;
     }
     
-    
     AttachGraphics(pGraphics);
 }
-
-
 
 Voltex::~Voltex() {}
 
