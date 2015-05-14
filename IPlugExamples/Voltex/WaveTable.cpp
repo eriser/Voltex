@@ -25,6 +25,8 @@ std::tr1::array<double, TABLE_LENGTH> WaveTable::getValues() {
 }
 
 double WaveTable::getValueAt(double location) {
+    if (!enabled) return 0.0;
+    
     double index = (location / TWO_PI) * TABLE_LENGTH;
     
     int a = (int)index;
@@ -62,4 +64,12 @@ void WaveTable::setGain(double newGain) {
 
 double WaveTable::getGain() {
     return gain;
+}
+
+void WaveTable::setEnabled(bool newEnabled) {
+    enabled = newEnabled;
+}
+
+bool WaveTable::isEnabled() {
+    return enabled;
 }

@@ -33,12 +33,11 @@ void EnvelopeGenerator::calculateMultiplier(double startLevel, double endLevel, 
 void EnvelopeGenerator::enterStage(EnvelopeStage newStage) {
     if (currentStage == newStage) return; //nothing to do here
     if (currentStage == ENVELOPE_STAGE_OFF) {
-        if (emitSignals)
-            beganEnvelopeCycle(); //Send signal
+        beganEnvelopeCycle(); //Send signal
     }
     if (newStage == ENVELOPE_STAGE_OFF) {
-        if (emitSignals)
-            finishedEnvelopeCycle(); //Send signal
+//        beganEnvelopeCycle();
+        finishedEnvelopeCycle(); //Send signal
     }
     
     currentStage = newStage;

@@ -32,7 +32,8 @@ public:
     double getMixValue (EnvelopeGenerator::EnvelopeStage stage);
     void setGain(double newGain);
     double getGain();
-    
+    void setEnabled(bool enabled);
+    bool isEnabled();
     double getValueAt (double index);
     
     WaveTable(): gain(1.0) //initialization list
@@ -53,6 +54,7 @@ public:
 private:
     std::tr1::array<double, TABLE_LENGTH> values;
     double gain;
+    bool enabled;
     double mix[EnvelopeGenerator::kNumEnvelopeStages];
     
     //interpolates between L0 and H0 taking the previous (L1) and next (H1) points into account
