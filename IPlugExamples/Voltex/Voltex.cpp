@@ -285,16 +285,10 @@ void Voltex::CreateGraphics() {
 	int x = 0, y = 0;
 	x = kSwitchX;
 	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
-        if (v == mSwitchThree) {
+        if (v == mSwitchThree || v == mSwitchTwo) {
 			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab[v - mSwitchOne]));
             pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
-        }
-        else if (v == mSwitchTwo) {
-			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 2, kTabY, v, &tab[v - mSwitchOne]));
-            pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, v, &switches));
-
-        } 
-		else {
+        } else {
 			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference, kTabY, v, &tab[v - mSwitchOne]));
 			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
 		}
