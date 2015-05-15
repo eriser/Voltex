@@ -56,13 +56,13 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define SWITCHES_ID   105
 
 #define TAB_ONE_ID	  110
-#define TAB_TWO_ID	  TAB_ONE_ID + 1
-#define TAB_THREE_ID	TAB_ONE_ID + 2
-#define TAB_FOUR_ID	  TAB_ONE_ID + 3
-#define TAB_FIVE_ID	  TAB_ONE_ID + 4
-#define TAB_SIX_ID	  TAB_ONE_ID + 5
-#define TAB_SEVEN_ID	TAB_ONE_ID + 6
-#define TAB_EIGHT_ID	TAB_ONE_ID + 7
+#define TAB_TWO_ID	  111
+#define TAB_THREE_ID  112
+#define TAB_FOUR_ID	  113
+#define TAB_FIVE_ID	  114
+#define TAB_SIX_ID	  115
+#define TAB_SEVEN_ID  116
+#define TAB_EIGHT_ID  117
 
 // Image resource locations for this plug.
 #define BG_FN         "resources/img/bg.png"
