@@ -57,12 +57,12 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 
 #define TAB_ONE_ID	  110
 #define TAB_TWO_ID	  TAB_ONE_ID + 1
-#define TAB_THREE_ID  TAB_ONE_ID + 2
+#define TAB_THREE_ID	TAB_ONE_ID + 2
 #define TAB_FOUR_ID	  TAB_ONE_ID + 3
 #define TAB_FIVE_ID	  TAB_ONE_ID + 4
 #define TAB_SIX_ID	  TAB_ONE_ID + 5
-#define TAB_SEVEN_ID  TAB_ONE_ID + 6
-#define TAB_EIGHT_ID  TAB_ONE_ID + 7
+#define TAB_SEVEN_ID	TAB_ONE_ID + 6
+#define TAB_EIGHT_ID	TAB_ONE_ID + 7
 
 // Image resource locations for this plug.
 #define BG_FN         "resources/img/bg.png"
@@ -77,7 +77,7 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 // GUI default dimensions
 #define GUI_WIDTH   960
 #define GUI_HEIGHT  680
-// on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ oness
+// on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API) && !defined(OS_IOS)
 #include "app_wrapper/app_resource.h"
 #endif

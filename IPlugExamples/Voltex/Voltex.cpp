@@ -6,7 +6,7 @@
 #include "IControl.h"
 #include "IKeyboardControl.h"
 #include "resource.h"
-#include <stdio.h>
+
 #include <math.h>
 #include <algorithm>
 
@@ -278,7 +278,7 @@ void Voltex::CreateGraphics() {
 	IBitmap tab[kTabNum];
     for (int i = 0; i < kTabNum; i++) {
         char c[28];
-        sprintf(c, TAB_FN, i + 1);
+        snprintf(c, 28, TAB_FN, i + 1);
         tab[i] = pGraphics->LoadIBitmap(TAB_ONE_ID + i, c, 2);
     }
 
