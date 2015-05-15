@@ -4,7 +4,9 @@ KNOB_ID       PNG KNOB_FN
 BG_ID         PNG BG_FN
 WHITE_KEY_ID  PNG WHITE_KEY_FN
 BLACK_KEY_ID  PNG BLACK_KEY_FN
-SWITCHES_ID	  PNG SWITCHES_FN
+SWITCHES_ID   PNG SWITCHES_FN
+
+/*
 TAB_ONE_ID    PNG "resources/img/Tabs/tab1.png"
 TAB_TWO_ID    PNG "resources/img/Tabs/tab2.png"
 TAB_THREE_ID  PNG "resources/img/Tabs/tab3.png"
@@ -13,6 +15,16 @@ TAB_FIVE_ID   PNG "resources/img/Tabs/tab5.png"
 TAB_SIX_ID    PNG "resources/img/Tabs/tab6.png"
 TAB_SEVEN_ID  PNG "resources/img/Tabs/tab7.png"
 TAB_EIGHT_ID  PNG "resources/img/Tabs/tab8.png"
+*/
+
+TAB_ONE_ID    PNG "resources/img/tab1.png"
+TAB_TWO_ID    PNG "resources/img/tab2.png"
+TAB_THREE_ID  PNG "resources/img/tab3.png"
+TAB_FOUR_ID   PNG "resources/img/tab4.png"
+TAB_FIVE_ID   PNG "resources/img/tab5.png"
+TAB_SIX_ID    PNG "resources/img/tab6.png"
+TAB_SEVEN_ID  PNG "resources/img/tab7.png"
+TAB_EIGHT_ID  PNG "resources/img/tab8.png"
 
 #ifdef SA_API
 //Standalone stuff

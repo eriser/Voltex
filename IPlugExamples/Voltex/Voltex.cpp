@@ -278,7 +278,7 @@ void Voltex::CreateGraphics() {
 	IBitmap tab[kTabNum];
     for (int i = 0; i < kTabNum; i++) {
         char c[28];
-        snprintf(c, 28, TAB_FN, i + 1);
+        sprintf(c, TAB_FN, i + 1);
         tab[i] = pGraphics->LoadIBitmap(TAB_ONE_ID + i, c, 2);
     }
 
