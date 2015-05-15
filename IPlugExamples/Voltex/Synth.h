@@ -20,6 +20,7 @@
 #endif
 
 #include "WaveTable.h"
+#include "EnvelopeGenerator.h"
 
 class Synth {
 public:
@@ -34,8 +35,8 @@ public:
     twoPI(2 * mPI),
     mFrequency(440.0),
     mPhase(0.0),
-    mPhaseIncrement(1.0)
-//    mEnvelopeStage()
+    mPhaseIncrement(1.0),
+    mEnvelopeStage(EnvelopeGenerator::ENVELOPE_STAGE_OFF)
     {
         
     }

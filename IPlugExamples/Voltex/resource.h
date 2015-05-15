@@ -54,7 +54,15 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define BLACK_KEY_ID  103
 #define KNOB_ID       104
 #define SWITCHES_ID   105
-#define TAB_ID		  106
+
+#define TAB_ONE_ID	  110
+#define TAB_TWO_ID	  TAB_ONE_ID + 1
+#define TAB_THREE_ID	TAB_ONE_ID + 2
+#define TAB_FOUR_ID	  TAB_ONE_ID + 3
+#define TAB_FIVE_ID	  TAB_ONE_ID + 4
+#define TAB_SIX_ID	  TAB_ONE_ID + 5
+#define TAB_SEVEN_ID	TAB_ONE_ID + 6
+#define TAB_EIGHT_ID	TAB_ONE_ID + 7
 
 // Image resource locations for this plug.
 #define BG_FN         "resources/img/bg.png"
@@ -62,7 +70,9 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define BLACK_KEY_FN  "resources/img/blackkey.png"
 #define KNOB_FN       "resources/img/knob.png"
 #define SWITCHES_FN   "resources/img/switch.png"
-#define TAB_FN	      "resources/img/tabs.png"
+
+#define TAB_FN    "resources/img/Tabs/tab%d.png"
+
 
 // GUI default dimensions
 #define GUI_WIDTH   960
