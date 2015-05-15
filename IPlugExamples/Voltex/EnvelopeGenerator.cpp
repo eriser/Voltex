@@ -41,6 +41,7 @@ void EnvelopeGenerator::enterStage(EnvelopeStage newStage) {
     }
     
     currentStage = newStage;
+    changedEnvelopeStage(currentStage);
     currentSampleIndex = 0;
     if (currentStage == ENVELOPE_STAGE_OFF ||
         currentStage == ENVELOPE_STAGE_SUSTAIN) {

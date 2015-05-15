@@ -136,7 +136,7 @@ enum ELayout {
 	//tabs
 	kTabX = 272,
 	kTabY = 344,
-	TabNum = 8,
+	kTabNum = 8,
 	kTabXDifference = kSwitchX - kTabX
 
 };
@@ -275,22 +275,27 @@ void Voltex::CreateGraphics() {
     //Create on/off buttons and tabs
 	
 	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
-	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 8);
+	IBitmap tab[kTabNum];
+    for (int i = 0; i < kTabNum; i++) {
+        char c[27];
+        snprintf(c, 27, TAB_FN, i + 1);
+        tab[i] = pGraphics->LoadIBitmap(TAB_ONE_ID + i, c, 2);
+    }
 
 	int x = 0, y = 0;
 	x = kSwitchX;
 	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
         if (v == mSwitchThree) {
-			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab));
+			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab[1]));
             pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
         }
         else if (v == mSwitchTwo) {
-			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 2, kTabY, v, &tab));
+			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 2, kTabY, v, &tab[1]));
             pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, v, &switches));
 
         } 
 		else {
-			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference, kTabY, v, &tab));
+			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference, kTabY, v, &tab[1]));
 			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
 		}
 		x = kSwitchSpaceX + x;

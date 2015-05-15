@@ -15,6 +15,7 @@
 
 #include "GallantSignal.h"
 using Gallant::Signal0;
+using Gallant::Signal1;
 
 class EnvelopeGenerator {
 public:
@@ -38,8 +39,7 @@ public:
     currentLevel(minimumLevel),
     multiplier(1.0),
     currentSampleIndex(0),
-    nextStageSampleIndex(0),
-    emitSignals(true)
+    nextStageSampleIndex(0)
     {
         stageValue[ENVELOPE_STAGE_OFF] = 0.0;
         stageValue[ENVELOPE_STAGE_ATTACK] = 0.01;
@@ -51,12 +51,9 @@ public:
     
     void setStageValue(EnvelopeStage stage, double value);
     
-    void emitSignalsEh (bool emitSigs) {
-        emitSignals = emitSigs;
-    }
-    
     Signal0<> beganEnvelopeCycle;
     Signal0<> finishedEnvelopeCycle;
+    Signal1<int> changedEnvelopeStage;
     
     void reset() {
         currentStage = ENVELOPE_STAGE_OFF;
@@ -74,7 +71,6 @@ private:
     void calculateMultiplier(double startLevel, double endLevel, unsigned long long lengthInSamples);
     unsigned long long currentSampleIndex;
     unsigned long long nextStageSampleIndex;
-    bool emitSignals;
 };
 
 #endif /* defined(__Voltex__EnvelopeGenerator__) */

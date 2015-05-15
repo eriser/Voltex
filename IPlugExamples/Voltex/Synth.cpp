@@ -51,6 +51,10 @@ double Synth::nextSample() {
     return value;
 }
 
+void Synth::setEnvelopeStage(int stage) {
+    
+}
+
 void Synth::setWavetables(std::tr1::array<WaveTable*, 8> *newTables) {
     tables = newTables;
 }

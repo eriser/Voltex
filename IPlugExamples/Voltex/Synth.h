@@ -27,6 +27,8 @@ public:
     void setFrequency(double frequency);
     void setSampleRate(double sampleRate);
     void setWavetables(std::tr1::array<WaveTable*, 8> *tables);
+    
+    void setEnvelopeStage(int stage);
         
     double nextSample();
     
