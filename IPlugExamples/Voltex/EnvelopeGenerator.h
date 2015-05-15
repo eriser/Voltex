@@ -53,7 +53,7 @@ public:
     
     Signal0<> beganEnvelopeCycle;
     Signal0<> finishedEnvelopeCycle;
-    Signal1<int> changedEnvelopeStage;
+    Signal1<EnvelopeGenerator::EnvelopeStage> changedEnvelopeStage;
     
     void reset() {
         currentStage = ENVELOPE_STAGE_OFF;

@@ -28,7 +28,7 @@ public:
     void setSampleRate(double sampleRate);
     void setWavetables(std::tr1::array<WaveTable*, 8> *tables);
     
-    void setEnvelopeStage(int stage);
+    void setEnvelopeStage(EnvelopeGenerator::EnvelopeStage stage);
         
     double nextSample();
     
@@ -51,7 +51,7 @@ private:
     double mFrequency;
     double mPhase;
     double mPhaseIncrement;
-    double mEnvelopeStage;
+    EnvelopeGenerator::EnvelopeStage mEnvelopeStage;
     static double mSampleRate;
     
     void calculatePhaseIncrement();

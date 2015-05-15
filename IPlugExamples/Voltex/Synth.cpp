@@ -38,7 +38,7 @@ double Synth::nextSample() {
     int numTables = 0;
     
     for (int i = 0 ; i < 8; i++) {
-		value += (*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() /*(*tables)[i]->getMixValue()*/;
+		value += (*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() * (*tables)[i]->getMixValue(mEnvelopeStage);
 		numTables++;
     }
     
@@ -51,8 +51,8 @@ double Synth::nextSample() {
     return value;
 }
 
-void Synth::setEnvelopeStage(int stage) {
-    
+void Synth::setEnvelopeStage(EnvelopeGenerator::EnvelopeStage stage) {
+    mEnvelopeStage = stage;
 }
 
 void Synth::setWavetables(std::tr1::array<WaveTable*, 8> *newTables) {
