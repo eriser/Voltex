@@ -25,7 +25,7 @@ double EnvelopeGenerator::nextSample() {
 }
 
 void EnvelopeGenerator::calculateMultiplier(double startLevel, double endLevel, unsigned long long lengthInSamples) {
-    //Calculate a multiplier for a nice smooth exponential fade
+    //Calculate a multiplier for a nice smooth exponential fade (the human ear hears volume logarithmically)
     multiplier = 1.0 + (log(endLevel) - log(startLevel)) / (lengthInSamples);
     //Maxim - This is what Mr. Kesner was hearing when he said that our fades where so nice and smooth. Many plugins just use a linear fade but this sounds much better.
 }
@@ -33,12 +33,11 @@ void EnvelopeGenerator::calculateMultiplier(double startLevel, double endLevel, 
 void EnvelopeGenerator::enterStage(EnvelopeStage newStage) {
     if (currentStage == newStage) return; //nothing to do here
     if (currentStage == ENVELOPE_STAGE_OFF) {
-        if (emitSignals)
-            beganEnvelopeCycle(); //Send signal
+        beganEnvelopeCycle(); //Send signal
     }
     if (newStage == ENVELOPE_STAGE_OFF) {
-        if (emitSignals)
-            finishedEnvelopeCycle(); //Send signal
+//        beganEnvelopeCycle();
+        finishedEnvelopeCycle(); //Send signal
     }
     
     currentStage = newStage;

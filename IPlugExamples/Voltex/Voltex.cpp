@@ -141,12 +141,6 @@ enum ELayout {
 
 };
 
-enum ESwitch {
-    switchOff = 0,
-    switchOn,
-    switchNumOptions
-};
-
 enum ETab {
 	
 };
@@ -216,16 +210,16 @@ void Voltex::CreateParams() {
     
 	//Tabs
 	for (int i = mTabOne; i <= mTabEight; i++) {
-		GetParam(i)->InitEnum("Wavetable Tab", switchOff, switchNumOptions);
+		GetParam(i)->InitEnum("Wavetable Tab", 0, 8);
 		GetParam(i)->SetDisplayText(0, "Wavetable Tab");
 	}
 
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
         if (i == mSwitchOne) {
-             GetParam(i)->InitEnum("Wavetable Switch", switchOn, switchNumOptions);
+             GetParam(i)->InitEnum("Wavetable Switch", 1, 2);
         } else {
-             GetParam(i)->InitEnum("Wavetable Switch", switchOff, switchNumOptions);
+             GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
         }
         GetParam(i)->SetDisplayText(0, "Wavetable Switch");
         
@@ -432,6 +426,9 @@ void Voltex::OnParamChange(int paramIdx) {
             } else if (paramIdx >= mGainOne && paramIdx <= mGainEight) {
                 //Gain
                 waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
+            } else if (paramIdx >= mSwitchOne && paramIdx <= mSwitchEight) {
+                //Gain
+                waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Value());
             } else {
                 //oops
             }
