@@ -8,6 +8,7 @@
 
 #include "MIDIReceiver.h"
 #include "VoiceManager.h"
+#include "VectorSpace.h"
 
 class Voltex : public IPlug
 {

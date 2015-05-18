@@ -129,9 +129,15 @@ enum ELayout {
 	//tabs
 	kTabX = 272,
 	kTabY = 344,
+    kTabMaxX = 957,
+    kTabMaxY = 484,
 	kTabNum = 8,
-	kTabXDifference = kSwitchX - kTabX
-
+    
+    //vector space
+    kVectorSpaceX = 272,
+    kVectorSpaceY = 389,
+    kVectorSpaceMaxX = 955,
+    kVectorSpaceMaxY = 609
 };
 
 enum ETab {
@@ -204,22 +210,10 @@ void Voltex::CreateParams() {
 	//Tabs
     GetParam(mTab)->InitEnum("Wavetable Tab", 0, 8);
     GetParam(mTab)->SetDisplayText(0, "Wavetable Tab");
-//	for (int i = mTabOne; i <= mTabEight; i++) {
-//        if (i == mTabOne) {
-//            GetParam(i)->InitEnum("Wavetable Tab", 1, 2);
-//        } else {
-//            GetParam(i)->InitEnum("Wavetable Tab", 0, 2);
-//        }
-//		GetParam(i)->SetDisplayText(0, "Wavetable Tab");
-//	}
 
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
-        if (i == mSwitchOne) {
-             GetParam(i)->InitEnum("Wavetable Switch", 1, 2);
-        } else {
-             GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
-        }
+        GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
         GetParam(i)->SetDisplayText(0, "Wavetable Switch");
         
     }
@@ -274,18 +268,13 @@ void Voltex::CreateGraphics() {
     //Create on/off buttons and tabs
 	
 	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
-	IBitmap tab[kTabNum];
-    
-    for (int i = 0; i < kTabNum; i++) {
-        char c[28];
-        sprintf(c, TAB_FN, i + 1);
-        tab[i] = pGraphics->LoadIBitmap(TAB_ONE_ID + i, c, 2);
-    }
+	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
     
     //Tabs
-    pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kSwitchX - kTabXDifference, kTabY,   957, kTabY + 40), mTab, 8, &tab[0], kHorizontal, false));
+    pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, kTabNum, &tab, kHorizontal, false));
     
-
+    
+    //Switches
 	int x = kSwitchX, y = 0;
 	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
         if (v == mSwitchThree || v == mSwitchTwo) {
@@ -345,6 +334,8 @@ void Voltex::CreateGraphics() {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
         x += kTableSpaceX;
     }
+    
+    pGraphics->AttachControl(new VectorSpace(this, IRECT(kVectorSpaceX, kVectorSpaceY, kVectorSpaceMaxX, kVectorSpaceMaxY)));
     
     AttachGraphics(pGraphics);
 }
