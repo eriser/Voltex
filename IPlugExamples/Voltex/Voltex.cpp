@@ -34,14 +34,7 @@ enum EParams {
     mGain,
     
 	//Tabs
-	mTabOne,
-	mTabTwo,
-	mTabThree,
-	mTabFour, 
-	mTabFive,
-	mTabSix,
-	mTabSeven,
-	mTabEight,
+	mTab,
 
     //Switches
     mSwitchOne,
@@ -209,10 +202,16 @@ void Voltex::CreateParams() {
     GetParam(mGain)->SetShape(2);
     
 	//Tabs
-	for (int i = mTabOne; i <= mTabEight; i++) {
-		GetParam(i)->InitEnum("Wavetable Tab", 0, 8);
-		GetParam(i)->SetDisplayText(0, "Wavetable Tab");
-	}
+    GetParam(mTab)->InitEnum("Wavetable Tab", 0, 8);
+    GetParam(mTab)->SetDisplayText(0, "Wavetable Tab");
+//	for (int i = mTabOne; i <= mTabEight; i++) {
+//        if (i == mTabOne) {
+//            GetParam(i)->InitEnum("Wavetable Tab", 1, 2);
+//        } else {
+//            GetParam(i)->InitEnum("Wavetable Tab", 0, 2);
+//        }
+//		GetParam(i)->SetDisplayText(0, "Wavetable Tab");
+//	}
 
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
@@ -271,29 +270,32 @@ void Voltex::CreateGraphics() {
     int keyCoordinates[12] = { 0, 15, 20, 37, 46, 68, 81, 96, 103, 118, 125, 140 };
     mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
     pGraphics->AttachControl(mVirtualKeyboard);
-    
+
     //Create on/off buttons and tabs
 	
 	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
 	IBitmap tab[kTabNum];
+    
     for (int i = 0; i < kTabNum; i++) {
         char c[28];
         sprintf(c, TAB_FN, i + 1);
         tab[i] = pGraphics->LoadIBitmap(TAB_ONE_ID + i, c, 2);
     }
+    
+    //Tabs
+    pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kSwitchX - kTabXDifference, kTabY,   957, kTabY + 40), mTab, 8, &tab[0], kHorizontal, false));
+    
 
-	int x = 0, y = 0;
-	x = kSwitchX;
+	int x = kSwitchX, y = 0;
 	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
         if (v == mSwitchThree || v == mSwitchTwo) {
-			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab[v - mSwitchOne]));
             pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
         } else {
-			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference, kTabY, v, &tab[v - mSwitchOne]));
 			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
 		}
 		x = kSwitchSpaceX + x;
 	}
+    
 
     //Create knobs
     IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
@@ -425,8 +427,10 @@ void Voltex::OnParamChange(int paramIdx) {
             } else if (paramIdx >= mGainOne && paramIdx <= mGainEight) {
                 //Gain
                 waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
+            } else if (paramIdx == mTab) {
+                printf("Tabs: %f\n", param->Value());
             } else if (paramIdx >= mSwitchOne && paramIdx <= mSwitchEight) {
-                //Gain
+                //Switches
                 waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Value());
             } else {
                 //oops
