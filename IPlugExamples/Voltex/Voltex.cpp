@@ -147,25 +147,28 @@ enum ELayout {
         waveTables[i] = new WaveTable();
     }
     
+    //initialize vector spaces
     for (int i = 0; i < NUM_TABLES; i++) {
         vectorSpaces[i] = new VectorSpace(this, IRECT(kVectorSpaceX, kVectorSpaceY, kVectorSpaceMaxX, kVectorSpaceMaxY));
+        vectorSpaces[i]->index = i;
+        vectorSpaces[i]->tableChanged.Connect(this, &Voltex::updateWaveTable);
     }
     
     
     //test tables
-    /*    WaveTable* squareTable;
-     squareTable = new WaveTable();
-     
-     std::tr1::array<double, 2048> values;
-     for (int i = 0; i < 2048; i++) {
-     if (i < 1024) {
-     values[i] = -1.0;
-     } else {
-     values[i] = 1.0;
-     }
-     }
-     squareTable->setValues(values);
-     waveTables[0] = squareTable; */
+    WaveTable* squareTable;
+    squareTable = new WaveTable();
+    
+    std::tr1::array<double, 2048> values;
+    for (int i = 0; i < 2048; i++) {
+        if (i < 1024) {
+            values[i] = -1.0;
+        } else {
+            values[i] = 1.0;
+        }
+    }
+    squareTable->setValues(values);
+    waveTables[0] = squareTable;
     
     WaveTable* sineTable;
     sineTable = new WaveTable();
@@ -177,8 +180,20 @@ enum ELayout {
     sineTable->setValues(sinValues);
     waveTables[1] = sineTable;
     
-    voiceManager.setWavetables(&waveTables);
+    WaveTable* triangleTable;
+    triangleTable = new WaveTable();
+        
+    std::tr1::array<double, 2048> triangleValues;
+    for (int i = 0; i < 2048; i++) {
+        double value = -1.0 + (2.0 * ((i / 2048.0) * (4 * acos(0.0))) / (4 * acos(0.0)));
+        triangleValues[i] = 2.0 * (fabs(value) - 0.5);
+    }
+    triangleTable->setValues(triangleValues);
+    waveTables[2] = triangleTable;
     
+    
+    voiceManager.setWavetables(&waveTables);
+        
     CreateParams();
     CreateGraphics();
     CreatePresets();
@@ -423,7 +438,6 @@ void Voltex::OnParamChange(int paramIdx) {
                 waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
             } else if (paramIdx == mTab) {
                 //Tabs
-                printf("Tab %d\n", (int)param->Value());
                 vectorSpaces[(int)param->Value()]->Hide(false);
                 for (int i = 0; i < NUM_TABLES; i++) {
                     if (i != (int)param->Value()) {
@@ -438,6 +452,10 @@ void Voltex::OnParamChange(int paramIdx) {
             }
             break;
     }
+}
+
+void Voltex::updateWaveTable(int table) {
+    waveTables[table]->setValues(vectorSpaces[table]->getValues());
 }
 
 void Voltex::ProcessMidiMsg(IMidiMsg* pMsg) {

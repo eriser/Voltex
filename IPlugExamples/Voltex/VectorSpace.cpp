@@ -8,6 +8,9 @@
 
 #include "VectorSpace.h"
 
+#include <algorithm>
+
+
 unsigned int VectorPoint::counter = 1;
 
 bool VectorSpace::Draw(IGraphics *pGraphics) {
@@ -128,5 +131,33 @@ void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod
 
 void VectorSpace::SetDirty() {
     IControl::SetDirty();
-    //update values here
+    tableChanged(index);
+}
+
+std::tr1::array<double, 2048> VectorSpace::getValues() {
+    std::tr1::array<double, 2048> values;
+    for (int i = 0; i < 2048; i++) {
+        VectorPoint a, b;
+        for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
+            VectorPoint point = *it;
+            if (point.y <= i / 2048.0) {
+                a = point;
+                if (++it != points.end()) {
+                    b = *it;
+                } else {
+                    b = a;
+                }
+                break;
+            }
+        }
+        if (a == b) {
+            values[i] = (2 * a.y) - 1;
+        } else {
+            //interpolate
+            //          Base  Fraction             Difference
+            values[i] = a.y + ((i / 2048) - a.x) * (b.y - a.y);
+        }
+        printf("Extrapolated value: i = %d between %f and %f. Value = %f between %f and %f\n", i, a.x, b.x, values[i], a.y, b.y);
+    }
+    return values;
 }

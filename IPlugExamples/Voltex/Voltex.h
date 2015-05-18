@@ -50,6 +50,8 @@ private:
     void CreateParams();
     void CreateGraphics();
     
+    void updateWaveTable(int table);
+    
     double gain;
 };
 

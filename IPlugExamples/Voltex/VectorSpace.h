@@ -10,9 +10,15 @@
 #define __Voltex__VectorSpace__
 
 #include "IControl.h"
-#include <algorithm>
 #include <vector>
+#include "GallantSignal.h"
+using Gallant::Signal1;
 
+#ifdef WIN32
+#include <array>
+#else
+#include <tr1/array>
+#endif
 
 class VectorPoint {
 private:
@@ -78,6 +84,10 @@ public:
     };
     ~VectorSpace() {};
     
+    Signal1<int> tableChanged;
+    
+    int index;
+    
     void SetDirty();
     bool Draw(IGraphics *pGraphics);
     VectorPoint getPoint(double x, double y, double epsilon);
@@ -85,6 +95,8 @@ public:
     void OnMouseUp(int x, int y, IMouseMod* pMouseMod);
     void OnMouseDown(int x, int y, IMouseMod* pMouseMod);
     void OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod);
+    
+    std::tr1::array<double, 2048> getValues();
 };
 
 #endif /* defined(__Voltex__VectorSpace__) */
