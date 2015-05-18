@@ -10,6 +10,8 @@
 #include "VoiceManager.h"
 #include "VectorSpace.h"
 
+#define NUM_TABLES 8
+
 class Voltex : public IPlug
 {
 public:
@@ -37,9 +39,13 @@ private:
     IControl* mVirtualKeyboard;
     void processVirtualKeyboard();
     
+    std::tr1::array<VectorSpace*, NUM_TABLES> vectorSpaces;
+    
     VoiceManager voiceManager;
     
-    std::tr1::array<WaveTable*, 8> waveTables;
+    std::tr1::array<WaveTable*, NUM_TABLES> waveTables;
+
+    IGraphics* pGraphics;
     
     void CreateParams();
     void CreateGraphics();

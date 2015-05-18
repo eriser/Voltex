@@ -131,7 +131,6 @@ enum ELayout {
 	kTabY = 344,
     kTabMaxX = 957,
     kTabMaxY = 484,
-	kTabNum = 8,
     
     //vector space
     kVectorSpaceX = 272,
@@ -140,16 +139,16 @@ enum ELayout {
     kVectorSpaceMaxY = 609
 };
 
-enum ETab {
-	
-};
-
-Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
+    Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
     TRACE;
     
     //initialize wavetables
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < NUM_TABLES; i++) {
         waveTables[i] = new WaveTable();
+    }
+    
+    for (int i = 0; i < NUM_TABLES; i++) {
+        vectorSpaces[i] = new VectorSpace(this, IRECT(kVectorSpaceX, kVectorSpaceY, kVectorSpaceMaxX, kVectorSpaceMaxY));
     }
     
     
@@ -208,7 +207,7 @@ void Voltex::CreateParams() {
     GetParam(mGain)->SetShape(2);
     
 	//Tabs
-    GetParam(mTab)->InitEnum("Wavetable Tab", 0, 8);
+    GetParam(mTab)->InitEnum("Wavetable Tab", 0, NUM_TABLES);
     GetParam(mTab)->SetDisplayText(0, "Wavetable Tab");
 
     //Switches
@@ -253,7 +252,7 @@ void Voltex::CreateParams() {
 
 void Voltex::CreateGraphics() {
     //Get this plugins graphics instance and attach the background image
-    IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
+    pGraphics = MakeGraphics(this, kWidth, kHeight);
     pGraphics->AttachBackground(BG_ID, BG_FN);
     
     //Initialize keyboard
@@ -271,7 +270,7 @@ void Voltex::CreateGraphics() {
 	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
     
     //Tabs
-    pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, kTabNum, &tab, kHorizontal, false));
+    pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
     
     
     //Switches
@@ -335,7 +334,11 @@ void Voltex::CreateGraphics() {
         x += kTableSpaceX;
     }
     
-    pGraphics->AttachControl(new VectorSpace(this, IRECT(kVectorSpaceX, kVectorSpaceY, kVectorSpaceMaxX, kVectorSpaceMaxY)));
+    //Vector spaces
+    for (int i = 0; i < NUM_TABLES; i++) {
+        pGraphics->AttachControl(vectorSpaces[i]);
+    }
+    
     
     AttachGraphics(pGraphics);
 }
@@ -419,7 +422,14 @@ void Voltex::OnParamChange(int paramIdx) {
                 //Gain
                 waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
             } else if (paramIdx == mTab) {
-                printf("Tabs: %f\n", param->Value());
+                //Tabs
+                printf("Tab %d\n", (int)param->Value());
+                vectorSpaces[(int)param->Value()]->Hide(false);
+                for (int i = 0; i < NUM_TABLES; i++) {
+                    if (i != (int)param->Value()) {
+                        vectorSpaces[(int)i]->Hide(true);
+                    }
+                }
             } else if (paramIdx >= mSwitchOne && paramIdx <= mSwitchEight) {
                 //Switches
                 waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Value());

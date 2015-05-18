@@ -11,6 +11,10 @@
 unsigned int VectorPoint::counter = 1;
 
 bool VectorSpace::Draw(IGraphics *pGraphics) {
+    if (IControl::IsHidden()) {
+        return true;
+    }
+    
     IColor color(255, 50, 200, 20); //a nice green
     IColor selection(255, 200, 500, 20); //not green
     VectorPoint previous;
