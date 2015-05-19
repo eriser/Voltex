@@ -38,9 +38,8 @@ double WaveTable::getValueAt(double location) {
     int b = a + 1;
     if (b > (TABLE_LENGTH - 1)) {b -= TABLE_LENGTH;} // if we are looking for a sample that is above the end of the array (a decimal between (length) and (length + 1)), then the next value is actually the first value in the array, since the system is cyclical.
     
-    //     Base               Fraction      Difference
-    double out = values[a] + (index - a) * (values[b] - values[a]);
-    return out;
+    //     Base        Fraction      Difference
+    return values[a] + (index - a) * (values[b] - values[a]);
 #elif INTERP_MODE == 4
     //Four point (cubic) interpolation.
     int b = a, c = a + 1, d = a + 2;

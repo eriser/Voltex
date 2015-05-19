@@ -1,10 +1,8 @@
 #include "Voltex.h"
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmain"
 #include "IPlug_include_in_plug_src.h"
 #pragma clang diagnostic pop
-#include "MyGraphicControl.h"
 #include "IControl.h"
 #include "IKeyboardControl.h"
 #include "resource.h"
@@ -12,9 +10,7 @@
 #include <math.h>
 #include <algorithm>
 
-
 #ifdef WIN32
-
 #include <array>
 #include <functional>
 #else
@@ -38,14 +34,7 @@ enum EParams {
     mGain,
     
 	//Tabs
-	mTabOne,
-	mTabTwo,
-	mTabThree,
-	mTabFour, 
-	mTabFive,
-	mTabSix,
-	mTabSeven,
-	mTabEight,
+	mTab,
 
     //Switches
     mSwitchOne,
@@ -113,10 +102,6 @@ enum ELayout {
 	kKeybX = 166,
 	kKeybY = 614,
 
-	//Vector Drawing 
-	kVectorWidth = 674,
-	kVectorHeight = 211,
-
 	//Master Section:
 	kMasterX = 793,
 	kMasterY = 53,
@@ -144,34 +129,46 @@ enum ELayout {
 	//tabs
 	kTabX = 272,
 	kTabY = 344,
-	kTabNum = 8,
-	kTabXDifference = kSwitchX - kTabX
-
+    kTabMaxX = 957,
+    kTabMaxY = 484,
+    
+    //vector space
+    kVectorSpaceX = 272,
+    kVectorSpaceY = 389,
+    kVectorSpaceMaxX = 955,
+    kVectorSpaceMaxY = 609
 };
 
-Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
+    Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
     TRACE;
     
     //initialize wavetables
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < NUM_TABLES; i++) {
         waveTables[i] = new WaveTable();
+    }
+    
+    //initialize vector spaces
+    for (int i = 0; i < NUM_TABLES; i++) {
+        vectorSpaces[i] = new VectorSpace(this, IRECT(kVectorSpaceX, kVectorSpaceY, kVectorSpaceMaxX, kVectorSpaceMaxY));
+        vectorSpaces[i]->index = i;
+        vectorSpaces[i]->tableChanged.Connect(this, &Voltex::updateWaveTable);
     }
     
     
     //test tables
-    /*    WaveTable* squareTable;
-     squareTable = new WaveTable();
-     
-     std::tr1::array<double, 2048> values;
-     for (int i = 0; i < 2048; i++) {
-     if (i < 1024) {
-     values[i] = -1.0;
-     } else {
-     values[i] = 1.0;
-     }
-     }
-     squareTable->setValues(values);
-     waveTables[0] = squareTable; */
+    WaveTable* squareTable;
+    squareTable = new WaveTable();
+    
+    std::tr1::array<double, 2048> values;
+    for (int i = 0; i < 2048; i++) {
+        if (i < 1024) {
+            values[i] = -1.0;
+        } else {
+            values[i] = 1.0;
+        }
+    }
+    squareTable->setValues(values);
+    waveTables[0] = squareTable;
     
     WaveTable* sineTable;
     sineTable = new WaveTable();
@@ -183,8 +180,20 @@ Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumProg
     sineTable->setValues(sinValues);
     waveTables[1] = sineTable;
     
-    voiceManager.setWavetables(&waveTables);
+    WaveTable* triangleTable;
+    triangleTable = new WaveTable();
+        
+    std::tr1::array<double, 2048> triangleValues;
+    for (int i = 0; i < 2048; i++) {
+        double value = -1.0 + (2.0 * ((i / 2048.0) * (4 * acos(0.0))) / (4 * acos(0.0)));
+        triangleValues[i] = 2.0 * (fabs(value) - 0.5);
+    }
+    triangleTable->setValues(triangleValues);
+    waveTables[2] = triangleTable;
     
+    
+    voiceManager.setWavetables(&waveTables);
+        
     CreateParams();
     CreateGraphics();
     CreatePresets();
@@ -213,18 +222,12 @@ void Voltex::CreateParams() {
     GetParam(mGain)->SetShape(2);
     
 	//Tabs
-	for (int i = mTabOne; i <= mTabEight; i++) {
-		GetParam(i)->InitEnum("Wavetable Tab", 0, 8);
-		GetParam(i)->SetDisplayText(0, "Wavetable Tab");
-	}
+    GetParam(mTab)->InitEnum("Wavetable Tab", 0, NUM_TABLES);
+    GetParam(mTab)->SetDisplayText(0, "Wavetable Tab");
 
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
-        if (i == mSwitchOne) {
-             GetParam(i)->InitEnum("Wavetable Switch", 1, 2);
-        } else {
-             GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
-        }
+        GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
         GetParam(i)->SetDisplayText(0, "Wavetable Switch");
         
     }
@@ -264,11 +267,7 @@ void Voltex::CreateParams() {
 
 void Voltex::CreateGraphics() {
     //Get this plugins graphics instance and attach the background image
-    IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
-
-	//pGraphics->AttachPanelBackground(&COLOR_WHITE); x= 276, y = 393
-	pGraphics->AttachControl(new MyGraphicControl(this, IRECT(272, 389, kWidth - 4, 609)));
-
+    pGraphics = MakeGraphics(this, kWidth, kHeight);
     pGraphics->AttachBackground(BG_ID, BG_FN);
     
     //Initialize keyboard
@@ -279,34 +278,27 @@ void Voltex::CreateGraphics() {
     int keyCoordinates[12] = { 0, 15, 20, 37, 46, 68, 81, 96, 103, 118, 125, 140 };
     mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
     pGraphics->AttachControl(mVirtualKeyboard);
-    
+
     //Create on/off buttons and tabs
 	
 	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
-	IBitmap tab[kTabNum];
-    for (int i = 0; i < kTabNum; i++) {
-        char c[28];
-        sprintf(c, TAB_FN, i + 1);
-        tab[i] = pGraphics->LoadIBitmap(TAB_ONE_ID + i, c, 2);
-    }
-
-	int x = 0, y = 0;
-	x = kSwitchX;
+	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
+    
+    //Tabs
+    pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
+    
+    
+    //Switches
+	int x = kSwitchX, y = 0;
 	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
-			if (v == mSwitchThree) {
-				pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab[v - mSwitchOne]));
-				pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
-			}
-			else if (v == mSwitchTwo) {
-				pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab[v - mSwitchOne]));
-				pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, v, &switches));
-			}
-         else {
-			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference, kTabY, v, &tab[v - mSwitchOne]));
+        if (v == mSwitchThree || v == mSwitchTwo) {
+            pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
+        } else {
 			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
 		}
 		x = kSwitchSpaceX + x;
 	}
+    
 
     //Create knobs
     IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
@@ -356,6 +348,12 @@ void Voltex::CreateGraphics() {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
         x += kTableSpaceX;
     }
+    
+    //Vector spaces
+    for (int i = 0; i < NUM_TABLES; i++) {
+        pGraphics->AttachControl(vectorSpaces[i]);
+    }
+    
     
     AttachGraphics(pGraphics);
 }
@@ -438,24 +436,26 @@ void Voltex::OnParamChange(int paramIdx) {
             } else if (paramIdx >= mGainOne && paramIdx <= mGainEight) {
                 //Gain
                 waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
+            } else if (paramIdx == mTab) {
+                //Tabs
+                vectorSpaces[(int)param->Value()]->Hide(false);
+                for (int i = 0; i < NUM_TABLES; i++) {
+                    if (i != (int)param->Value()) {
+                        vectorSpaces[(int)i]->Hide(true);
+                    }
+                }
             } else if (paramIdx >= mSwitchOne && paramIdx <= mSwitchEight) {
-                //Gain
+                //Switches
                 waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Value());
-			} else if (paramIdx >= mTabOne && paramIdx <= mTabEight) {
-				//Gain														  //paramIdx = parameter number
-				 //paramIdx - mTabOne is the index of the pressed tab
-				for (int i = mTabOne; i < mTabEight; i++) {
-					if (i != paramIdx) {
-						waveTables[paramIdx - (mTabOne)]->setEnabled(false);
-					}
-				}
-				//for loop through paramIdx loop from mtab to mtabeight, inside loop if i != paramIdx, deselect for all of the tabs, param->setValue
-			}
-			else {
-
-			}
+            } else {
+                //oops
+            }
             break;
     }
+}
+
+void Voltex::updateWaveTable(int table) {
+    waveTables[table]->setValues(vectorSpaces[table]->getValues());
 }
 
 void Voltex::ProcessMidiMsg(IMidiMsg* pMsg) {
