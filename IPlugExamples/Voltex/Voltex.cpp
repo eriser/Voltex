@@ -1,8 +1,10 @@
 #include "Voltex.h"
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmain"
 #include "IPlug_include_in_plug_src.h"
 #pragma clang diagnostic pop
+#include "MyGraphicControl.h"
 #include "IControl.h"
 #include "IKeyboardControl.h"
 #include "resource.h"
@@ -10,7 +12,9 @@
 #include <math.h>
 #include <algorithm>
 
+
 #ifdef WIN32
+
 #include <array>
 #include <functional>
 #else
@@ -109,6 +113,10 @@ enum ELayout {
 	kKeybX = 166,
 	kKeybY = 614,
 
+	//Vector Drawing 
+	kVectorWidth = 674,
+	kVectorHeight = 211,
+
 	//Master Section:
 	kMasterX = 793,
 	kMasterY = 53,
@@ -139,10 +147,6 @@ enum ELayout {
 	kTabNum = 8,
 	kTabXDifference = kSwitchX - kTabX
 
-};
-
-enum ETab {
-	
 };
 
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -261,6 +265,10 @@ void Voltex::CreateParams() {
 void Voltex::CreateGraphics() {
     //Get this plugins graphics instance and attach the background image
     IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
+
+	//pGraphics->AttachPanelBackground(&COLOR_WHITE); x= 276, y = 393
+	pGraphics->AttachControl(new MyGraphicControl(this, IRECT(272, 389, kWidth - 4, 609)));
+
     pGraphics->AttachBackground(BG_ID, BG_FN);
     
     //Initialize keyboard
@@ -285,10 +293,15 @@ void Voltex::CreateGraphics() {
 	int x = 0, y = 0;
 	x = kSwitchX;
 	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
-        if (v == mSwitchThree || v == mSwitchTwo) {
-			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab[v - mSwitchOne]));
-            pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
-        } else {
+			if (v == mSwitchThree) {
+				pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab[v - mSwitchOne]));
+				pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
+			}
+			else if (v == mSwitchTwo) {
+				pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference - 1, kTabY, v, &tab[v - mSwitchOne]));
+				pGraphics->AttachControl(new ISwitchControl(this, x - 2, kSwitchY, v, &switches));
+			}
+         else {
 			pGraphics->AttachControl(new ISwitchControl(this, x - kTabXDifference, kTabY, v, &tab[v - mSwitchOne]));
 			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
 		}
@@ -428,9 +441,19 @@ void Voltex::OnParamChange(int paramIdx) {
             } else if (paramIdx >= mSwitchOne && paramIdx <= mSwitchEight) {
                 //Gain
                 waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Value());
-            } else {
-                //oops
-            }
+			} else if (paramIdx >= mTabOne && paramIdx <= mTabEight) {
+				//Gain														  //paramIdx = parameter number
+				 //paramIdx - mTabOne is the index of the pressed tab
+				for (int i = mTabOne; i < mTabEight; i++) {
+					if (i != paramIdx) {
+						waveTables[paramIdx - (mTabOne)]->setEnabled(false);
+					}
+				}
+				//for loop through paramIdx loop from mtab to mtabeight, inside loop if i != paramIdx, deselect for all of the tabs, param->setValue
+			}
+			else {
+
+			}
             break;
     }
 }
