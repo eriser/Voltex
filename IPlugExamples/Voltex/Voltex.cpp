@@ -10,6 +10,10 @@
 #include <math.h>
 #include <algorithm>
 
+#include <stdio.h>      /* printf, scanf, puts, NULL */
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+
 #ifdef WIN32
 #include <array>
 #include <functional>
@@ -154,7 +158,8 @@ enum ELayout {
         vectorSpaces[i]->tableChanged.Connect(this, &Voltex::updateWaveTable);
     }
     
-    //test tables
+    //test tables,
+	//square wave
     WaveTable* squareTable;
     squareTable = new WaveTable();
     
@@ -170,6 +175,7 @@ enum ELayout {
     waveTables[0] = squareTable;
     vectorSpaces[0]->setValues(values, kVectorSpaceMaxY - kVectorSpaceY);
     
+	//sine wave
     WaveTable* sineTable;
     sineTable = new WaveTable();
     
@@ -187,6 +193,7 @@ enum ELayout {
     waveTables[3] = sineTableTwo;
     vectorSpaces[3]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
     
+	//triangle wave
     WaveTable* triangleTable;
     triangleTable = new WaveTable();
         
@@ -199,7 +206,25 @@ enum ELayout {
     waveTables[2] = triangleTable;
     vectorSpaces[2]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
     
-    
+    //white noise
+	WaveTable* noiseTable;
+	noiseTable = new WaveTable();
+
+	std::tr1::array<double, 2048> noiseValues;
+
+	srand(time(NULL));
+
+	float random = rand() % 2;
+
+	for (int i = 0; i < 2048; i++) {
+		random = rand();
+		noiseValues[i] = random - 1;
+	}
+
+	noiseTable->setValues(noiseValues);
+	waveTables[4] = noiseTable;
+	vectorSpaces[4]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
+
     voiceManager.setWavetables(&waveTables);
         
     CreateParams();

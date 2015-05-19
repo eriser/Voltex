@@ -5,7 +5,7 @@ BG_ID         PNG BG_FN
 WHITE_KEY_ID  PNG WHITE_KEY_FN
 BLACK_KEY_ID  PNG BLACK_KEY_FN
 SWITCHES_ID   PNG SWITCHES_FN
-
+TAB_ID		  PNG TAB_FN
 
 TAB_ONE_ID    PNG "resources/img/Tabs/tab1.png"
 TAB_TWO_ID    PNG "resources/img/Tabs/tab2.png"

@@ -49,6 +49,7 @@
     </ClInclude>
     <ClInclude Include="app_wrapper\app_resource.h" />
     <ClInclude Include="MyGraphicControl.h" />
+    <ClInclude Include="VectorSpace.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -82,6 +83,7 @@
     <ClCompile Include="VoiceManager.cpp" />
     <ClCompile Include="MIDIReceiver.cpp" />
     <ClCompile Include="WaveTable.cpp" />
+    <ClCompile Include="VectorSpace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Voltex.rc" />
