@@ -14,7 +14,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "63"
-            endingLineNumber = "63">
+            endingLineNumber = "63"
+            landmarkName = "WaveTable::isEnabled()"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -29,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "49"
             endingLineNumber = "49"
-            landmarkName = "WaveTable::getValueAt(double location)"
+            landmarkName = "WaveTable::isEnabled()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -44,9 +46,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "195"
-            endingLineNumber = "195"
-            landmarkName = "VectorSpace::getValues()"
-            landmarkType = "5">
+            endingLineNumber = "195">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
