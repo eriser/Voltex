@@ -134,9 +134,9 @@ enum ELayout {
     
     //vector space
     kVectorSpaceX = 272,
-    kVectorSpaceY = 389,
+    kVectorSpaceY = 392,
     kVectorSpaceMaxX = 955,
-    kVectorSpaceMaxY = 609
+    kVectorSpaceMaxY = 606
 };
 
     Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -154,7 +154,6 @@ enum ELayout {
         vectorSpaces[i]->tableChanged.Connect(this, &Voltex::updateWaveTable);
     }
     
-    
     //test tables
     WaveTable* squareTable;
     squareTable = new WaveTable();
@@ -169,6 +168,7 @@ enum ELayout {
     }
     squareTable->setValues(values);
     waveTables[0] = squareTable;
+    vectorSpaces[0]->setValues(values, kVectorSpaceMaxY - kVectorSpaceY);
     
     WaveTable* sineTable;
     sineTable = new WaveTable();
@@ -179,6 +179,7 @@ enum ELayout {
     }
     sineTable->setValues(sinValues);
     waveTables[1] = sineTable;
+    vectorSpaces[1]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
     
     WaveTable* triangleTable;
     triangleTable = new WaveTable();
@@ -190,6 +191,7 @@ enum ELayout {
     }
     triangleTable->setValues(triangleValues);
     waveTables[2] = triangleTable;
+    vectorSpaces[2]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
     
     
     voiceManager.setWavetables(&waveTables);
@@ -262,6 +264,10 @@ void Voltex::CreateParams() {
     //Initial param update
     for (int i = 0; i < kNumParams; i++) {
         OnParamChange(i);
+    }
+    
+    for (int i = 0; i < NUM_TABLES; i++) {
+        vectorSpaces[i]->sendSignals = true;
     }
 }
 

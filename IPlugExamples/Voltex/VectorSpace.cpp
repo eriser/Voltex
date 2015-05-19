@@ -11,7 +11,7 @@
 #include <algorithm>
 
 
-unsigned int VectorPoint::counter = 1;
+unsigned long VectorPoint::counter = 1;
 
 bool VectorSpace::Draw(IGraphics *pGraphics) {
     if (IControl::IsHidden()) {
@@ -22,18 +22,15 @@ bool VectorSpace::Draw(IGraphics *pGraphics) {
     IColor selection(255, 200, 500, 20); //not green
     VectorPoint previous;
     previous.uid = 0;
-//    VectorPoint previous;
-//    previous.x = 0;
-//    previous.y = .5;
     
     for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
         VectorPoint current = *it;
         //draw the point
         if (current.uid > 1) {
             if (current != selected) {
-                pGraphics->DrawCircle(&color, convertToGraphicX(current.x), convertToGraphicY(current.y), 3, 0, true);
+                pGraphics->DrawCircle(&color, convertToGraphicX(current.x), convertToGraphicY(current.y), 2, 0, true);
             } else {
-                pGraphics->DrawCircle(&selection, convertToGraphicX(current.x), convertToGraphicY(current.y), 3, 0, true);
+                pGraphics->DrawCircle(&selection, convertToGraphicX(current.x), convertToGraphicY(current.y), 2, 0, true);
             }
         }
         
@@ -70,7 +67,7 @@ VectorPoint VectorSpace::getPoint(double x, double y, double epsilon /* symbol f
 };
 
 void VectorSpace::OnMouseDblClick(int x, int y, IMouseMod* pMouseMod) {
-    VectorPoint imHere = getPoint(x, y, 6);
+    VectorPoint imHere = getPoint(x, y, 4);
     
     //the uid = 0 means no point
     if (imHere.uid == 0) {
@@ -81,19 +78,33 @@ void VectorSpace::OnMouseDblClick(int x, int y, IMouseMod* pMouseMod) {
         // And we sort it!
         std::sort(points.begin(), points.end());
         SetDirty();
+        if (sendSignals) {
+            tableChanged(index);
+        }
     } else {
         // We delete the point
         if (imHere.uid > 1) {
             points.erase(std::remove(points.begin(), points.end(), imHere), points.end());
             SetDirty();
+            if (sendSignals) {
+                tableChanged(index);
+            }
         }
     }
 };
 
 void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
     isDragging = false;
-    std::sort(points.begin(), points.end());
+    if (pMouseMod->C) {
+        clear();
+        return;
+    } else {
+        std::sort(points.begin(), points.end());
+    }
     SetDirty();
+    if (sendSignals) {
+        tableChanged(index);
+    }
 };
 
 void VectorSpace::OnMouseDown(int x, int y, IMouseMod* pMouseMod) {
@@ -116,8 +127,15 @@ void VectorSpace::OnMouseDown(int x, int y, IMouseMod* pMouseMod) {
 
 void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod) {
     if (selected.uid == 0 || isDragging == false) {
-        // Nothing to do
-        return;
+        if (pMouseMod->S) {
+            //Draw freehand
+            for(int i=0; i < points.size(); i++){
+                
+            }
+        } else {
+            //nothing to do
+            return;
+        }
     }
     
     std::vector<VectorPoint>::iterator it = std::find(points.begin(), points.end(), selected);
@@ -129,23 +147,40 @@ void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod
     SetDirty();
 };
 
-void VectorSpace::SetDirty() {
-    IControl::SetDirty();
-    tableChanged(index);
+void VectorSpace::clear() {
+    //remove all elements (points.clear() doesn't work for some reason)
+    for (std::vector<VectorPoint>::iterator i = points.begin(); i != points.end();) {
+         i = points.erase(i);
+    }
+    //Points at the very ends of the space
+    VectorPoint start;
+    start.x = 0;
+    start.y = .5;
+    start.uid = 1;
+    VectorPoint end;
+    end.x = 1;
+    end.y = .5;
+    end.uid = 1;
+    points.push_back(start);
+    points.push_back(end);
+    SetDirty();
+    if (sendSignals) {
+        tableChanged(index);
+    }
 }
 
 std::tr1::array<double, 2048> VectorSpace::getValues() {
     std::tr1::array<double, 2048> values;
     for (int i = 0; i < 2048; i++) {
         VectorPoint a, b;
-        for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
-            VectorPoint point = *it;
-            if (point.y <= i / 2048.0) {
-                a = point;
-                if (++it != points.end()) {
-                    b = *it;
+        double targetX = i / 2048.0;
+        for(int j=0; j < points.size(); j++){
+            if (points[j].x <= targetX && points[j+1].x >= targetX) {
+                a = points[j];
+                if ((j + 1) < points.size()) {
+                    b = points[j++];
                 } else {
-                    b = a;
+                    b = points[0]; // loop around
                 }
                 break;
             }
@@ -157,7 +192,23 @@ std::tr1::array<double, 2048> VectorSpace::getValues() {
             //          Base  Fraction             Difference
             values[i] = a.y + ((i / 2048) - a.x) * (b.y - a.y);
         }
-        printf("Extrapolated value: i = %d between %f and %f. Value = %f between %f and %f\n", i, a.x, b.x, values[i], a.y, b.y);
+        printf("%d: i = %d between %f and %f. Value = %f between %f and %f, a=b: %d\n", index, i, a.x, b.x, values[i], a.y, b.y, a == b);
     }
     return values;
+}
+
+void VectorSpace::setValues(std::tr1::array<double, 2048> table, int precision) {
+    clear();
+    double increment = 2048.0 / precision;
+    for (double i = 0; i < 2048; i += increment) {
+        VectorPoint point;
+        point.x = i / 2048.0;
+        point.y = (table[i] + 1) / 2;
+        points.push_back(point);
+    }
+    std::sort(points.begin(), points.end());
+    SetDirty();
+    if (sendSignals) {
+        tableChanged(index);
+    }
 }

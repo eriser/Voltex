@@ -22,7 +22,7 @@ using Gallant::Signal1;
 
 class VectorPoint {
 private:
-    static unsigned int counter;
+    static unsigned long counter;
 public:
     VectorPoint() :
     uid(++counter)
@@ -57,9 +57,9 @@ protected:
         return fmax(fmin((position / distance),  1), 0);
     };
     double convertToGraphicY(double value) {
-        double min = (double) this->mRECT.T;
-        double distance = (double) this->mRECT.H();
-        return (1 - value) * distance + min; //1 - value since we want 1 to be at the top of the space
+        double min = (double) this->mRECT.T + 2;
+        double distance = (double) this->mRECT.H() - 2;
+        return ((1 - value) * distance + min); //1 - value since we want 1 to be at the top of the space
     };
     double convertToPercentY(double value) {
         double min = (double) this->mRECT.T;
@@ -69,26 +69,16 @@ protected:
         
     };
 public:
-    VectorSpace(IPlugBase *pPlug, IRECT pR) : IControl(pPlug, pR) {
-        VectorPoint start;
-        start.x = 0;
-        start.y = .5;
-        start.uid = 1;
-        VectorPoint end;
-        end.x = 1;
-        end.y = .5;
-        end.uid = 1;
-        points.push_back(start);
-        points.push_back(end);
-
+    VectorSpace(IPlugBase *pPlug, IRECT pR) : IControl(pPlug, pR), sendSignals(false) {
+        clear();
     };
     ~VectorSpace() {};
     
     Signal1<int> tableChanged;
     
     int index;
+    bool sendSignals;
     
-    void SetDirty();
     bool Draw(IGraphics *pGraphics);
     VectorPoint getPoint(double x, double y, double epsilon);
     void OnMouseDblClick(int x, int y, IMouseMod* pMouseMod);
@@ -96,7 +86,10 @@ public:
     void OnMouseDown(int x, int y, IMouseMod* pMouseMod);
     void OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod);
     
+    void clear();
+    
     std::tr1::array<double, 2048> getValues();
+    void setValues(std::tr1::array<double, 2048> table, int precision);
 };
 
 #endif /* defined(__Voltex__VectorSpace__) */
