@@ -111,7 +111,7 @@ enum ELayout {
 	kMasterSustainX = kMasterDecayX + 66,
 	kMasterReleaseX = kMasterSustainX + 66,
 
-	kMasterEnvelopeY = 231,
+	kMasterEnvelopeY = 137,
 
 
 	//Table:
