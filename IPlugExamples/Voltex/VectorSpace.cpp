@@ -10,6 +10,7 @@
 
 #include <algorithm>
 
+const int epsilon = 4;
 
 unsigned long VectorPoint::counter = 1;
 
@@ -44,7 +45,7 @@ bool VectorSpace::Draw(IGraphics *pGraphics) {
     return true;
 };
 
-VectorPoint VectorSpace::getPoint(double x, double y, double epsilon /* symbol for precision*/) {
+VectorPoint VectorSpace::getPoint(double x, double y) {
     for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
         VectorPoint point = *it;
         double xGraphic = convertToGraphicX(point.x);
@@ -67,7 +68,7 @@ VectorPoint VectorSpace::getPoint(double x, double y, double epsilon /* symbol f
 };
 
 void VectorSpace::OnMouseDblClick(int x, int y, IMouseMod* pMouseMod) {
-    VectorPoint imHere = getPoint(x, y, 4);
+    VectorPoint imHere = getPoint(x, y);
     
     //the uid = 0 means no point
     if (imHere.uid == 0) {
@@ -108,7 +109,12 @@ void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
 };
 
 void VectorSpace::OnMouseDown(int x, int y, IMouseMod* pMouseMod) {
-    VectorPoint imHere = getPoint(x, y, 6);
+    if (pMouseMod->S) {
+        //Drawing
+        return;
+    }
+    
+    VectorPoint imHere = getPoint(x, y);
     
     if (imHere.uid < 2) {
         // We erase selected
@@ -129,8 +135,35 @@ void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod
     if (selected.uid == 0 || isDragging == false) {
         if (pMouseMod->S) {
             //Draw freehand
-            for(int i=0; i < points.size(); i++){
-                
+            int prev = x - dX, lower = prev, higher = x;
+            if (prev > x) {
+                lower = x;
+                higher = prev;
+            }
+            for (int i = lower; i < higher; i++) {
+                if (i == 0 || i == 1) {
+                    break;
+                }
+                bool pointMoved = false;
+                for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
+                    VectorPoint* point = &(*it);
+                    double xGraphic = convertToGraphicX(point->x);
+                    if ((xGraphic - epsilon) < i && (xGraphic + epsilon) > i) {
+                        point->y = convertToPercentY(y);
+                        pointMoved = true;
+                        break;
+                    }
+                }
+                if (!pointMoved) {
+                    //Add an new point
+                    VectorPoint newPoint;
+                    newPoint.x = convertToPercentX(i);
+                    newPoint.y = convertToPercentY(y);
+                    points.push_back(newPoint);
+                    // And we sort it!
+                    std::sort(points.begin(), points.end());
+                }
+                SetDirty();
             }
         } else {
             //nothing to do
@@ -192,7 +225,7 @@ std::tr1::array<double, 2048> VectorSpace::getValues() {
             //          Base  Fraction             Difference
             values[i] = a.y + ((i / 2048) - a.x) * (b.y - a.y);
         }
-        printf("%d: i = %d between %f and %f. Value = %f between %f and %f, a=b: %d\n", index, i, a.x, b.x, values[i], a.y, b.y, a == b);
+//        printf("%d: i = %d between %f and %f. Value = %f between %f and %f, a=b: %d\n", index, i, a.x, b.x, values[i], a.y, b.y, a == b);
     }
     return values;
 }

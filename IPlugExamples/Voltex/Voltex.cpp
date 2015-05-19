@@ -180,6 +180,12 @@ enum ELayout {
     sineTable->setValues(sinValues);
     waveTables[1] = sineTable;
     vectorSpaces[1]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
+        
+    WaveTable* sineTableTwo;
+    sineTableTwo = new WaveTable();
+    sineTableTwo->setValues(sinValues);
+    waveTables[3] = sineTableTwo;
+    vectorSpaces[3]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
     
     WaveTable* triangleTable;
     triangleTable = new WaveTable();

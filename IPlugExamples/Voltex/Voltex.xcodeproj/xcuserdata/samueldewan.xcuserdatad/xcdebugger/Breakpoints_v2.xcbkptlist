@@ -14,9 +14,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "63"
-            endingLineNumber = "63"
-            landmarkName = "WaveTable::isEnabled()"
-            landmarkType = "5">
+            endingLineNumber = "63">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -31,7 +29,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "49"
             endingLineNumber = "49"
-            landmarkName = "WaveTable::isEnabled()"
+            landmarkName = "WaveTable::getValueAt(double location)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -42,11 +40,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VectorSpace.cpp"
-            timestampString = "453693363.06838"
+            timestampString = "453700176.925793"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "195"
-            endingLineNumber = "195"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
             landmarkName = "VectorSpace::getValues()"
             landmarkType = "5">
          </BreakpointContent>

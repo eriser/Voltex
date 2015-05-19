@@ -4,6 +4,7 @@
 //
 //  Created by Samuel Dewan on 2015-05-18.
 //
+//  A very heavily modified version of the code found here https://simplapi.wordpress.com/2015/02/07/wdl-ol-modify-graphic-by-user-input/
 //
 
 #ifndef __Voltex__VectorSpace__
@@ -46,8 +47,8 @@ protected:
     bool isDragging;
     
     double convertToGraphicX(double value) {
-        double min = (double) this->mRECT.L;
-        double distance = (double) this->mRECT.W();
+        double min = (double) this->mRECT.L + 2;
+        double distance = (double) this->mRECT.W() - 4;
         return value * distance + min;
     };
     double convertToPercentX(double value) {
@@ -58,7 +59,7 @@ protected:
     };
     double convertToGraphicY(double value) {
         double min = (double) this->mRECT.T + 2;
-        double distance = (double) this->mRECT.H() - 2;
+        double distance = (double) this->mRECT.H() - 4;
         return ((1 - value) * distance + min); //1 - value since we want 1 to be at the top of the space
     };
     double convertToPercentY(double value) {
@@ -80,7 +81,7 @@ public:
     bool sendSignals;
     
     bool Draw(IGraphics *pGraphics);
-    VectorPoint getPoint(double x, double y, double epsilon);
+    VectorPoint getPoint(double x, double y);
     void OnMouseDblClick(int x, int y, IMouseMod* pMouseMod);
     void OnMouseUp(int x, int y, IMouseMod* pMouseMod);
     void OnMouseDown(int x, int y, IMouseMod* pMouseMod);
