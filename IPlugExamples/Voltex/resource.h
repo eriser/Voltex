@@ -49,21 +49,24 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // Unique IDs for each image resource.
-#define BG_ID         101
-#define WHITE_KEY_ID  102
-#define BLACK_KEY_ID  103
-#define KNOB_ID       104
-#define SWITCHES_ID   105
-#define TAB_ID        106
+#define BG_ID			101
+#define WHITE_KEY_ID	102
+#define BLACK_KEY_ID	103
+#define KNOB_ID			104
+#define SWITCHES_ID		105
+#define TAB_ID			106
+#define DBCOVERBG_ID	107
+#define DBCOVERRECT_ID	108
 
 // Image resource locations for this plug.
-#define BG_FN         "resources/img/bg.png"
-#define WHITE_KEY_FN  "resources/img/whitekey.png"
-#define BLACK_KEY_FN  "resources/img/blackkey.png"
-#define KNOB_FN       "resources/img/knob.png"
-#define SWITCHES_FN   "resources/img/switch.png"
-#define TAB_FN        "resources/img/tab.png"
-
+#define BG_FN			"resources/img/bg.png"
+#define WHITE_KEY_FN	"resources/img/whitekey.png"
+#define BLACK_KEY_FN	"resources/img/blackkey.png"
+#define KNOB_FN			"resources/img/knob.png"
+#define SWITCHES_FN		"resources/img/switch.png"
+#define TAB_FN			"resources/img/tab.png"
+#define DBCOVERBG_FN	"resources/img/dBCoverBg.png"
+#define DBCOVERRECT_FN	"resources/img/dBCoverRect.png"
 
 // GUI default dimensions
 #define GUI_WIDTH   960
