@@ -57,6 +57,10 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define TAB_ID			106
 #define DBCOVERBG_ID	107
 #define DBCOVERRECT_ID	108
+#define CURSORCLK_ID	109
+#define PENCILCLK_ID	110
+#define SELECTCLK_ID	111
+#define TRASHCLK_ID		112
 
 // Image resource locations for this plug.
 #define BG_FN			"resources/img/bg.png"
@@ -67,6 +71,10 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define TAB_FN			"resources/img/tab.png"
 #define DBCOVERBG_FN	"resources/img/dBCoverBg.png"
 #define DBCOVERRECT_FN	"resources/img/dBCoverRect.png"
+#define CURSORCLK_FN	"resources/img/ButtonPressed/cursorClicked.png"
+#define PENCILCLK_FN	"resources/img/ButtonPressed/pencilClicked.png"
+#define SELECTCLK_FN	"resources/img/ButtonPressed/selectClicked.png"
+#define TRASHCLK_FN		"resources/img/ButtonPressed/trashClicked.png"
 
 // GUI default dimensions
 #define GUI_WIDTH   960
