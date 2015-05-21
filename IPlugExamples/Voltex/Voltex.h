@@ -39,6 +39,11 @@ private:
     IControl* mVirtualKeyboard;
     void processVirtualKeyboard();
     
+    IControl* toolCursor;
+    IControl* toolPencil;
+    IControl* toolSelection;
+    IControl* toolDelete;
+    
     std::tr1::array<VectorSpace*, NUM_TABLES> vectorSpaces;
     
     VoiceManager voiceManager;
@@ -53,6 +58,8 @@ private:
     void updateWaveTable(int table);
     
     double gain;
+    
+    bool firstUpdate;
 };
 
 #endif

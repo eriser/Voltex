@@ -70,12 +70,22 @@ protected:
         
     };
 public:
+    enum Tools {
+        kToolCursor = 0,
+        kToolPencil,
+        kToolSelection,
+        kToolDelete,
+        kNumTools
+    };
+    
     VectorSpace(IPlugBase *pPlug, IRECT pR) : IControl(pPlug, pR), sendSignals(false) {
         clear();
     };
     ~VectorSpace() {};
     
     Signal1<int> tableChanged;
+    
+    static Tools currentTool;
     
     int index;
     bool sendSignals;

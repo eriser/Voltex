@@ -148,6 +148,7 @@ enum ELayout {
 
 	//Buttons
 	kButtonX = 197,
+    kButtonY = 385,
 	kButtonYSpacing = 56
 };
 
@@ -235,9 +236,13 @@ enum ELayout {
 
     voiceManager.setWavetables(&waveTables);
         
+     firstUpdate = true;
+        
     CreateParams();
     CreateGraphics();
     CreatePresets();
+        
+    firstUpdate = false;
     
     //Connect noteOn and noteOff signals to slots in the voice manager, this way they voice manager does not need to know anything about the midi reciever and vice versa.
     mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
@@ -413,10 +418,14 @@ void Voltex::CreateGraphics() {
 
 //     pGraphics->AttachControl(new ISwitchControl(parent, x, t, param, img));
     
-	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, mToolCursor, &cursorClick));
-	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385 + kButtonYSpacing, mToolPencil, &pencilClick));
-	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385 + (2 * kButtonYSpacing), mToolSelection, &selectClick));
-	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385 + (3 * kButtonYSpacing), mToolDelete, &trashClick));
+    toolCursor = new ISwitchControl(this, kButtonX, kButtonY, mToolCursor, &cursorClick);
+	pGraphics->AttachControl(toolCursor);
+    toolPencil = new ISwitchControl(this, kButtonX, kButtonY + kButtonYSpacing, mToolPencil, &pencilClick);
+	pGraphics->AttachControl(toolPencil);
+    toolSelection = new ISwitchControl(this, kButtonX, kButtonY + (2 * kButtonYSpacing), mToolSelection, &selectClick);
+	pGraphics->AttachControl(toolSelection);
+    toolDelete = new ISwitchControl(this, kButtonX, kButtonY + (3 * kButtonYSpacing), mToolDelete, &trashClick);
+	pGraphics->AttachControl(toolDelete);
 
 	//dB meter
 //	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
@@ -514,6 +523,62 @@ void Voltex::OnParamChange(int paramIdx) {
             } else if (paramIdx >= mSwitchOne && paramIdx <= mSwitchEight) {
                 //Switches
                 waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Value());
+            } else if (paramIdx == mToolCursor) {
+                //Tool: Cursor
+                if (param->Value() == true) {
+                    if (!firstUpdate) {
+                        toolPencil->SetValueFromPlug(false);
+                        toolSelection->SetValueFromPlug(false);
+                        toolDelete->SetValueFromPlug(false);
+                    }
+                    VectorSpace::currentTool = VectorSpace::kToolCursor;
+                } else {
+                    if (!firstUpdate) {
+                        toolCursor->SetValueFromPlug(true);
+                    }
+                }
+            } else if (paramIdx == mToolPencil) {
+                //Tool: Pencil
+                if (param->Value() == true) {
+                    if (!firstUpdate) {
+                        toolCursor->SetValueFromPlug(false);
+                        toolSelection->SetValueFromPlug(false);
+                        toolDelete->SetValueFromPlug(false);
+                    }
+                    VectorSpace::currentTool = VectorSpace::kToolPencil;
+                } else {
+                    if (!firstUpdate) {
+                        toolPencil->SetValueFromPlug(true);
+                    }
+                }
+            }else if (paramIdx == mToolSelection) {
+                //Tool: Selection
+                if (param->Value() == true) {
+                    if (!firstUpdate) {
+                        toolPencil->SetValueFromPlug(false);
+                        toolCursor->SetValueFromPlug(false);
+                        toolDelete->SetValueFromPlug(false);
+                    }
+                    VectorSpace::currentTool = VectorSpace::kToolSelection;
+                } else {
+                    if (!firstUpdate) {
+                        toolSelection->SetValueFromPlug(true);
+                    }
+                }
+            }else if (paramIdx == mToolDelete) {
+                //Tool: Delete
+                if (param->Value() == true) {
+                    if (!firstUpdate) {
+                        toolPencil->SetValueFromPlug(false);
+                        toolSelection->SetValueFromPlug(false);
+                        toolCursor->SetValueFromPlug(false);
+                    }
+                    VectorSpace::currentTool = VectorSpace::kToolDelete;
+                } else {
+                    if (!firstUpdate) {
+                        toolDelete->SetValueFromPlug(true);
+                    }
+                }
             } else {
                 //oops
             }

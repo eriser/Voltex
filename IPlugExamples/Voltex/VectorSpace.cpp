@@ -13,6 +13,7 @@
 const int epsilon = 4;
 
 unsigned long VectorPoint::counter = 1;
+VectorSpace::Tools VectorSpace::currentTool = VectorSpace::kToolCursor;
 
 bool VectorSpace::Draw(IGraphics *pGraphics) {
     if (IControl::IsHidden()) {
