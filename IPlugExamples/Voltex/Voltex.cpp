@@ -96,6 +96,11 @@ enum EParams {
     mGainSeven,
     mGainEight,
     
+    mToolCursor,
+    mToolPencil,
+    mToolSelection,
+    mToolDelete,
+    
     kNumParams
 };
 
@@ -295,6 +300,12 @@ void Voltex::CreateParams() {
         GetParam(i)->SetShape(2);
     }
     
+    //Tools
+    GetParam(mToolCursor)->InitBool("Cursor", true);
+    GetParam(mToolPencil)->InitBool("Pencil", false);
+    GetParam(mToolSelection)->InitBool("Selection", false);
+    GetParam(mToolDelete)->InitBool("Delete", false);
+    
     //Initial param update
     for (int i = 0; i < kNumParams; i++) {
         OnParamChange(i);
@@ -400,19 +411,16 @@ void Voltex::CreateGraphics() {
 	IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
 	IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
 
-	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, 1, &cursorClick, IChannelBlend::kBlendColorDodge));
-	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, 1 + kButtonYSpacing, &pencilClick, IChannelBlend::kBlendColorDodge));
-	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, 1 + 2 * kButtonYSpacing, &selectClick, IChannelBlend::kBlendColorDodge));
-	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, 1 + 3 * kButtonYSpacing, &trashClick, IChannelBlend::kBlendColorDodge));
+//     pGraphics->AttachControl(new ISwitchControl(parent, x, t, param, img));
+    
+	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, mToolCursor, &cursorClick));
+	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385 + kButtonYSpacing, mToolPencil, &pencilClick));
+	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385 + (2 * kButtonYSpacing), mToolSelection, &selectClick));
+	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385 + (3 * kButtonYSpacing), mToolDelete, &trashClick));
 
 	//dB meter
-	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
-	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
-
-	
-	//pGraphics->AttachControl(new IFaderControl(this, 23, 34, 23, 23, &dBCoverRect, kVertical, true)); //experimenting
-	//pGraphics->AttachControl(new IFaderControl(this, 23, 39, 87, 64, &dBCoverBg, kVertical, true));	//experimenting
-	//Need to just paint, not attach to a control. 
+//	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
+//	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
 
     AttachGraphics(pGraphics);
 }
