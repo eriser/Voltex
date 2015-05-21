@@ -103,9 +103,25 @@ void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
     } else {
         std::sort(points.begin(), points.end());
     }
-    SetDirty();
-    if (sendSignals) {
-        tableChanged(index);
+    VectorPoint imHere = getPoint(x, y);
+    
+    //the uid = 0 means no point
+    if (currentTool == kToolPencil && imHere.uid == 0) {
+        VectorPoint newPoint;
+        newPoint.x = convertToPercentX(x);
+        newPoint.y = convertToPercentY(y);
+        points.push_back(newPoint);
+        // And we sort it!
+        std::sort(points.begin(), points.end());
+        SetDirty();
+        if (sendSignals) {
+            tableChanged(index);
+        }
+    } else {
+        SetDirty();
+        if (sendSignals) {
+            tableChanged(index);
+        }
     }
 };
 
@@ -134,7 +150,7 @@ void VectorSpace::OnMouseDown(int x, int y, IMouseMod* pMouseMod) {
 
 void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod) {
     if (selected.uid == 0 || isDragging == false) {
-        if (pMouseMod->S) {
+        if (currentTool == kToolPencil ||  pMouseMod->S) {
             //Draw freehand
             int prev = x - dX, lower = prev, higher = x;
             if (prev > x) {

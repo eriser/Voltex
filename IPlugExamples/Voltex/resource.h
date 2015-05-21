@@ -63,18 +63,18 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define TRASHCLK_ID		112
 
 // Image resource locations for this plug.
-#define BG_FN			"resources/img/bg.png"
-#define WHITE_KEY_FN	"resources/img/whitekey.png"
-#define BLACK_KEY_FN	"resources/img/blackkey.png"
-#define KNOB_FN			"resources/img/knob.png"
-#define SWITCHES_FN		"resources/img/switch.png"
-#define TAB_FN			"resources/img/tab.png"
-#define DBCOVERBG_FN	"resources/img/dBCoverBg.png"
-#define DBCOVERRECT_FN	"resources/img/dBCoverRect.png"
-#define CURSORCLK_FN	"resources/img/ButtonPressed/cursorClicked.png"
-#define PENCILCLK_FN	"resources/img/ButtonPressed/pencilClicked.png"
-#define SELECTCLK_FN	"resources/img/ButtonPressed/selectClicked.png"
-#define TRASHCLK_FN		"resources/img/ButtonPressed/trashClicked.png"
+#define BG_FN             "resources/img/bg.png"
+#define WHITE_KEY_FN      "resources/img/whitekey.png"
+#define BLACK_KEY_FN      "resources/img/blackkey.png"
+#define KNOB_FN           "resources/img/knob.png"
+#define SWITCHES_FN       "resources/img/switch.png"
+#define TAB_FN            "resources/img/tab.png"
+#define DBCOVERBG_FN      "resources/img/dBCoverBg.png"
+#define DBCOVERRECT_FN    "resources/img/dBCoverRect.png"
+#define CURSORCLK_FN      "resources/img/ButtonPressed/cursorClicked.png"
+#define PENCILCLK_FN      "resources/img/ButtonPressed/pencilClicked.png"
+#define SELECTCLK_FN      "resources/img/ButtonPressed/selectClicked.png"
+#define TRASHCLK_FN       "resources/img/ButtonPressed/trashClicked.png"
 
 // GUI default dimensions
 #define GUI_WIDTH   960
