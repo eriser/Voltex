@@ -117,10 +117,9 @@ enum ELayout {
 
 	kMasterEnvelopeY = 137,
 
-
 	//Table:
-	kTableX = 232,
-	kTableY = 98,
+	kTableX = 296,//232,
+	kTableY = 101,
 	kTableSpaceX = 43,
 	kTableSpaceY = 40,
 	kTableSpaceGainY = 50,
@@ -140,7 +139,11 @@ enum ELayout {
     kVectorSpaceX = 272,
     kVectorSpaceY = 392,
     kVectorSpaceMaxX = 955,
-    kVectorSpaceMaxY = 606
+    kVectorSpaceMaxY = 606,
+
+	//Buttons
+	kButtonX = 197,
+	kButtonYSpacing = 56
 };
 
     Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -214,8 +217,11 @@ enum ELayout {
 
 	srand(time(NULL));
 
+	float random = rand() % 2;
+
 	for (int i = 0; i < 2048; i++) {
-		noiseValues[i] =  (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/2)) - 1;
+		random = rand();
+		noiseValues[i] = random - 1;
 	}
 
 	noiseTable->setValues(noiseValues);
@@ -297,6 +303,7 @@ void Voltex::CreateParams() {
     for (int i = 0; i < NUM_TABLES; i++) {
         vectorSpaces[i]->sendSignals = true;
     }
+
 }
 
 void Voltex::CreateGraphics() {
@@ -333,7 +340,6 @@ void Voltex::CreateGraphics() {
 		x = kSwitchSpaceX + x;
 	}
     
-
     //Create knobs
     IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
     
@@ -387,8 +393,27 @@ void Voltex::CreateGraphics() {
     for (int i = 0; i < NUM_TABLES; i++) {
         pGraphics->AttachControl(vectorSpaces[i]);
     }
-    
-    
+
+	//Buttons
+	IBitmap cursorClick = pGraphics->LoadIBitmap(CURSORCLK_ID, CURSORCLK_FN, 2);
+	IBitmap pencilClick = pGraphics->LoadIBitmap(PENCILCLK_ID, PENCILCLK_FN, 2);
+	IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
+	IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
+
+	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, 1, &cursorClick, IChannelBlend::kBlendColorDodge));
+	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, 1 + kButtonYSpacing, &pencilClick, IChannelBlend::kBlendColorDodge));
+	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, 1 + 2 * kButtonYSpacing, &selectClick, IChannelBlend::kBlendColorDodge));
+	pGraphics->AttachControl(new ISwitchControl(this, kButtonX, 385, 1 + 3 * kButtonYSpacing, &trashClick, IChannelBlend::kBlendColorDodge));
+
+	//dB meter
+	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
+	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
+
+	
+	//pGraphics->AttachControl(new IFaderControl(this, 23, 34, 23, 23, &dBCoverRect, kVertical, true)); //experimenting
+	//pGraphics->AttachControl(new IFaderControl(this, 23, 39, 87, 64, &dBCoverBg, kVertical, true));	//experimenting
+	//Need to just paint, not attach to a control. 
+
     AttachGraphics(pGraphics);
 }
 
