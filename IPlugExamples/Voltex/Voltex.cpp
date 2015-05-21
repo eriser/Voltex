@@ -223,11 +223,8 @@ enum ELayout {
 
 	srand(time(NULL));
 
-	float random = rand() % 2;
-
 	for (int i = 0; i < 2048; i++) {
-		random = rand();
-		noiseValues[i] = random - 1;
+		noiseValues[i] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1;
 	}
 
 	noiseTable->setValues(noiseValues);

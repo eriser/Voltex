@@ -69,30 +69,7 @@ VectorPoint VectorSpace::getPoint(double x, double y) {
 };
 
 void VectorSpace::OnMouseDblClick(int x, int y, IMouseMod* pMouseMod) {
-    VectorPoint imHere = getPoint(x, y);
-    
-    //the uid = 0 means no point
-    if (imHere.uid == 0) {
-        VectorPoint newPoint;
-        newPoint.x = convertToPercentX(x);
-        newPoint.y = convertToPercentY(y);
-        points.push_back(newPoint);
-        // And we sort it!
-        std::sort(points.begin(), points.end());
-        SetDirty();
-        if (sendSignals) {
-            tableChanged(index);
-        }
-    } else {
-        // We delete the point
-        if (imHere.uid > 1) {
-            points.erase(std::remove(points.begin(), points.end(), imHere), points.end());
-            SetDirty();
-            if (sendSignals) {
-                tableChanged(index);
-            }
-        }
-    }
+    //Nothing here anymore, but keeping the stub ust in case
 };
 
 void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
@@ -116,6 +93,15 @@ void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
         SetDirty();
         if (sendSignals) {
             tableChanged(index);
+        }
+    } else if (currentTool == kToolDelete) {
+        // We delete the point
+        if (imHere.uid > 1) {
+            points.erase(std::remove(points.begin(), points.end(), imHere), points.end());
+            SetDirty();
+            if (sendSignals) {
+                tableChanged(index);
+            }
         }
     } else {
         SetDirty();
