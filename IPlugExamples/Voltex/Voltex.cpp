@@ -101,6 +101,8 @@ enum EParams {
     mToolSelection,
     mToolDelete,
     
+    mVuMeter,
+    
     kNumParams
 };
 
@@ -308,6 +310,9 @@ void Voltex::CreateParams() {
     GetParam(mToolSelection)->InitBool("Selection", false);
     GetParam(mToolDelete)->InitBool("Delete", false);
     
+    GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
+    
+    
     //Initial param update
     for (int i = 0; i < kNumParams; i++) {
         OnParamChange(i);
@@ -424,6 +429,8 @@ void Voltex::CreateGraphics() {
     toolDelete = new ISwitchControl(this, kButtonX, kButtonY + (3 * kButtonYSpacing), mToolDelete, &trashClick);
 	pGraphics->AttachControl(toolDelete);
 
+    pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
+    
 	//dB meter
 //	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
 //	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
@@ -448,6 +455,7 @@ void Voltex::ProcessDoubleReplacing(double** inputs, double** outputs, int nFram
         mMIDIReceiver.advance();
         //The left and right channels are equal as our synth only works in mono
         leftOutput[i] = rightOutput[i] = (voiceManager.nextSample() * gain);
+        GetGUI()->SetParameterFromPlug(mVuMeter, leftOutput[i], true);
     }
     
     mMIDIReceiver.Flush(nFrames);

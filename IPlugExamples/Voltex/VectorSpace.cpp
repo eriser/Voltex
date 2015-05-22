@@ -46,7 +46,7 @@ bool VectorSpace::Draw(IGraphics *pGraphics) {
     return true;
 };
 
-VectorPoint VectorSpace::getPoint(double x, double y) {
+VectorPoint VectorSpace::getPoint(double x, double y = -1.0) {
     for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
         VectorPoint point = *it;
         double xGraphic = convertToGraphicX(point.x);
@@ -56,7 +56,7 @@ VectorPoint VectorSpace::getPoint(double x, double y) {
             // X check
             (xGraphic - epsilon < x && xGraphic + epsilon > x) &&
             // Y check
-            (yGraphic - epsilon < y && yGraphic + epsilon > y)
+            (y == -1.0 || (yGraphic - epsilon < y && yGraphic + epsilon > y))
             ) {
             return point;
         }
@@ -154,6 +154,11 @@ void VectorSpace::OnMouseDown(int x, int y, IMouseMod* pMouseMod) {
     } else {
         if (!(std::find(selected.begin(), selected.end(), imHere) != selected.end())) {
             selected.push_back(imHere);
+        } else {
+            std::vector<VectorPoint>::iterator i = std::find(selected.begin(), selected.end(), imHere);
+            if (i != selected.end()) {
+                selected.erase(i);
+            }
         }
         isDragging = true;
         SetDirty();
@@ -161,65 +166,81 @@ void VectorSpace::OnMouseDown(int x, int y, IMouseMod* pMouseMod) {
 };
 
 void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod) {
-    if (selected.empty() || isDragging == false) {
-        if (currentTool == kToolPencil ||  pMouseMod->S) {
-            //Draw freehand
-            int prev = x - dX, lower = prev, higher = x;
-            if (prev > x) {
-                lower = x;
-                higher = prev;
-            }
-            for (int i = lower; i < higher; i++) {
-                if (i == 0 || i == 1) {
-                    break;
-                }
-                bool pointMoved = false;
-                for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
-                    VectorPoint* point = &(*it);
-                    double xGraphic = convertToGraphicX(point->x);
-                    if ((xGraphic - epsilon) < i && (xGraphic + epsilon) > i) {
-                        point->y = convertToPercentY(y);
-                        pointMoved = true;
-                        break;
-                    }
-                }
-                if (!pointMoved) {
-                    //Add an new point
-                    VectorPoint newPoint;
-                    newPoint.x = convertToPercentX(i);
-                    newPoint.y = convertToPercentY(y);
-                    points.push_back(newPoint);
-                    // And we sort it!
-                    std::sort(points.begin(), points.end());
-                }
-                SetDirty();
-            }
-        } else {
-            //nothing to do
-            return;
+    if (currentTool == kToolSelection) {
+        int prev = x - dX, lower = prev, higher = x;
+        if (prev > x) {
+            lower = x;
+            higher = prev;
         }
-    }
-    
-    if (selected.size() == 1) {
-        std::vector<VectorPoint>::iterator it = std::find(points.begin(), points.end(), selected[0]);
-        if (it != points.end()) {
-            (&(*it))->x = convertToPercentX(x);
-            (&(*it))->y = convertToPercentY(y);
+        for (int i = lower; i < higher; i++) {
+            VectorPoint point = getPoint(i);
+            if (!(std::find(selected.begin(), selected.end(), point) != selected.end())) {
+                selected.push_back(point);
+            }
+            SetDirty();
         }
 
-    } else if (selected.size() > 1) {
-        for (int i = 0; i < selected.size(); i++) {
-            std::vector<VectorPoint>::iterator it = std::find(points.begin(), points.end(), selected[i]);
+    } else {
+        if (selected.empty() || isDragging == false) {
+            if (currentTool == kToolPencil ||  pMouseMod->S) {
+                //Draw freehand
+                int prev = x - dX, lower = prev, higher = x;
+                if (prev > x) {
+                    lower = x;
+                    higher = prev;
+                }
+                for (int i = lower; i < higher; i++) {
+                    if (i == 0 || i == 1) {
+                        break;
+                    }
+                    bool pointMoved = false;
+                    for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
+                        VectorPoint* point = &(*it);
+                        double xGraphic = convertToGraphicX(point->x);
+                        if ((xGraphic - epsilon) < i && (xGraphic + epsilon) > i) {
+                            point->y = convertToPercentY(y);
+                            pointMoved = true;
+                            break;
+                        }
+                    }
+                    if (!pointMoved) {
+                        //Add an new point
+                        VectorPoint newPoint;
+                        newPoint.x = convertToPercentX(i);
+                        newPoint.y = convertToPercentY(y);
+                        points.push_back(newPoint);
+                        // And we sort it!
+                        std::sort(points.begin(), points.end());
+                    }
+                    SetDirty();
+                }
+            } else {
+                //nothing to do
+                return;
+            }
+        }
+        
+        if (selected.size() == 1) {
+            std::vector<VectorPoint>::iterator it = std::find(points.begin(), points.end(), selected[0]);
             if (it != points.end()) {
-                (&(*it))->x = convertToPercentX(convertToGraphicX((&(*it))->x) + dX);
-                (&(*it))->y = convertToPercentY(convertToGraphicY((&(*it))->y) + dY);
+                (&(*it))->x = convertToPercentX(x);
+                (&(*it))->y = convertToPercentY(y);
             }
             
+        } else if (selected.size() > 1) {
+            for (int i = 0; i < selected.size(); i++) {
+                std::vector<VectorPoint>::iterator it = std::find(points.begin(), points.end(), selected[i]);
+                if (it != points.end()) {
+                    (&(*it))->x = convertToPercentX(convertToGraphicX((&(*it))->x) + dX);
+                    (&(*it))->y = convertToPercentY(convertToGraphicY((&(*it))->y) + dY);
+                }
+                
+            }
+        } else {
+            return;
         }
-    } else {
-        return;
+        SetDirty();
     }
-    SetDirty();
 };
 
 void VectorSpace::clear() {
