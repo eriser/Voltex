@@ -29,7 +29,7 @@ bool VectorSpace::Draw(IGraphics *pGraphics) {
         VectorPoint current = *it;
         //draw the point
         if (current.uid > 1) {
-            if (current != selected) {
+            if (!(std::find(selected.begin(), selected.end(), current) != selected.end())) {
                 pGraphics->DrawCircle(&color, convertToGraphicX(current.x), convertToGraphicY(current.y), 2, 0, true);
             } else {
                 pGraphics->DrawCircle(&selection, convertToGraphicX(current.x), convertToGraphicY(current.y), 2, 0, true);
@@ -69,7 +69,29 @@ VectorPoint VectorSpace::getPoint(double x, double y) {
 };
 
 void VectorSpace::OnMouseDblClick(int x, int y, IMouseMod* pMouseMod) {
-    //Nothing here anymore, but keeping the stub ust in case
+    VectorPoint imHere = getPoint(x, y);
+    //the uid = 0 means no point
+    if (imHere.uid == 0) {
+        VectorPoint newPoint;
+        newPoint.x = convertToPercentX(x);
+        newPoint.y = convertToPercentY(y);
+        points.push_back(newPoint);
+        // And we sort it!
+        std::sort(points.begin(), points.end());
+        SetDirty();
+        if (sendSignals) {
+            tableChanged(index);
+        }
+    } else {
+        // We delete the point
+        if (imHere.uid > 1) {
+            points.erase(std::remove(points.begin(), points.end(), imHere), points.end());
+            SetDirty();
+            if (sendSignals) {
+                tableChanged(index);
+            }
+        }
+    }
 };
 
 void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
@@ -123,19 +145,23 @@ void VectorSpace::OnMouseDown(int x, int y, IMouseMod* pMouseMod) {
         // We erase selected
         VectorPoint none;
         none.uid = 0;
-        selected = none;
+        for (std::vector<VectorPoint>::iterator i = selected.begin(); i != selected.end();) {
+            i = selected.erase(i);
+        }
         // Not needed, but who knows.
         isDragging = false;
         SetDirty();
     } else {
-        selected = imHere;
+        if (!(std::find(selected.begin(), selected.end(), imHere) != selected.end())) {
+            selected.push_back(imHere);
+        }
         isDragging = true;
         SetDirty();
     }
 };
 
 void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod) {
-    if (selected.uid == 0 || isDragging == false) {
+    if (selected.empty() || isDragging == false) {
         if (currentTool == kToolPencil ||  pMouseMod->S) {
             //Draw freehand
             int prev = x - dX, lower = prev, higher = x;
@@ -174,11 +200,24 @@ void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod
         }
     }
     
-    std::vector<VectorPoint>::iterator it = std::find(points.begin(), points.end(), selected);
-    
-    if (it != points.end()) {
-        (&(*it))->x = convertToPercentX(x);
-        (&(*it))->y = convertToPercentY(y);
+    if (selected.size() == 1) {
+        std::vector<VectorPoint>::iterator it = std::find(points.begin(), points.end(), selected[0]);
+        if (it != points.end()) {
+            (&(*it))->x = convertToPercentX(x);
+            (&(*it))->y = convertToPercentY(y);
+        }
+
+    } else if (selected.size() > 1) {
+        for (int i = 0; i < selected.size(); i++) {
+            std::vector<VectorPoint>::iterator it = std::find(points.begin(), points.end(), selected[i]);
+            if (it != points.end()) {
+                (&(*it))->x = convertToPercentX(convertToGraphicX((&(*it))->x) + dX);
+                (&(*it))->y = convertToPercentY(convertToGraphicY((&(*it))->y) + dY);
+            }
+            
+        }
+    } else {
+        return;
     }
     SetDirty();
 };

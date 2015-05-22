@@ -43,7 +43,7 @@ public:
 class VectorSpace : public IControl {
 protected:
     std::vector<VectorPoint> points;
-    VectorPoint selected;
+    std::vector<VectorPoint> selected;
     bool isDragging;
     
     double convertToGraphicX(double value) {
