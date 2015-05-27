@@ -9,6 +9,7 @@
 #include "MIDIReceiver.h"
 #include "VoiceManager.h"
 #include "VectorSpace.h"
+#include "VuMeter.h"
 
 #define NUM_TABLES  8
 #define NUM_PRESETS 5

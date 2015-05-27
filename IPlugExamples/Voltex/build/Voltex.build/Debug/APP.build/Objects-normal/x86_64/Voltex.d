@@ -40,5 +40,6 @@ dependencies: \
   /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/Synth.h \
   /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/WaveTable.h \
   /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/VectorSpace.h \
+  /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/VuMeter.h \
   /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/../../WDL/IPlug/IPlug_include_in_plug_src.h \
   /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/../../WDL/IPlug/IKeyboardControl.h

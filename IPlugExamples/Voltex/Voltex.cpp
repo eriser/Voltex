@@ -103,6 +103,7 @@ enum EParams {
     
 	mPreset,
 	mLoad,
+	mVuMeter,
 
     kNumParams
 };
@@ -346,6 +347,8 @@ void Voltex::CreateParams() {
     GetParam(mToolSelection)->InitBool("Selection", false);
     GetParam(mToolDelete)->InitBool("Delete", false);
     
+	GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
+
 	//Presets
 	GetParam(mPreset)->InitEnum("Preset", 0, NUM_PRESETS);
 
@@ -480,8 +483,9 @@ void Voltex::CreateGraphics() {
 	//dB meter
 	//moves vertically 246 (from 363 to 609) pixels from  0 dB to -inf. dB
 
-	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
-	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
+	pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
+	//IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
+	//IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
 
 	//pGraphics->AttachControl(new IBitmapControl(this, 65, 7, &dBCoverRect)); //replace 3rd param. with a changing value based on total. amplitude. 
 	//pGraphics->AttachControl(new IBitmapControl(this, 61, 92, &dBCoverBg));
@@ -506,6 +510,7 @@ void Voltex::ProcessDoubleReplacing(double** inputs, double** outputs, int nFram
         mMIDIReceiver.advance();
         //The left and right channels are equal as our synth only works in mono
         leftOutput[i] = rightOutput[i] = (voiceManager.nextSample() * gain);
+		GetGUI()->SetParameterFromPlug(mVuMeter, leftOutput[i], true);
     }
     
     mMIDIReceiver.Flush(nFrames);
