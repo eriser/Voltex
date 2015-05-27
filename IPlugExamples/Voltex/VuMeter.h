@@ -21,9 +21,7 @@ public:
     
     bool Draw(IGraphics* pGraphics);
     
-    bool isDirty() {
-        return true;
-    }
+    bool isDirty() { return true; } //This component will change so much we might as well just always draw it
 protected:
     IColor mColor;
 };

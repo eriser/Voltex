@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-const int epsilon = 4;
+const int epsilon = 3;
 
 unsigned long VectorPoint::counter = 1;
 VectorSpace::Tools VectorSpace::currentTool = VectorSpace::kToolCursor;
@@ -104,8 +104,8 @@ void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
     }
     VectorPoint imHere = getPoint(x, y);
     
-    //the uid = 0 means no point
-    if (currentTool == kToolPencil && imHere.uid == 0) {
+    //uid = 0 means no point
+    if ((currentTool == kToolPencil && imHere.uid == 0) || ((currentTool == kToolDelete && pMouseMod->R) && imHere.uid == 0)) {
         VectorPoint newPoint;
         newPoint.x = convertToPercentX(x);
         newPoint.y = convertToPercentY(y);
@@ -116,7 +116,7 @@ void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
         if (sendSignals) {
             tableChanged(index);
         }
-    } else if (currentTool == kToolDelete) {
+    } else if ((currentTool == kToolDelete && !pMouseMod->R) || (currentTool == kToolPencil && pMouseMod->R)) {
         // We delete the point
         if (imHere.uid > 1) {
             points.erase(std::remove(points.begin(), points.end(), imHere), points.end());
@@ -197,13 +197,14 @@ void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod
                     for (std::vector<VectorPoint>::iterator it = points.begin(); it != points.end(); ++it) {
                         VectorPoint* point = &(*it);
                         double xGraphic = convertToGraphicX(point->x);
-                        if ((xGraphic - epsilon) < i && (xGraphic + epsilon) > i) {
+//                        if (((xGraphic - epsilon) < i && (xGraphic + epsilon) > i) && (xGraphic > 0 && xGraphic < 1)) {
+                        if ((((xGraphic - epsilon) < i && (xGraphic + epsilon) > i)) && (point->x > 0 && point->x < 1)) {
                             point->y = convertToPercentY(y);
                             pointMoved = true;
                             break;
                         }
                     }
-                    if (!pointMoved) {
+                    if (!pointMoved && (convertToPercentX(i) > 0 && convertToPercentX(i) < 1)) {
                         //Add an new point
                         VectorPoint newPoint;
                         newPoint.x = convertToPercentX(i);

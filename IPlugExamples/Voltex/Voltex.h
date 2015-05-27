@@ -45,6 +45,8 @@ private:
     IControl* toolSelection;
     IControl* toolDelete;
     
+    IControl* vuMeter;
+    
     std::tr1::array<VectorSpace*, NUM_TABLES> vectorSpaces;
     
     VoiceManager voiceManager;

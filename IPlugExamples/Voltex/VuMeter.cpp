@@ -9,7 +9,11 @@
 #include "VuMeter.h"
 
 bool VuMeter::Draw(IGraphics* pGraphics) {
-    printf("Drawing Vu Meter\n");
+    if (IControl::IsHidden()) {
+        return true;
+    }
+    
+    printf("Drawing Vu Meter, value = %f\n", mValue);
     
     //IRECT(mRECT.L, mRECT.T, mRECT.W , mRECT.T + (mValue * mRECT.H));
     pGraphics->FillIRect(&COLOR_RED, &mRECT);

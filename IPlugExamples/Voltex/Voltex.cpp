@@ -37,9 +37,9 @@ enum EParams {
     // Master
     mGain,
     
-	//Tabs
-	mTab,
-
+    //Tabs
+    mTab,
+    
     //Switches
     mSwitchOne,
     mSwitchTwo,
@@ -59,7 +59,7 @@ enum EParams {
     mAttackSix,
     mAttackSeven,
     mAttackEight,
-
+    
     mDecayOne,
     mDecayTwo,
     mDecayThree,
@@ -108,37 +108,37 @@ enum EParams {
 
 //Layout paramaters
 enum ELayout {
-	kWidth = GUI_WIDTH,
-	kHeight = GUI_HEIGHT,
-	kKeybX = 166,
-	kKeybY = 614,
-
-	//Master Section:
-	kMasterX = 793,
-	kMasterY = 53,
-
-	kMasterAttackX = 693,
-	kMasterDecayX = kMasterAttackX + 65,
-	kMasterSustainX = kMasterDecayX + 66,
-	kMasterReleaseX = kMasterSustainX + 66,
-
-	kMasterEnvelopeY = 137,
-
-	//Table:
-	kTableX = 296,//232,
-	kTableY = 101,
-	kTableSpaceX = 43,
-	kTableSpaceY = 40,
-	kTableSpaceGainY = 50,
-
-	//On/off Buttons
-	kSwitchX = 325,
-	kSwitchY = 358,
-	kSwitchSpaceX = 86,
-
-	//tabs
-	kTabX = 272,
-	kTabY = 344,
+    kWidth = GUI_WIDTH,
+    kHeight = GUI_HEIGHT,
+    kKeybX = 166,
+    kKeybY = 614,
+    
+    //Master Section:
+    kMasterX = 793,
+    kMasterY = 53,
+    
+    kMasterAttackX = 693,
+    kMasterDecayX = kMasterAttackX + 65,
+    kMasterSustainX = kMasterDecayX + 66,
+    kMasterReleaseX = kMasterSustainX + 66,
+    
+    kMasterEnvelopeY = 137,
+    
+    //Table:
+    kTableX = 296,//232,
+    kTableY = 101,
+    kTableSpaceX = 43,
+    kTableSpaceY = 40,
+    kTableSpaceGainY = 50,
+    
+    //On/off Buttons
+    kSwitchX = 325,
+    kSwitchY = 358,
+    kSwitchSpaceX = 86,
+    
+    //tabs
+    kTabX = 272,
+    kTabY = 344,
     kTabMaxX = 957,
     kTabMaxY = 484,
     
@@ -147,14 +147,14 @@ enum ELayout {
     kVectorSpaceY = 392,
     kVectorSpaceMaxX = 955,
     kVectorSpaceMaxY = 606,
-
-	//Buttons
-	kButtonX = 197,
+    
+    //Buttons
+    kButtonX = 197,
     kButtonY = 385,
-	kButtonYSpacing = 56
+    kButtonYSpacing = 56
 };
 
-    Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
+Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
     TRACE;
     
     //initialize wavetables
@@ -170,7 +170,7 @@ enum ELayout {
     }
     
     //test tables,
-	//square wave
+    //square wave
     WaveTable* squareTable;
     squareTable = new WaveTable();
     
@@ -186,7 +186,7 @@ enum ELayout {
     waveTables[0] = squareTable;
     vectorSpaces[0]->setValues(values, kVectorSpaceMaxY - kVectorSpaceY);
     
-	//sine wave
+    //sine wave
     WaveTable* sineTable;
     sineTable = new WaveTable();
     
@@ -197,20 +197,24 @@ enum ELayout {
     sineTable->setValues(sinValues);
     waveTables[1] = sineTable;
     vectorSpaces[1]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
-        
+    
     WaveTable* sineTableTwo;
     sineTableTwo = new WaveTable();
     sineTableTwo->setValues(sinValues);
     waveTables[3] = sineTableTwo;
     vectorSpaces[3]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
     
-	//triangle wave
+    //triangle wave
     WaveTable* triangleTable;
     triangleTable = new WaveTable();
-        
+    
     std::tr1::array<double, 2048> triangleValues;
     for (int i = 0; i < 2048; i++) {
-        double value = -1.0 + (2.0 * ((i / 2048.0) * (4 * acos(0.0))) / (4 * acos(0.0)));
+        int phase = i + 512;
+        if (phase > 2048) {
+            phase -= 2048;
+        }
+        double value = -1.0 + (2.0 * (((phase / 2048.0) * (4 * acos(0.0)))) / (4 * acos(0.0)));
         triangleValues[i] = 2.0 * (fabs(value) - 0.5);
     }
     triangleTable->setValues(triangleValues);
@@ -218,29 +222,53 @@ enum ELayout {
     vectorSpaces[2]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
     
     //white noise
-	WaveTable* noiseTable;
-	noiseTable = new WaveTable();
+    WaveTable* noiseTable;
+    noiseTable = new WaveTable();
+    
+    std::tr1::array<double, 2048> noiseValues;
+    
+    srand(time(NULL));
+    
+/*    //Box-Muller transform for random numbers with a gaussian distrbution
+    //Mean = 0, standard deviation = 1
+    double n2;
+    bool n2Cached = false;
+    for (int i = 0; i < 2048; i++) {
+        if (!n2Cached) {
+            double x, y, r;
+            do {
+                x = 2.0*rand()/RAND_MAX - 1;
+                y = 2.0*rand()/RAND_MAX - 1;
+                r = x*x + y*y;
+            } while (r == 0.0 || r > 1.0);
+            double d = sqrt(-2.0*log(r)/r);
+            n2 = y*d*.5;
+            n2Cached = true;
+            noiseValues[i] = x*d * .5;
+        } else {
+            //Each Box-Muller transfor gives us to values so we chache on and use it next time in order to do less work
+            n2Cached = false;
+            noiseValues[i] = n2;
+        }
+    }*/
+    
+    for (int i = 0; i < 2048; i++) {
+        noiseValues[i] = (static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2))) - 1.0;
 
-	std::tr1::array<double, 2048> noiseValues;
-
-	srand(time(NULL));
-
-	for (int i = 0; i < 2048; i++) {
-		noiseValues[i] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1;
-	}
-
-	noiseTable->setValues(noiseValues);
-	waveTables[4] = noiseTable;
-	vectorSpaces[4]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
-
+    }
+    
+    noiseTable->setValues(noiseValues);
+    waveTables[4] = noiseTable;
+    vectorSpaces[4]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
+    
     voiceManager.setWavetables(&waveTables);
-        
-     firstUpdate = true;
-        
+    
+    firstUpdate = true;
+    
     CreateParams();
     CreateGraphics();
     CreatePresets();
-        
+    
     firstUpdate = false;
     
     //Connect noteOn and noteOff signals to slots in the voice manager, this way they voice manager does not need to know anything about the midi reciever and vice versa.
@@ -266,10 +294,10 @@ void Voltex::CreateParams() {
     GetParam(mGain)->InitDouble("Gain", 80.0, 0.0, 100.0, parameterStep);
     GetParam(mGain)->SetShape(2);
     
-	//Tabs
+    //Tabs
     GetParam(mTab)->InitEnum("Wavetable Tab", 0, NUM_TABLES);
     GetParam(mTab)->SetDisplayText(0, "Wavetable Tab");
-
+    
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
         GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
@@ -321,7 +349,7 @@ void Voltex::CreateParams() {
     for (int i = 0; i < NUM_TABLES; i++) {
         vectorSpaces[i]->sendSignals = true;
     }
-
+    
 }
 
 void Voltex::CreateGraphics() {
@@ -337,26 +365,26 @@ void Voltex::CreateGraphics() {
     int keyCoordinates[12] = { 0, 15, 20, 37, 46, 68, 81, 96, 103, 118, 125, 140 };
     mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
     pGraphics->AttachControl(mVirtualKeyboard);
-
+    
     //Create on/off buttons and tabs
-	
-	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
-	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
+    
+    IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
+    IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
     
     //Tabs
     pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
     
     
     //Switches
-	int x = kSwitchX, y = 0;
-	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
+    int x = kSwitchX, y = 0;
+    for (int v = mSwitchOne; v <= mSwitchEight; v++) {
         if (v == mSwitchThree || v == mSwitchTwo) {
             pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
         } else {
-			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
-		}
-		x = kSwitchSpaceX + x;
-	}
+            pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
+        }
+        x = kSwitchSpaceX + x;
+    }
     
     //Create knobs
     IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
@@ -411,30 +439,31 @@ void Voltex::CreateGraphics() {
     for (int i = 0; i < NUM_TABLES; i++) {
         pGraphics->AttachControl(vectorSpaces[i]);
     }
-
-	//Buttons
-	IBitmap cursorClick = pGraphics->LoadIBitmap(CURSORCLK_ID, CURSORCLK_FN, 2);
-	IBitmap pencilClick = pGraphics->LoadIBitmap(PENCILCLK_ID, PENCILCLK_FN, 2);
-	IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
-	IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
-
-//     pGraphics->AttachControl(new ISwitchControl(parent, x, t, param, img));
+    
+    //Buttons
+    IBitmap cursorClick = pGraphics->LoadIBitmap(CURSORCLK_ID, CURSORCLK_FN, 2);
+    IBitmap pencilClick = pGraphics->LoadIBitmap(PENCILCLK_ID, PENCILCLK_FN, 2);
+    IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
+    IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
+    
+    //     pGraphics->AttachControl(new ISwitchControl(parent, x, t, param, img));
     
     toolCursor = new ISwitchControl(this, kButtonX, kButtonY, mToolCursor, &cursorClick);
-	pGraphics->AttachControl(toolCursor);
+    pGraphics->AttachControl(toolCursor);
     toolPencil = new ISwitchControl(this, kButtonX, kButtonY + kButtonYSpacing, mToolPencil, &pencilClick);
-	pGraphics->AttachControl(toolPencil);
+    pGraphics->AttachControl(toolPencil);
     toolSelection = new ISwitchControl(this, kButtonX, kButtonY + (2 * kButtonYSpacing), mToolSelection, &selectClick);
-	pGraphics->AttachControl(toolSelection);
+    pGraphics->AttachControl(toolSelection);
     toolDelete = new ISwitchControl(this, kButtonX, kButtonY + (3 * kButtonYSpacing), mToolDelete, &trashClick);
-	pGraphics->AttachControl(toolDelete);
-
-    pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
+    pGraphics->AttachControl(toolDelete);
     
-	//dB meter
-//	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
-//	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
-
+    vuMeter = new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter);
+    pGraphics->AttachControl(vuMeter);
+    
+    //dB meter
+    //	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
+    //	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
+    
     AttachGraphics(pGraphics);
 }
 
@@ -455,7 +484,8 @@ void Voltex::ProcessDoubleReplacing(double** inputs, double** outputs, int nFram
         mMIDIReceiver.advance();
         //The left and right channels are equal as our synth only works in mono
         leftOutput[i] = rightOutput[i] = (voiceManager.nextSample() * gain);
-        GetGUI()->SetParameterFromPlug(mVuMeter, leftOutput[i], true);
+        vuMeter->SetValueFromPlug(leftOutput[i]);
+        vuMeter->Redraw();
     }
     
     mMIDIReceiver.Flush(nFrames);
@@ -483,8 +513,8 @@ void Voltex::OnParamChange(int paramIdx) {
         case mGain:
             gain = param->Value() / 100.0;
             break;
-        // Volume Envelope:
-        //In each case we need to create a VoiceChangerFunction wich defines the stage and value fields but leaves the voice field empty so that it can be filled later as it is being iterated through
+            // Volume Envelope:
+            //In each case we need to create a VoiceChangerFunction wich defines the stage and value fields but leaves the voice field empty so that it can be filled later as it is being iterated through
         case mVolumeEnvAttack:
             changer = bind(&VoiceManager::setVolumeEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Value());
             voiceManager.changeAllVoices(changer);
