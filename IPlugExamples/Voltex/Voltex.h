@@ -10,7 +10,8 @@
 #include "VoiceManager.h"
 #include "VectorSpace.h"
 
-#define NUM_TABLES 8
+#define NUM_TABLES  8
+#define NUM_PRESETS 5
 
 class Voltex : public IPlug
 {
@@ -44,6 +45,9 @@ private:
     IControl* toolSelection;
     IControl* toolDelete;
     
+	IControl* load;
+	IControl* presets;
+
     std::tr1::array<VectorSpace*, NUM_TABLES> vectorSpaces;
     
     VoiceManager voiceManager;
@@ -54,7 +58,7 @@ private:
     
     void CreateParams();
     void CreateGraphics();
-    
+	void PresetOsc(int c);
     void updateWaveTable(int table);
     
     double gain;
