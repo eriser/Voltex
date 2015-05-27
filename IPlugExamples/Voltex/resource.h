@@ -61,6 +61,8 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define PENCILCLK_ID	110
 #define SELECTCLK_ID	111
 #define TRASHCLK_ID		112
+#define PRESETS_ID		113
+#define LOAD_ID			114
 
 // Image resource locations for this plug.
 #define BG_FN             "resources/img/bg.png"
@@ -75,6 +77,8 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define PENCILCLK_FN      "resources/img/ButtonPressed/pencilClicked.png"
 #define SELECTCLK_FN      "resources/img/ButtonPressed/selectClicked.png"
 #define TRASHCLK_FN       "resources/img/ButtonPressed/trashClicked.png"
+#define PRESETS_FN		  "resources/img/presets.png"
+#define LOAD_FN           "resources/img/load.png"
 
 // GUI default dimensions
 #define GUI_WIDTH   960

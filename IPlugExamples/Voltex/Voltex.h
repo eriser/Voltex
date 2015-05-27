@@ -11,7 +11,8 @@
 #include "VectorSpace.h"
 #include "VuMeter.h"
 
-#define NUM_TABLES 8
+#define NUM_TABLES  8
+#define NUM_PRESETS 5
 
 class Voltex : public IPlug
 {
@@ -57,7 +58,7 @@ private:
     
     void CreateParams();
     void CreateGraphics();
-    
+	void PresetOsc(int c);
     void updateWaveTable(int table);
     
     double gain;

@@ -101,8 +101,10 @@ enum EParams {
     mToolSelection,
     mToolDelete,
     
-    mVuMeter,
-    
+	mPreset,
+	mLoad,
+	mVuMeter,
+
     kNumParams
 };
 
@@ -338,9 +340,14 @@ void Voltex::CreateParams() {
     GetParam(mToolSelection)->InitBool("Selection", false);
     GetParam(mToolDelete)->InitBool("Delete", false);
     
-    GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
-    
-    
+	GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
+
+	//Presets
+	GetParam(mPreset)->InitEnum("Preset", 0, NUM_PRESETS);
+
+	//Load
+	GetParam(mPreset)->InitBool("Load", false);
+
     //Initial param update
     for (int i = 0; i < kNumParams; i++) {
         OnParamChange(i);
@@ -586,7 +593,7 @@ void Voltex::OnParamChange(int paramIdx) {
                         toolPencil->SetValueFromPlug(true);
                     }
                 }
-            }else if (paramIdx == mToolSelection) {
+            } else if (paramIdx == mToolSelection) {
                 //Tool: Selection
                 if (param->Value() == true) {
                     if (!firstUpdate) {
@@ -600,7 +607,7 @@ void Voltex::OnParamChange(int paramIdx) {
                         toolSelection->SetValueFromPlug(true);
                     }
                 }
-            }else if (paramIdx == mToolDelete) {
+            } else if (paramIdx == mToolDelete) {
                 //Tool: Delete
                 if (param->Value() == true) {
                     if (!firstUpdate) {
@@ -614,7 +621,16 @@ void Voltex::OnParamChange(int paramIdx) {
                         toolDelete->SetValueFromPlug(true);
                     }
                 }
-            } else {
+			}
+			else if (paramIdx == mLoad){
+				
+			}
+			else if (paramIdx == mPreset){
+				
+				//g->SetValueFromUserInput();
+			}
+			
+			else {
                 //oops
             }
             break;
