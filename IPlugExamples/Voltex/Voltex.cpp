@@ -101,6 +101,9 @@ enum EParams {
     mToolSelection,
     mToolDelete,
     
+	mPreset,
+	mLoad,
+
     kNumParams
 };
 
@@ -137,19 +140,27 @@ enum ELayout {
 	//tabs
 	kTabX = 272,
 	kTabY = 344,
-    kTabMaxX = 957,
-    kTabMaxY = 484,
-    
-    //vector space
-    kVectorSpaceX = 272,
-    kVectorSpaceY = 392,
-    kVectorSpaceMaxX = 955,
-    kVectorSpaceMaxY = 606,
+	kTabMaxX = 957,
+	kTabMaxY = 484,
+
+	//vector space
+	kVectorSpaceX = 272,
+	kVectorSpaceY = 392,
+	kVectorSpaceMaxX = 955,
+	kVectorSpaceMaxY = 606,
 
 	//Buttons
 	kButtonX = 197,
-    kButtonY = 385,
-	kButtonYSpacing = 56
+	kButtonY = 385,
+	kButtonYSpacing = 56,
+
+	//Load
+	kLoadX = 685,
+	kLoadY = 212,
+
+	//Presets
+	kPresetsX = 748,
+	kPresetsY = 213
 };
 
     Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -167,74 +178,14 @@ enum ELayout {
         vectorSpaces[i]->tableChanged.Connect(this, &Voltex::updateWaveTable);
     }
     
-    //test tables,
-	//square wave
-    WaveTable* squareTable;
-    squareTable = new WaveTable();
+    firstUpdate = true;
     
-    std::tr1::array<double, 2048> values;
-    for (int i = 0; i < 2048; i++) {
-        if (i < 1024) {
-            values[i] = -1.0;
-        } else {
-            values[i] = 1.0;
-        }
-    }
-    squareTable->setValues(values);
-    waveTables[0] = squareTable;
-    vectorSpaces[0]->setValues(values, kVectorSpaceMaxY - kVectorSpaceY);
-    
-	//sine wave
-    WaveTable* sineTable;
-    sineTable = new WaveTable();
-    
-    std::tr1::array<double, 2048> sinValues;
-    for (int i = 0; i < 2048; i++) {
-        sinValues[i] = sin((i / 2048.0) * (4 * acos(0.0)));
-    }
-    sineTable->setValues(sinValues);
-    waveTables[1] = sineTable;
-    vectorSpaces[1]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
-        
-    WaveTable* sineTableTwo;
-    sineTableTwo = new WaveTable();
-    sineTableTwo->setValues(sinValues);
-    waveTables[3] = sineTableTwo;
-    vectorSpaces[3]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
-    
-	//triangle wave
-    WaveTable* triangleTable;
-    triangleTable = new WaveTable();
-        
-    std::tr1::array<double, 2048> triangleValues;
-    for (int i = 0; i < 2048; i++) {
-        double value = -1.0 + (2.0 * ((i / 2048.0) * (4 * acos(0.0))) / (4 * acos(0.0)));
-        triangleValues[i] = 2.0 * (fabs(value) - 0.5);
-    }
-    triangleTable->setValues(triangleValues);
-    waveTables[2] = triangleTable;
-    vectorSpaces[2]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
-    
-    //white noise
-	WaveTable* noiseTable;
-	noiseTable = new WaveTable();
-
-	std::tr1::array<double, 2048> noiseValues;
-
-	srand(time(NULL));
-
-	for (int i = 0; i < 2048; i++) {
-		noiseValues[i] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1;
+	for (int x = 0; x < 5; x++) {
+		PresetOsc(x);
 	}
 
-	noiseTable->setValues(noiseValues);
-	waveTables[4] = noiseTable;
-	vectorSpaces[4]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
+	voiceManager.setWavetables(&waveTables);
 
-    voiceManager.setWavetables(&waveTables);
-        
-     firstUpdate = true;
-        
     CreateParams();
     CreateGraphics();
     CreatePresets();
@@ -245,6 +196,93 @@ enum ELayout {
     mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
     mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
 }
+
+void Voltex::PresetOsc(int c) {
+	//test tables,
+	//square wave
+	if (c == 0) {
+		WaveTable* emptyTable;
+		emptyTable = new WaveTable();
+
+		std::tr1::array<double, 2048> emptyValues;
+		for (int i = 0; i < 2048; i++) {
+			emptyValues[i] = 0;
+		}
+
+		emptyTable->setValues(emptyValues);
+		waveTables[5] = emptyTable;
+		vectorSpaces[5]->setValues(emptyValues, kVectorSpaceMaxY - kVectorSpaceY);
+
+	}
+	else if (c == 1) {
+		//sine wave
+		WaveTable* sineTable;
+		sineTable = new WaveTable();
+
+		std::tr1::array<double, 2048> sinValues;
+		for (int i = 0; i < 2048; i++) {
+			sinValues[i] = sin((i / 2048.0) * (4 * acos(0.0)));
+		}
+		sineTable->setValues(sinValues);
+		waveTables[1] = sineTable;
+		vectorSpaces[1]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
+		/*
+		WaveTable* sineTableTwo;
+		sineTableTwo = new WaveTable();
+		sineTableTwo->setValues(sinValues);
+		waveTables[3] = sineTableTwo;
+		vectorSpaces[3]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
+		*/
+	}
+	else if (c == 2) {
+		WaveTable* triangleTable;
+		triangleTable = new WaveTable();
+
+		std::tr1::array<double, 2048> triangleValues;
+		for (int i = 0; i < 2048; i++) {
+			double value = -1.0 + (2.0 * ((i / 2048.0) * (4 * acos(0.0))) / (4 * acos(0.0)));
+			triangleValues[i] = 2.0 * (fabs(value) - 0.5);
+		}
+		triangleTable->setValues(triangleValues);
+		waveTables[2] = triangleTable;
+		vectorSpaces[2]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
+	}
+	else if (c == 3) {
+		WaveTable* squareTable;
+		squareTable = new WaveTable();
+
+		std::tr1::array<double, 2048> values;
+		for (int i = 0; i < 2048; i++) {
+			if (i < 1024) {
+				values[i] = -1.0;
+			}
+			else {
+				values[i] = 1.0;
+			}
+		}
+		squareTable->setValues(values);
+		waveTables[0] = squareTable;
+		vectorSpaces[0]->setValues(values, kVectorSpaceMaxY - kVectorSpaceY);
+	}
+	else if (c == 4) {
+	//white noise
+	WaveTable* noiseTable;
+	noiseTable = new WaveTable();
+
+	std::tr1::array<double, 2048> noiseValues;
+
+	srand(time(NULL));
+
+	for (int i = 0; i < 2048; i++) {
+		noiseValues[i] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2)) - 1;
+	}
+
+	noiseTable->setValues(noiseValues);
+	waveTables[4] = noiseTable;
+	vectorSpaces[4]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
+	}
+	else {}
+	}
 
 void Voltex::CreateParams() {
     //GetParam(int param)->InitDouble(defaultVal, minVal, maxVal, step, label);
@@ -308,6 +346,12 @@ void Voltex::CreateParams() {
     GetParam(mToolSelection)->InitBool("Selection", false);
     GetParam(mToolDelete)->InitBool("Delete", false);
     
+	//Presets
+	GetParam(mPreset)->InitEnum("Preset", 0, NUM_PRESETS);
+
+	//Load
+	GetParam(mPreset)->InitBool("Load", false);
+
     //Initial param update
     for (int i = 0; i < kNumParams; i++) {
         OnParamChange(i);
@@ -424,9 +468,23 @@ void Voltex::CreateGraphics() {
     toolDelete = new ISwitchControl(this, kButtonX, kButtonY + (3 * kButtonYSpacing), mToolDelete, &trashClick);
 	pGraphics->AttachControl(toolDelete);
 
+	//load and waveform selection
+	IBitmap loadIcon = pGraphics->LoadIBitmap(LOAD_ID, LOAD_FN, 2);
+	IBitmap presetIcon = pGraphics->LoadIBitmap(PRESETS_ID, PRESETS_FN, NUM_PRESETS);
+
+	load = new ISwitchControl(this, kLoadX, kLoadY, mLoad, &loadIcon);
+	pGraphics->AttachControl(load);
+	presets = new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
+	pGraphics->AttachControl(presets);
+
 	//dB meter
-//	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
-//	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
+	//moves vertically 246 (from 363 to 609) pixels from  0 dB to -inf. dB
+
+	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
+	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
+
+	//pGraphics->AttachControl(new IBitmapControl(this, 65, 7, &dBCoverRect)); //replace 3rd param. with a changing value based on total. amplitude. 
+	//pGraphics->AttachControl(new IBitmapControl(this, 61, 92, &dBCoverBg));
 
     AttachGraphics(pGraphics);
 }
@@ -548,7 +606,7 @@ void Voltex::OnParamChange(int paramIdx) {
                         toolPencil->SetValueFromPlug(true);
                     }
                 }
-            }else if (paramIdx == mToolSelection) {
+            } else if (paramIdx == mToolSelection) {
                 //Tool: Selection
                 if (param->Value() == true) {
                     if (!firstUpdate) {
@@ -562,7 +620,7 @@ void Voltex::OnParamChange(int paramIdx) {
                         toolSelection->SetValueFromPlug(true);
                     }
                 }
-            }else if (paramIdx == mToolDelete) {
+            } else if (paramIdx == mToolDelete) {
                 //Tool: Delete
                 if (param->Value() == true) {
                     if (!firstUpdate) {
@@ -576,7 +634,16 @@ void Voltex::OnParamChange(int paramIdx) {
                         toolDelete->SetValueFromPlug(true);
                     }
                 }
-            } else {
+			}
+			else if (paramIdx == mLoad){
+				
+			}
+			else if (paramIdx == mPreset){
+				
+				//g->SetValueFromUserInput();
+			}
+			
+			else {
                 //oops
             }
             break;
