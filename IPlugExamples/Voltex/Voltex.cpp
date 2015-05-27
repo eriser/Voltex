@@ -110,50 +110,58 @@ enum EParams {
 
 //Layout paramaters
 enum ELayout {
-    kWidth = GUI_WIDTH,
-    kHeight = GUI_HEIGHT,
-    kKeybX = 166,
-    kKeybY = 614,
-    
-    //Master Section:
-    kMasterX = 793,
-    kMasterY = 53,
-    
-    kMasterAttackX = 693,
-    kMasterDecayX = kMasterAttackX + 65,
-    kMasterSustainX = kMasterDecayX + 66,
-    kMasterReleaseX = kMasterSustainX + 66,
-    
-    kMasterEnvelopeY = 137,
-    
-    //Table:
-    kTableX = 296,//232,
-    kTableY = 101,
-    kTableSpaceX = 43,
-    kTableSpaceY = 40,
-    kTableSpaceGainY = 50,
-    
-    //On/off Buttons
-    kSwitchX = 325,
-    kSwitchY = 358,
-    kSwitchSpaceX = 86,
-    
-    //tabs
-    kTabX = 272,
-    kTabY = 344,
-    kTabMaxX = 957,
-    kTabMaxY = 484,
-    
-    //vector space
-    kVectorSpaceX = 272,
-    kVectorSpaceY = 392,
-    kVectorSpaceMaxX = 955,
-    kVectorSpaceMaxY = 606,
-    
-    //Buttons
-    kButtonX = 197,
-    kButtonY = 385,
-    kButtonYSpacing = 56
+	kWidth = GUI_WIDTH,
+	kHeight = GUI_HEIGHT,
+	kKeybX = 166,
+	kKeybY = 614,
+
+	//Master Section:
+	kMasterX = 793,
+	kMasterY = 53,
+
+	kMasterAttackX = 693,
+	kMasterDecayX = kMasterAttackX + 65,
+	kMasterSustainX = kMasterDecayX + 66,
+	kMasterReleaseX = kMasterSustainX + 66,
+
+	kMasterEnvelopeY = 137,
+
+	//Table:
+	kTableX = 296,//232,
+	kTableY = 101,
+	kTableSpaceX = 43,
+	kTableSpaceY = 40,
+	kTableSpaceGainY = 50,
+
+	//On/off Buttons
+	kSwitchX = 325,
+	kSwitchY = 358,
+	kSwitchSpaceX = 86,
+
+	//tabs
+	kTabX = 272,
+	kTabY = 344,
+	kTabMaxX = 957,
+	kTabMaxY = 484,
+
+	//vector space
+	kVectorSpaceX = 272,
+	kVectorSpaceY = 392,
+	kVectorSpaceMaxX = 955,
+	kVectorSpaceMaxY = 606,
+
+	//Buttons
+	kButtonX = 197,
+	kButtonY = 385,
+	kButtonYSpacing = 56,
+
+	//Load
+	kLoadX = 685,
+	kLoadY = 212,
+
+	//Presets
+	kPresetsX = 748,
+	kPresetsY = 213
 };
 
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -171,112 +179,111 @@ Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumProg
         vectorSpaces[i]->tableChanged.Connect(this, &Voltex::updateWaveTable);
     }
     
-    //test tables,
-    //square wave
-    WaveTable* squareTable;
-    squareTable = new WaveTable();
-    
-    std::tr1::array<double, 2048> values;
-    for (int i = 0; i < 2048; i++) {
-        if (i < 1024) {
-            values[i] = -1.0;
-        } else {
-            values[i] = 1.0;
-        }
-    }
-    squareTable->setValues(values);
-    waveTables[0] = squareTable;
-    vectorSpaces[0]->setValues(values, kVectorSpaceMaxY - kVectorSpaceY);
-    
-    //sine wave
-    WaveTable* sineTable;
-    sineTable = new WaveTable();
-    
-    std::tr1::array<double, 2048> sinValues;
-    for (int i = 0; i < 2048; i++) {
-        sinValues[i] = sin((i / 2048.0) * (4 * acos(0.0)));
-    }
-    sineTable->setValues(sinValues);
-    waveTables[1] = sineTable;
-    vectorSpaces[1]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
-    
-    WaveTable* sineTableTwo;
-    sineTableTwo = new WaveTable();
-    sineTableTwo->setValues(sinValues);
-    waveTables[3] = sineTableTwo;
-    vectorSpaces[3]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
-    
-    //triangle wave
-    WaveTable* triangleTable;
-    triangleTable = new WaveTable();
-    
-    std::tr1::array<double, 2048> triangleValues;
-    for (int i = 0; i < 2048; i++) {
-        int phase = i + 512;
-        if (phase > 2048) {
-            phase -= 2048;
-        }
-        double value = -1.0 + (2.0 * (((phase / 2048.0) * (4 * acos(0.0)))) / (4 * acos(0.0)));
-        triangleValues[i] = 2.0 * (fabs(value) - 0.5);
-    }
-    triangleTable->setValues(triangleValues);
-    waveTables[2] = triangleTable;
-    vectorSpaces[2]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
-    
-    //white noise
-    WaveTable* noiseTable;
-    noiseTable = new WaveTable();
-    
-    std::tr1::array<double, 2048> noiseValues;
-    
-    srand(time(NULL));
-    
-/*    //Box-Muller transform for random numbers with a gaussian distrbution
-    //Mean = 0, standard deviation = 1
-    double n2;
-    bool n2Cached = false;
-    for (int i = 0; i < 2048; i++) {
-        if (!n2Cached) {
-            double x, y, r;
-            do {
-                x = 2.0*rand()/RAND_MAX - 1;
-                y = 2.0*rand()/RAND_MAX - 1;
-                r = x*x + y*y;
-            } while (r == 0.0 || r > 1.0);
-            double d = sqrt(-2.0*log(r)/r);
-            n2 = y*d*.5;
-            n2Cached = true;
-            noiseValues[i] = x*d * .5;
-        } else {
-            //Each Box-Muller transfor gives us to values so we chache on and use it next time in order to do less work
-            n2Cached = false;
-            noiseValues[i] = n2;
-        }
-    }*/
-    
-    for (int i = 0; i < 2048; i++) {
-        noiseValues[i] = (static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2))) - 1.0;
-
-    }
-    
-    noiseTable->setValues(noiseValues);
-    waveTables[4] = noiseTable;
-    vectorSpaces[4]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
-    
-    voiceManager.setWavetables(&waveTables);
-    
     firstUpdate = true;
     
+	for (int x = 0; x < 5; x++) {
+		PresetOsc(x);
+	}
+
+	voiceManager.setWavetables(&waveTables);
+
     CreateParams();
     CreateGraphics();
     CreatePresets();
-    
+        
     firstUpdate = false;
     
     //Connect noteOn and noteOff signals to slots in the voice manager, this way they voice manager does not need to know anything about the midi reciever and vice versa.
     mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
     mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
 }
+
+void Voltex::PresetOsc(int c) {
+	//test tables,
+	//square wave
+	if (c == 0) {
+		WaveTable* emptyTable;
+		emptyTable = new WaveTable();
+
+		std::tr1::array<double, 2048> emptyValues;
+		for (int i = 0; i < 2048; i++) {
+			emptyValues[i] = 0;
+		}
+
+		emptyTable->setValues(emptyValues);
+		waveTables[5] = emptyTable;
+		vectorSpaces[5]->setValues(emptyValues, kVectorSpaceMaxY - kVectorSpaceY);
+
+	}
+	else if (c == 1) {
+		//sine wave
+		WaveTable* sineTable;
+		sineTable = new WaveTable();
+
+		std::tr1::array<double, 2048> sinValues;
+		for (int i = 0; i < 2048; i++) {
+			sinValues[i] = sin((i / 2048.0) * (4 * acos(0.0)));
+		}
+		sineTable->setValues(sinValues);
+		waveTables[1] = sineTable;
+		vectorSpaces[1]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
+		/*
+		WaveTable* sineTableTwo;
+		sineTableTwo = new WaveTable();
+		sineTableTwo->setValues(sinValues);
+		waveTables[3] = sineTableTwo;
+		vectorSpaces[3]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
+		*/
+	}
+	else if (c == 2) {
+		WaveTable* triangleTable;
+		triangleTable = new WaveTable();
+
+		std::tr1::array<double, 2048> triangleValues;
+		for (int i = 0; i < 2048; i++) {
+			double value = -1.0 + (2.0 * ((i / 2048.0) * (4 * acos(0.0))) / (4 * acos(0.0)));
+			triangleValues[i] = 2.0 * (fabs(value) - 0.5);
+		}
+		triangleTable->setValues(triangleValues);
+		waveTables[2] = triangleTable;
+		vectorSpaces[2]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
+	}
+	else if (c == 3) {
+		WaveTable* squareTable;
+		squareTable = new WaveTable();
+
+		std::tr1::array<double, 2048> values;
+		for (int i = 0; i < 2048; i++) {
+			if (i < 1024) {
+				values[i] = -1.0;
+			}
+			else {
+				values[i] = 1.0;
+			}
+		}
+		squareTable->setValues(values);
+		waveTables[0] = squareTable;
+		vectorSpaces[0]->setValues(values, kVectorSpaceMaxY - kVectorSpaceY);
+	}
+	else if (c == 4) {
+	//white noise
+	WaveTable* noiseTable;
+	noiseTable = new WaveTable();
+
+	std::tr1::array<double, 2048> noiseValues;
+
+	srand(time(NULL));
+
+	for (int i = 0; i < 2048; i++) {
+		noiseValues[i] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2)) - 1;
+	}
+
+	noiseTable->setValues(noiseValues);
+	waveTables[4] = noiseTable;
+	vectorSpaces[4]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
+	}
+	else {}
+	}
 
 void Voltex::CreateParams() {
     //GetParam(int param)->InitDouble(defaultVal, minVal, maxVal, step, label);
@@ -462,15 +469,27 @@ void Voltex::CreateGraphics() {
     toolSelection = new ISwitchControl(this, kButtonX, kButtonY + (2 * kButtonYSpacing), mToolSelection, &selectClick);
     pGraphics->AttachControl(toolSelection);
     toolDelete = new ISwitchControl(this, kButtonX, kButtonY + (3 * kButtonYSpacing), mToolDelete, &trashClick);
-    pGraphics->AttachControl(toolDelete);
-    
-    vuMeter = new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter);
-    pGraphics->AttachControl(vuMeter);
-    
-    //dB meter
-    //	IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
-    //	IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
-    
+	pGraphics->AttachControl(toolDelete);
+
+	//load and waveform selection
+	IBitmap loadIcon = pGraphics->LoadIBitmap(LOAD_ID, LOAD_FN, 2);
+	IBitmap presetIcon = pGraphics->LoadIBitmap(PRESETS_ID, PRESETS_FN, NUM_PRESETS);
+
+	load = new ISwitchControl(this, kLoadX, kLoadY, mLoad, &loadIcon);
+	pGraphics->AttachControl(load);
+	presets = new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
+	pGraphics->AttachControl(presets);
+
+	//dB meter
+	//moves vertically 246 (from 363 to 609) pixels from  0 dB to -inf. dB
+
+	pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
+	//IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
+	//IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
+
+	//pGraphics->AttachControl(new IBitmapControl(this, 65, 7, &dBCoverRect)); //replace 3rd param. with a changing value based on total. amplitude. 
+	//pGraphics->AttachControl(new IBitmapControl(this, 61, 92, &dBCoverBg));
+
     AttachGraphics(pGraphics);
 }
 
@@ -491,8 +510,7 @@ void Voltex::ProcessDoubleReplacing(double** inputs, double** outputs, int nFram
         mMIDIReceiver.advance();
         //The left and right channels are equal as our synth only works in mono
         leftOutput[i] = rightOutput[i] = (voiceManager.nextSample() * gain);
-        vuMeter->SetValueFromPlug(leftOutput[i]);
-        vuMeter->Redraw();
+		GetGUI()->SetParameterFromPlug(mVuMeter, leftOutput[i], true);
     }
     
     mMIDIReceiver.Flush(nFrames);

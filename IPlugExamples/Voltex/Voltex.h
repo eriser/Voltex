@@ -48,6 +48,9 @@ private:
     
     IControl* vuMeter;
     
+	IControl* load;
+	IControl* presets;
+
     std::tr1::array<VectorSpace*, NUM_TABLES> vectorSpaces;
     
     VoiceManager voiceManager;
