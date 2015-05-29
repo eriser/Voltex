@@ -37,9 +37,9 @@ enum EParams {
     // Master
     mGain,
     
-	//Tabs
-	mTab,
-
+    //Tabs
+    mTab,
+    
     //Switches
     mSwitchOne,
     mSwitchTwo,
@@ -59,7 +59,7 @@ enum EParams {
     mAttackSix,
     mAttackSeven,
     mAttackEight,
-
+    
     mDecayOne,
     mDecayTwo,
     mDecayThree,
@@ -108,6 +108,15 @@ enum EParams {
     kNumParams
 };
 
+enum WaveForms {
+    wBlank = 0,
+    wSine,
+    wTriangle,
+    wSquare,
+    wNoise,
+    numWaveForms
+};
+
 //Layout paramaters
 enum ELayout {
 	kWidth = GUI_WIDTH,
@@ -127,37 +136,32 @@ enum ELayout {
 	kMasterEnvelopeY = 137,
 
 	//Table:
-	kTableX = 292,//232,
+	kTableX = 292,
 	kTableY = 101,
 	kTableSpaceX = 44,
 	kTableSpaceY = 40,
 	kTableSpaceGainY = 50,
 
 	//On/off Buttons
-	kSwitchX = 295,
+	kSwitchX = 325,
 	kSwitchY = 358,
-	kSwitchSpaceX = 90,
+	kSwitchSpaceX = 86,
 
 	//tabs
-	kTabX = 240,
+	kTabX = 272,
 	kTabY = 344,
 	kTabMaxX = 957,
 	kTabMaxY = 484,
 
-	//Numbers
-	kNumX = 314,
-	kNumY = 369,
-	kNumXSpacing = 90,
-
 	//vector space
-	kVectorSpaceX = 240,
+	kVectorSpaceX = 272,
 	kVectorSpaceY = 392,
 	kVectorSpaceMaxX = 955,
 	kVectorSpaceMaxY = 606,
 
 	//Buttons
-	kButtonX = 181,
-	kButtonY = 387,
+	kButtonX = 197,
+	kButtonY = 385,
 	kButtonYSpacing = 56,
 
 	//Load
@@ -169,7 +173,7 @@ enum ELayout {
 	kPresetsY = 213
 };
 
-    Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
+Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
     TRACE;
     
     //initialize wavetables
@@ -183,112 +187,20 @@ enum ELayout {
         vectorSpaces[i]->index = i;
         vectorSpaces[i]->tableChanged.Connect(this, &Voltex::updateWaveTable);
     }
-    
-    firstUpdate = true;
-    
-	for (int x = 0; x < 5; x++) {
-		PresetOsc(x);
-	}
-
 	voiceManager.setWavetables(&waveTables);
 
+    firstUpdate = true;
+    
     CreateParams();
     CreateGraphics();
     CreatePresets();
-        
+    
     firstUpdate = false;
     
     //Connect noteOn and noteOff signals to slots in the voice manager, this way they voice manager does not need to know anything about the midi reciever and vice versa.
     mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
     mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
 }
-
-void Voltex::PresetOsc(int c) {
-	//test tables,
-	//square wave
-	if (c == 0) {
-		WaveTable* emptyTable;
-		emptyTable = new WaveTable();
-
-		std::tr1::array<double, 2048> emptyValues;
-		for (int i = 0; i < 2048; i++) {
-			emptyValues[i] = 0;
-		}
-
-		emptyTable->setValues(emptyValues);
-		waveTables[5] = emptyTable;
-		vectorSpaces[5]->setValues(emptyValues, kVectorSpaceMaxY - kVectorSpaceY);
-
-	}
-	else if (c == 1) {
-		//sine wave
-		WaveTable* sineTable;
-		sineTable = new WaveTable();
-
-		std::tr1::array<double, 2048> sinValues;
-		for (int i = 0; i < 2048; i++) {
-			sinValues[i] = sin((i / 2048.0) * (4 * acos(0.0)));
-		}
-		sineTable->setValues(sinValues);
-		waveTables[1] = sineTable;
-		vectorSpaces[1]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
-		/*
-		WaveTable* sineTableTwo;
-		sineTableTwo = new WaveTable();
-		sineTableTwo->setValues(sinValues);
-		waveTables[3] = sineTableTwo;
-		vectorSpaces[3]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
-		*/
-	}
-	else if (c == 2) {
-		WaveTable* triangleTable;
-		triangleTable = new WaveTable();
-
-		std::tr1::array<double, 2048> triangleValues;
-		for (int i = 0; i < 2048; i++) {
-			double value = -1.0 + (2.0 * ((i / 2048.0) * (4 * acos(0.0))) / (4 * acos(0.0)));
-			triangleValues[i] = 2.0 * (fabs(value) - 0.5);
-		}
-		triangleTable->setValues(triangleValues);
-		waveTables[2] = triangleTable;
-		vectorSpaces[2]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
-	}
-	else if (c == 3) {
-		WaveTable* squareTable;
-		squareTable = new WaveTable();
-
-		std::tr1::array<double, 2048> values;
-		for (int i = 0; i < 2048; i++) {
-			if (i < 1024) {
-				values[i] = -1.0;
-			}
-			else {
-				values[i] = 1.0;
-			}
-		}
-		squareTable->setValues(values);
-		waveTables[0] = squareTable;
-		vectorSpaces[0]->setValues(values, kVectorSpaceMaxY - kVectorSpaceY);
-	}
-	else if (c == 4) {
-	//white noise
-	WaveTable* noiseTable;
-	noiseTable = new WaveTable();
-
-	std::tr1::array<double, 2048> noiseValues;
-
-	srand(time(NULL));
-
-	for (int i = 0; i < 2048; i++) {
-		noiseValues[i] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2)) - 1;
-	}
-
-	noiseTable->setValues(noiseValues);
-	waveTables[4] = noiseTable;
-	vectorSpaces[4]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
-	}
-	else {}
-	}
 
 void Voltex::CreateParams() {
     //GetParam(int param)->InitDouble(defaultVal, minVal, maxVal, step, label);
@@ -308,10 +220,10 @@ void Voltex::CreateParams() {
     GetParam(mGain)->InitDouble("Gain", 80.0, 0.0, 100.0, parameterStep);
     GetParam(mGain)->SetShape(2);
     
-	//Tabs
+    //Tabs
     GetParam(mTab)->InitEnum("Wavetable Tab", 0, NUM_TABLES);
     GetParam(mTab)->SetDisplayText(0, "Wavetable Tab");
-
+    
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
         GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
@@ -355,10 +267,9 @@ void Voltex::CreateParams() {
 	GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
 
 	//Presets
-	GetParam(mPreset)->InitEnum("Preset", 0, NUM_PRESETS);
-
+	GetParam(mPreset)->InitEnum("Preset", wBlank, numWaveForms);
 	//Load
-	GetParam(mPreset)->InitBool("Load", false);
+	GetParam(mLoad)->InitBool("Load", false);
 
     //Initial param update
     for (int i = 0; i < kNumParams; i++) {
@@ -368,7 +279,7 @@ void Voltex::CreateParams() {
     for (int i = 0; i < NUM_TABLES; i++) {
         vectorSpaces[i]->sendSignals = true;
     }
-
+    
 }
 
 void Voltex::CreateGraphics() {
@@ -384,46 +295,26 @@ void Voltex::CreateGraphics() {
     int keyCoordinates[12] = { 0, 15, 20, 37, 46, 68, 81, 96, 103, 118, 125, 140 };
     mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
     pGraphics->AttachControl(mVirtualKeyboard);
-
-    //Create on/off buttons and tabs
-	
-	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
-	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
     
-	
+    //Create on/off buttons and tabs
+    
+    IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
+    IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
+    
     //Tabs
     pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
     
-	//Tab Numbers
-
-	IBitmap one = pGraphics->LoadIBitmap(ONE_ID, ONE_FN, 1);
-	IBitmap two = pGraphics->LoadIBitmap(TWO_ID, TWO_FN, 1);
-	IBitmap three = pGraphics->LoadIBitmap(THREE_ID, THREE_FN, 1);
-	IBitmap four = pGraphics->LoadIBitmap(FOUR_ID, FOUR_FN, 1);
-	IBitmap five = pGraphics->LoadIBitmap(FIVE_ID, FIVE_FN, 1);
-	IBitmap six = pGraphics->LoadIBitmap(SIX_ID, SIX_FN, 1);
-	IBitmap seven = pGraphics->LoadIBitmap(SEVEN_ID, SEVEN_FN, 1);
-	IBitmap eight = pGraphics->LoadIBitmap(EIGHT_ID, EIGHT_FN, 1);
-
-	pGraphics->AttachControl(new IBitmapControl(this, kNumX, kNumY, &one));
-	pGraphics->AttachControl(new IBitmapControl(this, kNumX + kNumXSpacing, kNumY, &two));
-	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (2 * kNumXSpacing), kNumY, &three));
-	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (3 * kNumXSpacing), kNumY, &four));
-	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (4 * kNumXSpacing), kNumY, &five));
-	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (5 * kNumXSpacing), kNumY, &six));
-	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (6 * kNumXSpacing), kNumY, &seven));
-	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (7 * kNumXSpacing), kNumY, &eight));
-
+    
     //Switches
-	int x = kSwitchX, y = 0;
-	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
+    int x = kSwitchX, y = 0;
+    for (int v = mSwitchOne; v <= mSwitchEight; v++) {
         if (v == mSwitchThree || v == mSwitchTwo) {
             pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
         } else {
-			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
-		}
-		x = kSwitchSpaceX + x;
-	}
+            pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
+        }
+        x = kSwitchSpaceX + x;
+    }
     
     //Create knobs
     IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
@@ -478,19 +369,21 @@ void Voltex::CreateGraphics() {
     for (int i = 0; i < NUM_TABLES; i++) {
         pGraphics->AttachControl(vectorSpaces[i]);
     }
-
-	//Buttons
-	IBitmap cursorClick = pGraphics->LoadIBitmap(CURSORCLK_ID, CURSORCLK_FN, 2);
-	IBitmap pencilClick = pGraphics->LoadIBitmap(PENCILCLK_ID, PENCILCLK_FN, 2);
-	IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
-	IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
-
+    
+    //Buttons
+    IBitmap cursorClick = pGraphics->LoadIBitmap(CURSORCLK_ID, CURSORCLK_FN, 2);
+    IBitmap pencilClick = pGraphics->LoadIBitmap(PENCILCLK_ID, PENCILCLK_FN, 2);
+    IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
+    IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
+    
+    //     pGraphics->AttachControl(new ISwitchControl(parent, x, t, param, img));
+    
     toolCursor = new ISwitchControl(this, kButtonX, kButtonY, mToolCursor, &cursorClick);
-	pGraphics->AttachControl(toolCursor);
+    pGraphics->AttachControl(toolCursor);
     toolPencil = new ISwitchControl(this, kButtonX, kButtonY + kButtonYSpacing, mToolPencil, &pencilClick);
-	pGraphics->AttachControl(toolPencil);
+    pGraphics->AttachControl(toolPencil);
     toolSelection = new ISwitchControl(this, kButtonX, kButtonY + (2 * kButtonYSpacing), mToolSelection, &selectClick);
-	pGraphics->AttachControl(toolSelection);
+    pGraphics->AttachControl(toolSelection);
     toolDelete = new ISwitchControl(this, kButtonX, kButtonY + (3 * kButtonYSpacing), mToolDelete, &trashClick);
 	pGraphics->AttachControl(toolDelete);
 
@@ -502,13 +395,6 @@ void Voltex::CreateGraphics() {
 	pGraphics->AttachControl(load);
 	presets = new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
 	pGraphics->AttachControl(presets);
-
-	//dB meter
-	//moves vertically 246 (from 363 to 609) pixels from  0 dB to -inf. dB
-
-	//pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
-	//IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
-	//IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
 
 	//pGraphics->AttachControl(new IBitmapControl(this, 65, 7, &dBCoverRect)); //replace 3rd param. with a changing value based on total. amplitude. 
 	//pGraphics->AttachControl(new IBitmapControl(this, 61, 92, &dBCoverBg));
@@ -561,8 +447,8 @@ void Voltex::OnParamChange(int paramIdx) {
         case mGain:
             gain = param->Value() / 100.0;
             break;
-        // Volume Envelope:
-        //In each case we need to create a VoiceChangerFunction wich defines the stage and value fields but leaves the voice field empty so that it can be filled later as it is being iterated through
+            // Volume Envelope:
+            //In each case we need to create a VoiceChangerFunction wich defines the stage and value fields but leaves the voice field empty so that it can be filled later as it is being iterated through
         case mVolumeEnvAttack:
             changer = bind(&VoiceManager::setVolumeEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Value());
             voiceManager.changeAllVoices(changer);
@@ -582,16 +468,16 @@ void Voltex::OnParamChange(int paramIdx) {
         default:
             if (paramIdx >= mAttackOne && paramIdx <= mAttackEight) {
                 //Attack
-                waveTables[paramIdx - (mAttackOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Value());
+                waveTables[paramIdx - (mAttackOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, param->Int());
             } else if (paramIdx >= mDecayOne && paramIdx <= mDecayEight) {
                 //Decay
-                waveTables[paramIdx - (mDecayOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_DECAY, param->Value());
+                waveTables[paramIdx - (mDecayOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_DECAY, param->Int());
             } else if (paramIdx >= mSustainOne && paramIdx <= mSustainEight) {
                 //Sustain
-                waveTables[paramIdx - (mSustainOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, param->Value());
+                waveTables[paramIdx - (mSustainOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, param->Int());
             } else if (paramIdx >= mReleaseOne && paramIdx <= mReleaseEight) {
                 //Release
-                waveTables[paramIdx - (mReleaseOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Value());
+                waveTables[paramIdx - (mReleaseOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Int());
             } else if (paramIdx >= mGainOne && paramIdx <= mGainEight) {
                 //Gain
                 waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
@@ -605,10 +491,10 @@ void Voltex::OnParamChange(int paramIdx) {
                 }
             } else if (paramIdx >= mSwitchOne && paramIdx <= mSwitchEight) {
                 //Switches
-                waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Value());
+                waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Bool());
             } else if (paramIdx == mToolCursor) {
                 //Tool: Cursor
-                if (param->Value() == true) {
+                if (param->Bool() == true) {
                     if (!firstUpdate) {
                         toolPencil->SetValueFromPlug(false);
                         toolSelection->SetValueFromPlug(false);
@@ -622,7 +508,7 @@ void Voltex::OnParamChange(int paramIdx) {
                 }
             } else if (paramIdx == mToolPencil) {
                 //Tool: Pencil
-                if (param->Value() == true) {
+                if (param->Bool() == true) {
                     if (!firstUpdate) {
                         toolCursor->SetValueFromPlug(false);
                         toolSelection->SetValueFromPlug(false);
@@ -636,7 +522,7 @@ void Voltex::OnParamChange(int paramIdx) {
                 }
             } else if (paramIdx == mToolSelection) {
                 //Tool: Selection
-                if (param->Value() == true) {
+                if (param->Bool() == true) {
                     if (!firstUpdate) {
                         toolPencil->SetValueFromPlug(false);
                         toolCursor->SetValueFromPlug(false);
@@ -650,7 +536,7 @@ void Voltex::OnParamChange(int paramIdx) {
                 }
             } else if (paramIdx == mToolDelete) {
                 //Tool: Delete
-                if (param->Value() == true) {
+                if (param->Bool() == true) {
                     if (!firstUpdate) {
                         toolPencil->SetValueFromPlug(false);
                         toolSelection->SetValueFromPlug(false);
@@ -662,16 +548,86 @@ void Voltex::OnParamChange(int paramIdx) {
                         toolDelete->SetValueFromPlug(true);
                     }
                 }
-			}
-			else if (paramIdx == mLoad){
-
-			}
-			else if (paramIdx == mPreset){
-				
-				//g->SetValueFromUserInput();
-			}
-			
-			else {
+            } else if (paramIdx == mLoad){
+                if (param->Bool() == true) {
+                    for (int i = 0; i < vectorSpaces.size(); i++) {
+                        if (!vectorSpaces[i]->IsHidden()) {
+                            if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wBlank) {
+                                WaveTable* emptyTable;
+                                emptyTable = new WaveTable();
+                                
+                                std::tr1::array<double, 2048> emptyValues;
+                                for (int j = 0; j < 2048; j++) {
+                                    emptyValues[j] = 0;
+                                }
+                                
+                                emptyTable->setValues(emptyValues);
+                                waveTables[i] = emptyTable;
+                                vectorSpaces[i]->clear();
+                                vectorSpaces[i]->Redraw();
+                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSine) {
+                                WaveTable* sineTable;
+                                sineTable = new WaveTable();
+                                        
+                                std::tr1::array<double, 2048> sinValues;
+                                for (int j = 0; j < 2048; j++) {
+                                    sinValues[j] = sin((j / 2048.0) * (4 * acos(0.0)));
+                                }
+                                sineTable->setValues(sinValues);
+                                waveTables[i] = sineTable;
+                                vectorSpaces[i]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
+                                vectorSpaces[i]->Redraw();
+                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wTriangle) {
+                                WaveTable* triangleTable;
+                                triangleTable = new WaveTable();
+                                        
+                                std::tr1::array<double, 2048> triangleValues;
+                                for (int j = 0; j < 2048; j++) {
+                                    int phase = j - 512;
+                                    while (phase < 0) {
+                                        phase += 2048;
+                                    }
+                                    double value = -1.0 + ((phase / 2048.0) * 2);
+                                    triangleValues[j] = 2.0 * (fabs(value) - 0.5);
+                                }
+                                triangleTable->setValues(triangleValues);
+                                waveTables[i] = triangleTable;
+                                vectorSpaces[i]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
+                                vectorSpaces[i]->Redraw();
+                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSquare) {
+                                WaveTable* squareTable;
+                                squareTable = new WaveTable();
+                                std::tr1::array<double, 2048> squareValues;
+                                for (int j = 0; j < 2048; j++) {
+                                    if (j < 1024) {
+                                        squareValues[j] = -1;
+                                    } else {
+                                        squareValues[j] = 1;
+                                    }
+                                }
+                                squareTable->setValues(squareValues);
+                                waveTables[i] = squareTable;
+                                vectorSpaces[i]->setValues(squareValues, kVectorSpaceMaxY - kVectorSpaceY);
+                                vectorSpaces[i]->Redraw();
+                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wNoise) {
+                                WaveTable* noiseTable;
+                                noiseTable = new WaveTable();
+                                
+                                std::tr1::array<double, 2048> noiseValues;
+                                
+                                srand(time(NULL));
+                                for (int j = 0; j < 2048; j++) {
+                                    noiseValues[j] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2)) - 1;
+                                }
+                                
+                                noiseTable->setValues(noiseValues);
+                                waveTables[i] = noiseTable;
+                                vectorSpaces[i]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
+                            }
+                        }}
+                }
+            }
+            else {
                 //oops
             }
             break;
