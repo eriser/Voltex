@@ -43,5 +43,4 @@ dependencies: \
   /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/app_wrapper/../EnvelopeGenerator.h \
   /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/app_wrapper/../Synth.h \
   /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/app_wrapper/../WaveTable.h \
-  /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/app_wrapper/../VectorSpace.h \
-  /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/app_wrapper/../VuMeter.h
+  /Users/samueldewan/plugin-development/Voltex/IPlugExamples/Voltex/app_wrapper/../VectorSpace.h
