@@ -119,58 +119,63 @@ enum WaveForms {
 
 //Layout paramaters
 enum ELayout {
-	kWidth = GUI_WIDTH,
-	kHeight = GUI_HEIGHT,
-	kKeybX = 166,
-	kKeybY = 614,
-
-	//Master Section:
-	kMasterX = 793,
-	kMasterY = 53,
-
-	kMasterAttackX = 693,
-	kMasterDecayX = kMasterAttackX + 65,
-	kMasterSustainX = kMasterDecayX + 66,
-	kMasterReleaseX = kMasterSustainX + 66,
-
-	kMasterEnvelopeY = 137,
-
-	//Table:
-	kTableX = 292,
-	kTableY = 101,
-	kTableSpaceX = 44,
-	kTableSpaceY = 40,
-	kTableSpaceGainY = 50,
-
-	//On/off Buttons
-	kSwitchX = 325,
-	kSwitchY = 358,
-	kSwitchSpaceX = 86,
-
-	//tabs
-	kTabX = 272,
-	kTabY = 344,
-	kTabMaxX = 957,
-	kTabMaxY = 484,
-
-	//vector space
-	kVectorSpaceX = 272,
-	kVectorSpaceY = 392,
-	kVectorSpaceMaxX = 955,
-	kVectorSpaceMaxY = 606,
-
-	//Buttons
-	kButtonX = 197,
-	kButtonY = 385,
-	kButtonYSpacing = 56,
-
-	//Load
-	kLoadX = 685,
-	kLoadY = 212,
-
-	//Presets
-	kPresetsX = 748,
-	kPresetsY = 213
+    kWidth = GUI_WIDTH,
+    kHeight = GUI_HEIGHT,
+    kKeybX = 166,
+    kKeybY = 614,
+    
+    //Master Section:
+    kMasterX = 793,
+    kMasterY = 53,
+    
+    kMasterAttackX = 693,
+    kMasterDecayX = kMasterAttackX + 65,
+    kMasterSustainX = kMasterDecayX + 66,
+    kMasterReleaseX = kMasterSustainX + 66,
+    
+    kMasterEnvelopeY = 137,
+    
+    //Table:
+    kTableX = 292,//232,
+    kTableY = 101,
+    kTableSpaceX = 44,
+    kTableSpaceY = 40,
+    kTableSpaceGainY = 50,
+    
+    //On/off Buttons
+    kSwitchX = 295,
+    kSwitchY = 358,
+    kSwitchSpaceX = 90,
+    
+    //tabs
+    kTabX = 240,
+    kTabY = 344,
+    kTabMaxX = 957,
+    kTabMaxY = 484,
+    
+    //Numbers
+    kNumX = 314,
+    kNumY = 369,
+    kNumXSpacing = 90,
+    
+    //vector space
+    kVectorSpaceX = 240,
+    kVectorSpaceY = 392,
+    kVectorSpaceMaxX = 955,
+    kVectorSpaceMaxY = 606,
+    
+    //Buttons
+    kButtonX = 181,
+    kButtonY = 387,
+    kButtonYSpacing = 56,
+    
+    //Load
+    kLoadX = 685,
+    kLoadY = 212,
+    
+    //Presets
+    kPresetsX = 748,
+    kPresetsY = 213
 };
 
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -221,8 +226,8 @@ void Voltex::CreateParams() {
     GetParam(mGain)->SetShape(2);
     
     //Tabs
-    GetParam(mTab)->InitEnum("Wavetable Tab", 0, NUM_TABLES);
-    GetParam(mTab)->SetDisplayText(0, "Wavetable Tab");
+    GetParam(mPreset)->InitEnum("Wavetable Tab", wBlank, NUM_TABLES);
+    GetParam(mPreset)->SetDisplayText(0, "Wavetable Tab");
     
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
@@ -264,13 +269,14 @@ void Voltex::CreateParams() {
     GetParam(mToolSelection)->InitBool("Selection", false);
     GetParam(mToolDelete)->InitBool("Delete", false);
     
-	GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
-
-	//Presets
-	GetParam(mPreset)->InitEnum("Preset", wBlank, numWaveForms);
-	//Load
-	GetParam(mLoad)->InitBool("Load", false);
-
+    GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
+    
+    //Presets
+    GetParam(mPreset)->InitEnum("Preset", wBlank, numWaveForms);
+    
+    //Load
+    GetParam(mLoad)->InitBool("Load", false);
+    
     //Initial param update
     for (int i = 0; i < kNumParams; i++) {
         OnParamChange(i);
@@ -301,9 +307,29 @@ void Voltex::CreateGraphics() {
     IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
     IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
     
+    
     //Tabs
     pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
     
+    //Tab Numbers
+    
+    IBitmap one = pGraphics->LoadIBitmap(ONE_ID, ONE_FN, 1);
+    IBitmap two = pGraphics->LoadIBitmap(TWO_ID, TWO_FN, 1);
+    IBitmap three = pGraphics->LoadIBitmap(THREE_ID, THREE_FN, 1);
+    IBitmap four = pGraphics->LoadIBitmap(FOUR_ID, FOUR_FN, 1);
+    IBitmap five = pGraphics->LoadIBitmap(FIVE_ID, FIVE_FN, 1);
+    IBitmap six = pGraphics->LoadIBitmap(SIX_ID, SIX_FN, 1);
+    IBitmap seven = pGraphics->LoadIBitmap(SEVEN_ID, SEVEN_FN, 1);
+    IBitmap eight = pGraphics->LoadIBitmap(EIGHT_ID, EIGHT_FN, 1);
+    
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX, kNumY, &one));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + kNumXSpacing, kNumY, &two));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (2 * kNumXSpacing), kNumY, &three));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (3 * kNumXSpacing), kNumY, &four));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (4 * kNumXSpacing), kNumY, &five));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (5 * kNumXSpacing), kNumY, &six));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (6 * kNumXSpacing), kNumY, &seven));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (7 * kNumXSpacing), kNumY, &eight));
     
     //Switches
     int x = kSwitchX, y = 0;
@@ -376,8 +402,6 @@ void Voltex::CreateGraphics() {
     IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
     IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
     
-    //     pGraphics->AttachControl(new ISwitchControl(parent, x, t, param, img));
-    
     toolCursor = new ISwitchControl(this, kButtonX, kButtonY, mToolCursor, &cursorClick);
     pGraphics->AttachControl(toolCursor);
     toolPencil = new ISwitchControl(this, kButtonX, kButtonY + kButtonYSpacing, mToolPencil, &pencilClick);
@@ -385,20 +409,27 @@ void Voltex::CreateGraphics() {
     toolSelection = new ISwitchControl(this, kButtonX, kButtonY + (2 * kButtonYSpacing), mToolSelection, &selectClick);
     pGraphics->AttachControl(toolSelection);
     toolDelete = new ISwitchControl(this, kButtonX, kButtonY + (3 * kButtonYSpacing), mToolDelete, &trashClick);
-	pGraphics->AttachControl(toolDelete);
-
-	//load and waveform selection
-	IBitmap loadIcon = pGraphics->LoadIBitmap(LOAD_ID, LOAD_FN, 2);
-	IBitmap presetIcon = pGraphics->LoadIBitmap(PRESETS_ID, PRESETS_FN, NUM_PRESETS);
-
-	load = new IContactControl(this, kLoadX, kLoadY, mLoad, &loadIcon);
-	pGraphics->AttachControl(load);
-	presets = new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
-	pGraphics->AttachControl(presets);
-
-	//pGraphics->AttachControl(new IBitmapControl(this, 65, 7, &dBCoverRect)); //replace 3rd param. with a changing value based on total. amplitude. 
-	//pGraphics->AttachControl(new IBitmapControl(this, 61, 92, &dBCoverBg));
-
+    pGraphics->AttachControl(toolDelete);
+    
+    //load and waveform selection
+    IBitmap loadIcon = pGraphics->LoadIBitmap(LOAD_ID, LOAD_FN, 2);
+    IBitmap presetIcon = pGraphics->LoadIBitmap(PRESETS_ID, PRESETS_FN, NUM_PRESETS);
+    
+    load = new IContactControl(this, kLoadX, kLoadY, mLoad, &loadIcon);
+    pGraphics->AttachControl(load);
+    presets = new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
+    pGraphics->AttachControl(presets);
+    
+    //dB meter
+    //moves vertically 246 (from 363 to 609) pixels from  0 dB to -inf. dB
+    
+    //pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
+    //IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
+    //IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
+    
+    //pGraphics->AttachControl(new IBitmapControl(this, 65, 7, &dBCoverRect)); //replace 3rd param. with a changing value based on total. amplitude.
+    //pGraphics->AttachControl(new IBitmapControl(this, 61, 92, &dBCoverBg));
+    
     AttachGraphics(pGraphics);
 }
 
@@ -550,6 +581,7 @@ void Voltex::OnParamChange(int paramIdx) {
                 }
             } else if (paramIdx == mLoad){
                 if (param->Bool() == true) {
+                    printf("%d\n", GetParam(mPreset)->Int());
                     for (int i = 0; i < vectorSpaces.size(); i++) {
                         if (!vectorSpaces[i]->IsHidden()) {
                             if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wBlank) {
@@ -626,8 +658,7 @@ void Voltex::OnParamChange(int paramIdx) {
                             }
                         }}
                 }
-            }
-            else {
+            } else {
                 //oops
             }
             break;
