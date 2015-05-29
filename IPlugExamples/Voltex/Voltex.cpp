@@ -396,13 +396,6 @@ void Voltex::CreateGraphics() {
 	presets = new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
 	pGraphics->AttachControl(presets);
 
-	//dB meter
-	//moves vertically 246 (from 363 to 609) pixels from  0 dB to -inf. dB
-
-	pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
-	//IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
-	//IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
-
 	//pGraphics->AttachControl(new IBitmapControl(this, 65, 7, &dBCoverRect)); //replace 3rd param. with a changing value based on total. amplitude. 
 	//pGraphics->AttachControl(new IBitmapControl(this, 61, 92, &dBCoverBg));
 
