@@ -127,32 +127,37 @@ enum ELayout {
 	kMasterEnvelopeY = 137,
 
 	//Table:
-	kTableX = 296,//232,
+	kTableX = 292,//232,
 	kTableY = 101,
-	kTableSpaceX = 43,
+	kTableSpaceX = 44,
 	kTableSpaceY = 40,
 	kTableSpaceGainY = 50,
 
 	//On/off Buttons
-	kSwitchX = 325,
+	kSwitchX = 295,
 	kSwitchY = 358,
-	kSwitchSpaceX = 86,
+	kSwitchSpaceX = 90,
 
 	//tabs
-	kTabX = 272,
+	kTabX = 240,
 	kTabY = 344,
 	kTabMaxX = 957,
 	kTabMaxY = 484,
 
+	//Numbers
+	kNumX = 314,
+	kNumY = 369,
+	kNumXSpacing = 90,
+
 	//vector space
-	kVectorSpaceX = 272,
+	kVectorSpaceX = 240,
 	kVectorSpaceY = 392,
 	kVectorSpaceMaxX = 955,
 	kVectorSpaceMaxY = 606,
 
 	//Buttons
-	kButtonX = 197,
-	kButtonY = 385,
+	kButtonX = 181,
+	kButtonY = 387,
 	kButtonYSpacing = 56,
 
 	//Load
@@ -385,10 +390,30 @@ void Voltex::CreateGraphics() {
 	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
 	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
     
+	
     //Tabs
     pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
     
-    
+	//Tab Numbers
+
+	IBitmap one = pGraphics->LoadIBitmap(ONE_ID, ONE_FN, 1);
+	IBitmap two = pGraphics->LoadIBitmap(TWO_ID, TWO_FN, 1);
+	IBitmap three = pGraphics->LoadIBitmap(THREE_ID, THREE_FN, 1);
+	IBitmap four = pGraphics->LoadIBitmap(FOUR_ID, FOUR_FN, 1);
+	IBitmap five = pGraphics->LoadIBitmap(FIVE_ID, FIVE_FN, 1);
+	IBitmap six = pGraphics->LoadIBitmap(SIX_ID, SIX_FN, 1);
+	IBitmap seven = pGraphics->LoadIBitmap(SEVEN_ID, SEVEN_FN, 1);
+	IBitmap eight = pGraphics->LoadIBitmap(EIGHT_ID, EIGHT_FN, 1);
+
+	pGraphics->AttachControl(new IBitmapControl(this, kNumX, kNumY, &one));
+	pGraphics->AttachControl(new IBitmapControl(this, kNumX + kNumXSpacing, kNumY, &two));
+	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (2 * kNumXSpacing), kNumY, &three));
+	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (3 * kNumXSpacing), kNumY, &four));
+	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (4 * kNumXSpacing), kNumY, &five));
+	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (5 * kNumXSpacing), kNumY, &six));
+	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (6 * kNumXSpacing), kNumY, &seven));
+	pGraphics->AttachControl(new IBitmapControl(this, kNumX + (7 * kNumXSpacing), kNumY, &eight));
+
     //Switches
 	int x = kSwitchX, y = 0;
 	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
@@ -460,8 +485,6 @@ void Voltex::CreateGraphics() {
 	IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
 	IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
 
-//     pGraphics->AttachControl(new ISwitchControl(parent, x, t, param, img));
-    
     toolCursor = new ISwitchControl(this, kButtonX, kButtonY, mToolCursor, &cursorClick);
 	pGraphics->AttachControl(toolCursor);
     toolPencil = new ISwitchControl(this, kButtonX, kButtonY + kButtonYSpacing, mToolPencil, &pencilClick);
@@ -475,7 +498,7 @@ void Voltex::CreateGraphics() {
 	IBitmap loadIcon = pGraphics->LoadIBitmap(LOAD_ID, LOAD_FN, 2);
 	IBitmap presetIcon = pGraphics->LoadIBitmap(PRESETS_ID, PRESETS_FN, NUM_PRESETS);
 
-	load = new ISwitchControl(this, kLoadX, kLoadY, mLoad, &loadIcon);
+	load = new IContactControl(this, kLoadX, kLoadY, mLoad, &loadIcon);
 	pGraphics->AttachControl(load);
 	presets = new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
 	pGraphics->AttachControl(presets);
@@ -483,7 +506,7 @@ void Voltex::CreateGraphics() {
 	//dB meter
 	//moves vertically 246 (from 363 to 609) pixels from  0 dB to -inf. dB
 
-	pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
+	//pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
 	//IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
 	//IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
 
@@ -641,7 +664,7 @@ void Voltex::OnParamChange(int paramIdx) {
                 }
 			}
 			else if (paramIdx == mLoad){
-				
+
 			}
 			else if (paramIdx == mPreset){
 				

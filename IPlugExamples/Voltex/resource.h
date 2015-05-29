@@ -63,6 +63,15 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define TRASHCLK_ID		112
 #define PRESETS_ID		113
 #define LOAD_ID			114
+#define ONE_ID			115
+#define TWO_ID			116
+#define THREE_ID		117
+#define FOUR_ID			118
+#define FIVE_ID			119
+#define SIX_ID			120
+#define SEVEN_ID		121
+#define EIGHT_ID		122
+
 
 // Image resource locations for this plug.
 #define BG_FN             "resources/img/bg.png"
@@ -79,7 +88,14 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define TRASHCLK_FN       "resources/img/ButtonPressed/trashClicked.png"
 #define PRESETS_FN		  "resources/img/presets.png"
 #define LOAD_FN           "resources/img/load.png"
-
+#define	ONE_FN			  "resources/img/Numbers/1.png"
+#define TWO_FN			  "resources/img/Numbers/2.png"
+#define THREE_FN		  "resources/img/Numbers/3.png"
+#define FOUR_FN			  "resources/img/Numbers/4.png"
+#define FIVE_FN           "resources/img/Numbers/5.png"
+#define SIX_FN			  "resources/img/Numbers/6.png"
+#define SEVEN_FN          "resources/img/Numbers/7.png"
+#define EIGHT_FN          "resources/img/Numbers/8.png"
 // GUI default dimensions
 #define GUI_WIDTH   960
 #define GUI_HEIGHT  680
