@@ -36,6 +36,8 @@ public:
     bool isEnabled();
     double getValueAt (double index);
     
+    int size() {return TABLE_LENGTH;}
+    
     WaveTable(): gain(1.0) //initialization list
 	{
 		//Constructor Body

@@ -49,28 +49,30 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // Unique IDs for each image resource.
-#define BG_ID			101
-#define WHITE_KEY_ID	102
-#define BLACK_KEY_ID	103
-#define KNOB_ID			104
-#define SWITCHES_ID		105
-#define TAB_ID			106
-#define DBCOVERBG_ID	107
+#define BG_ID           101
+#define WHITE_KEY_ID    102
+#define BLACK_KEY_ID    103
+#define KNOB_ID         104
+#define SWITCHES_ID     105
+#define TAB_ID          106
+#define DBCOVERBG_ID    107
 #define DBCOVERRECT_ID	108
-#define CURSORCLK_ID	109
-#define PENCILCLK_ID	110
-#define SELECTCLK_ID	111
-#define TRASHCLK_ID		112
-#define PRESETS_ID		113
-#define LOAD_ID			114
-#define ONE_ID			115
-#define TWO_ID			116
-#define THREE_ID		117
-#define FOUR_ID			118
-#define FIVE_ID			119
-#define SIX_ID			120
-#define SEVEN_ID		121
-#define EIGHT_ID		122
+#define CURSORCLK_ID    109
+#define PENCILCLK_ID    110
+#define SELECTCLK_ID    111
+#define TRASHCLK_ID     112
+#define PRESETS_ID      113
+#define LOAD_ID         114
+#define ONE_ID          115
+#define TWO_ID          116
+#define THREE_ID        117
+#define FOUR_ID         118
+#define FIVE_ID         119
+#define SIX_ID          120
+#define SEVEN_ID        121
+#define EIGHT_ID        122
+#define SAVE_MENU_ID    123
+#define LOAD_MENU_ID    124
 
 
 // Image resource locations for this plug.
@@ -86,16 +88,19 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define PENCILCLK_FN      "resources/img/ButtonPressed/pencilClicked.png"
 #define SELECTCLK_FN      "resources/img/ButtonPressed/selectClicked.png"
 #define TRASHCLK_FN       "resources/img/ButtonPressed/trashClicked.png"
-#define PRESETS_FN		  "resources/img/presets.png"
+#define PRESETS_FN        "resources/img/presets.png"
 #define LOAD_FN           "resources/img/load.png"
-#define	ONE_FN			  "resources/img/Numbers/1.png"
-#define TWO_FN			  "resources/img/Numbers/2.png"
-#define THREE_FN		  "resources/img/Numbers/3.png"
-#define FOUR_FN			  "resources/img/Numbers/4.png"
+#define	ONE_FN            "resources/img/Numbers/1.png"
+#define TWO_FN            "resources/img/Numbers/2.png"
+#define THREE_FN          "resources/img/Numbers/3.png"
+#define FOUR_FN           "resources/img/Numbers/4.png"
 #define FIVE_FN           "resources/img/Numbers/5.png"
-#define SIX_FN			  "resources/img/Numbers/6.png"
+#define SIX_FN            "resources/img/Numbers/6.png"
 #define SEVEN_FN          "resources/img/Numbers/7.png"
 #define EIGHT_FN          "resources/img/Numbers/8.png"
+#define SAVE_MENU_FN      "resources/img/savemenu.png"
+#define LOAD_MENU_FN      "resources/img/loadmenu.png"
+
 // GUI default dimensions
 #define GUI_WIDTH   960
 #define GUI_HEIGHT  680

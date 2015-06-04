@@ -14,6 +14,8 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
+#include "FileAccess.h"
+
 #ifdef WIN32
 #include <array>
 #include <functional>
@@ -102,10 +104,19 @@ enum EParams {
     mToolDelete,
     
 	mPreset,
-	mLoad,
-	mVuMeter,
-
-    kNumParams
+	
+    kSavedParams,
+    
+    //all contact switches are after kSavedParams since we don't want to save them
+    mLoad,
+    mSaveMenu,
+    mLoadMenu,
+    
+    kNumParams,
+    
+    //Dummy paramaters for file selectors
+    mSaveFile,
+    mLoadFile
 };
 
 enum WaveForms {
@@ -175,7 +186,12 @@ enum ELayout {
     
     //Presets
     kPresetsX = 748,
-    kPresetsY = 213
+    kPresetsY = 213,
+    
+    //Menus
+    kSaveMenuX = 253,
+    kLoadMenuX = 160,
+    kMenuY = 8
 };
 
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -269,23 +285,27 @@ void Voltex::CreateParams() {
     GetParam(mToolSelection)->InitBool("Selection", false);
     GetParam(mToolDelete)->InitBool("Delete", false);
     
-    GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
-    
     //Presets
     GetParam(mPreset)->InitEnum("Preset", wBlank, numWaveForms);
     
     //Load
     GetParam(mLoad)->InitBool("Load", false);
     
+    //Load and save menus
+    GetParam(mSaveMenu)->InitBool("Save", false);
+    GetParam(mLoadMenu)->InitBool("Load", false);
+    
     //Initial param update
     for (int i = 0; i < kNumParams; i++) {
-        OnParamChange(i);
+        if (i != kSavedParams) {
+            OnParamChange(i);
+        }
     }
     
+    //we don't want the vector spaces to start updating till after the initial param update or they will make thier nice staight lines into a ton of points.
     for (int i = 0; i < NUM_TABLES; i++) {
         vectorSpaces[i]->sendSignals = true;
     }
-    
 }
 
 void Voltex::CreateGraphics() {
@@ -419,16 +439,13 @@ void Voltex::CreateGraphics() {
     pGraphics->AttachControl(load);
     presets = new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
     pGraphics->AttachControl(presets);
+
     
-    //dB meter
-    //moves vertically 246 (from 363 to 609) pixels from  0 dB to -inf. dB
+    IBitmap saveMenu = pGraphics->LoadIBitmap(SAVE_MENU_ID, SAVE_MENU_FN, 2);
+    IBitmap loadMenu = pGraphics->LoadIBitmap(LOAD_MENU_ID, LOAD_MENU_FN, 2);
+    pGraphics->AttachControl(new IContactControl(this, kSaveMenuX, kMenuY, mSaveMenu, &saveMenu));
+    pGraphics->AttachControl(new IContactControl(this, kLoadMenuX, kMenuY, mLoadMenu, &loadMenu));
     
-    //pGraphics->AttachControl(new VuMeter(this, *new IRECT(64, 388, 320, 80), mVuMeter));
-    //IBitmap dBCoverBg = pGraphics->LoadIBitmap(DBCOVERBG_ID, DBCOVERBG_FN, 1);
-    //IBitmap dBCoverRect = pGraphics->LoadIBitmap(DBCOVERRECT_ID, DBCOVERRECT_FN, 1);
-    
-    //pGraphics->AttachControl(new IBitmapControl(this, 65, 7, &dBCoverRect)); //replace 3rd param. with a changing value based on total. amplitude.
-    //pGraphics->AttachControl(new IBitmapControl(this, 61, 92, &dBCoverBg));
     
     AttachGraphics(pGraphics);
 }
@@ -450,7 +467,6 @@ void Voltex::ProcessDoubleReplacing(double** inputs, double** outputs, int nFram
         mMIDIReceiver.advance();
         //The left and right channels are equal as our synth only works in mono
         leftOutput[i] = rightOutput[i] = (voiceManager.nextSample() * gain);
-		GetGUI()->SetParameterFromPlug(mVuMeter, leftOutput[i], true);
     }
     
     mMIDIReceiver.Flush(nFrames);
@@ -496,6 +512,79 @@ void Voltex::OnParamChange(int paramIdx) {
             changer = bind(&VoiceManager::setVolumeEnvelopeStageValue, _1, EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Value());
             voiceManager.changeAllVoices(changer);
             break;
+        case mToolCursor:
+            //Tool: Cursor
+            if (param->Bool() == true) {
+                if (!firstUpdate) {
+                    toolPencil->SetValueFromPlug(false);
+                    toolSelection->SetValueFromPlug(false);
+                    toolDelete->SetValueFromPlug(false);
+                }
+                VectorSpace::currentTool = VectorSpace::kToolCursor;
+            } else {
+                if (!firstUpdate) {
+                    toolCursor->SetValueFromPlug(true);
+                }
+            }
+            break;
+        case mToolPencil:
+            //Tool: Pencil
+            if (param->Bool() == true) {
+                if (!firstUpdate) {
+                    toolCursor->SetValueFromPlug(false);
+                    toolSelection->SetValueFromPlug(false);
+                    toolDelete->SetValueFromPlug(false);
+                }
+                VectorSpace::currentTool = VectorSpace::kToolPencil;
+            } else {
+                if (!firstUpdate) {
+                    toolPencil->SetValueFromPlug(true);
+                }
+            }
+            break;
+        case mToolSelection:
+            //Tool: Selection
+            if (param->Bool() == true) {
+                if (!firstUpdate) {
+                    toolPencil->SetValueFromPlug(false);
+                    toolCursor->SetValueFromPlug(false);
+                    toolDelete->SetValueFromPlug(false);
+                }
+                VectorSpace::currentTool = VectorSpace::kToolSelection;
+            } else {
+                if (!firstUpdate) {
+                    toolSelection->SetValueFromPlug(true);
+                }
+            }
+            break;
+        case mToolDelete:
+            //Tool: Delete
+            if (param->Bool() == true) {
+                if (!firstUpdate) {
+                    toolPencil->SetValueFromPlug(false);
+                    toolSelection->SetValueFromPlug(false);
+                    toolCursor->SetValueFromPlug(false);
+                }
+                VectorSpace::currentTool = VectorSpace::kToolDelete;
+            } else {
+                if (!firstUpdate) {
+                    toolDelete->SetValueFromPlug(true);
+                }
+            }
+            break;
+        case mLoad:
+            processMLoad(param);
+            break;
+        case mSaveMenu:
+            if (param->Bool() == true) {
+                saveToFile();
+            }
+            break;
+        case mLoadMenu:
+            if (param->Bool() == true) {
+                loadFromFile();
+            }
+            break;
         default:
             if (paramIdx >= mAttackOne && paramIdx <= mAttackEight) {
                 //Attack
@@ -523,146 +612,104 @@ void Voltex::OnParamChange(int paramIdx) {
             } else if (paramIdx >= mSwitchOne && paramIdx <= mSwitchEight) {
                 //Switches
                 waveTables[paramIdx - (mSwitchOne)]->setEnabled(param->Bool());
-            } else if (paramIdx == mToolCursor) {
-                //Tool: Cursor
-                if (param->Bool() == true) {
-                    if (!firstUpdate) {
-                        toolPencil->SetValueFromPlug(false);
-                        toolSelection->SetValueFromPlug(false);
-                        toolDelete->SetValueFromPlug(false);
-                    }
-                    VectorSpace::currentTool = VectorSpace::kToolCursor;
-                } else {
-                    if (!firstUpdate) {
-                        toolCursor->SetValueFromPlug(true);
-                    }
-                }
-            } else if (paramIdx == mToolPencil) {
-                //Tool: Pencil
-                if (param->Bool() == true) {
-                    if (!firstUpdate) {
-                        toolCursor->SetValueFromPlug(false);
-                        toolSelection->SetValueFromPlug(false);
-                        toolDelete->SetValueFromPlug(false);
-                    }
-                    VectorSpace::currentTool = VectorSpace::kToolPencil;
-                } else {
-                    if (!firstUpdate) {
-                        toolPencil->SetValueFromPlug(true);
-                    }
-                }
-            } else if (paramIdx == mToolSelection) {
-                //Tool: Selection
-                if (param->Bool() == true) {
-                    if (!firstUpdate) {
-                        toolPencil->SetValueFromPlug(false);
-                        toolCursor->SetValueFromPlug(false);
-                        toolDelete->SetValueFromPlug(false);
-                    }
-                    VectorSpace::currentTool = VectorSpace::kToolSelection;
-                } else {
-                    if (!firstUpdate) {
-                        toolSelection->SetValueFromPlug(true);
-                    }
-                }
-            } else if (paramIdx == mToolDelete) {
-                //Tool: Delete
-                if (param->Bool() == true) {
-                    if (!firstUpdate) {
-                        toolPencil->SetValueFromPlug(false);
-                        toolSelection->SetValueFromPlug(false);
-                        toolCursor->SetValueFromPlug(false);
-                    }
-                    VectorSpace::currentTool = VectorSpace::kToolDelete;
-                } else {
-                    if (!firstUpdate) {
-                        toolDelete->SetValueFromPlug(true);
-                    }
-                }
-            } else if (paramIdx == mLoad){
-                if (param->Bool() == true) {
-                    printf("%d\n", GetParam(mPreset)->Int());
-                    for (int i = 0; i < vectorSpaces.size(); i++) {
-                        if (!vectorSpaces[i]->IsHidden()) {
-                            if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wBlank) {
-                                WaveTable* emptyTable;
-                                emptyTable = new WaveTable();
-                                
-                                std::tr1::array<double, 2048> emptyValues;
-                                for (int j = 0; j < 2048; j++) {
-                                    emptyValues[j] = 0;
-                                }
-                                
-                                emptyTable->setValues(emptyValues);
-                                waveTables[i] = emptyTable;
-                                vectorSpaces[i]->clear();
-                                vectorSpaces[i]->Redraw();
-                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSine) {
-                                WaveTable* sineTable;
-                                sineTable = new WaveTable();
-                                        
-                                std::tr1::array<double, 2048> sinValues;
-                                for (int j = 0; j < 2048; j++) {
-                                    sinValues[j] = sin((j / 2048.0) * (4 * acos(0.0)));
-                                }
-                                sineTable->setValues(sinValues);
-                                waveTables[i] = sineTable;
-                                vectorSpaces[i]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
-                                vectorSpaces[i]->Redraw();
-                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wTriangle) {
-                                WaveTable* triangleTable;
-                                triangleTable = new WaveTable();
-                                        
-                                std::tr1::array<double, 2048> triangleValues;
-                                for (int j = 0; j < 2048; j++) {
-                                    int phase = j - 512;
-                                    while (phase < 0) {
-                                        phase += 2048;
-                                    }
-                                    double value = -1.0 + ((phase / 2048.0) * 2);
-                                    triangleValues[j] = 2.0 * (fabs(value) - 0.5);
-                                }
-                                triangleTable->setValues(triangleValues);
-                                waveTables[i] = triangleTable;
-                                vectorSpaces[i]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
-                                vectorSpaces[i]->Redraw();
-                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSquare) {
-                                WaveTable* squareTable;
-                                squareTable = new WaveTable();
-                                std::tr1::array<double, 2048> squareValues;
-                                for (int j = 0; j < 2048; j++) {
-                                    if (j < 1024) {
-                                        squareValues[j] = -1;
-                                    } else {
-                                        squareValues[j] = 1;
-                                    }
-                                }
-                                squareTable->setValues(squareValues);
-                                waveTables[i] = squareTable;
-                                vectorSpaces[i]->setValues(squareValues, kVectorSpaceMaxY - kVectorSpaceY);
-                                vectorSpaces[i]->Redraw();
-                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wNoise) {
-                                WaveTable* noiseTable;
-                                noiseTable = new WaveTable();
-                                
-                                std::tr1::array<double, 2048> noiseValues;
-                                
-                                srand(time(NULL));
-                                for (int j = 0; j < 2048; j++) {
-                                    noiseValues[j] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2)) - 1;
-                                }
-                                
-                                noiseTable->setValues(noiseValues);
-                                waveTables[i] = noiseTable;
-                                vectorSpaces[i]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
-                            }
-                        }}
-                }
             } else {
                 //oops
             }
             break;
     }
+}
+
+void Voltex::processMLoad (IParam* param) {
+//    printf("Test saving...\n");
+//    printf("Result: %d\n", writeAllToFile("/Users/samueldewan/Desktop/save", *this, true));
+    if (param->Bool() == true) {
+        for (int i = 0; i < vectorSpaces.size(); i++) {
+            if (!vectorSpaces[i]->IsHidden()) {
+                if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wBlank) {
+                    WaveTable* emptyTable;
+                    emptyTable = new WaveTable();
+                    
+                    std::tr1::array<double, 2048> emptyValues;
+                    for (int j = 0; j < 2048; j++) {
+                        emptyValues[j] = 0;
+                    }
+                    
+                    emptyTable->setValues(emptyValues);
+                    waveTables[i] = emptyTable;
+                    vectorSpaces[i]->clear();
+                    vectorSpaces[i]->Redraw();
+                } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSine) {
+                    WaveTable* sineTable;
+                    sineTable = new WaveTable();
+                    
+                    std::tr1::array<double, 2048> sinValues;
+                    for (int j = 0; j < 2048; j++) {
+                        sinValues[j] = sin((j / 2048.0) * (4 * acos(0.0)));
+                    }
+                    sineTable->setValues(sinValues);
+                    waveTables[i] = sineTable;
+                    vectorSpaces[i]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
+                    vectorSpaces[i]->Redraw();
+                } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wTriangle) {
+                    WaveTable* triangleTable;
+                    triangleTable = new WaveTable();
+                    
+                    std::tr1::array<double, 2048> triangleValues;
+                    for (int j = 0; j < 2048; j++) {
+                        int phase = j - 512;
+                        while (phase < 0) {
+                            phase += 2048;
+                        }
+                        double value = -1.0 + ((phase / 2048.0) * 2);
+                        triangleValues[j] = 2.0 * (fabs(value) - 0.5);
+                    }
+                    triangleTable->setValues(triangleValues);
+                    waveTables[i] = triangleTable;
+                    vectorSpaces[i]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
+                    vectorSpaces[i]->Redraw();
+                } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSquare) {
+                    WaveTable* squareTable;
+                    squareTable = new WaveTable();
+                    std::tr1::array<double, 2048> squareValues;
+                    for (int j = 0; j < 2048; j++) {
+                        if (j < 1024) {
+                            squareValues[j] = -1;
+                        } else {
+                            squareValues[j] = 1;
+                        }
+                    }
+                    squareTable->setValues(squareValues);
+                    waveTables[i] = squareTable;
+                    vectorSpaces[i]->setValues(squareValues, kVectorSpaceMaxY - kVectorSpaceY);
+                    vectorSpaces[i]->Redraw();
+                } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wNoise) {
+                    WaveTable* noiseTable;
+                    noiseTable = new WaveTable();
+                    
+                    std::tr1::array<double, 2048> noiseValues;
+                    
+                    srand(time(NULL));
+                    for (int j = 0; j < 2048; j++) {
+                        noiseValues[j] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2)) - 1;
+                    }
+                    
+                    noiseTable->setValues(noiseValues);
+                    waveTables[i] = noiseTable;
+                    vectorSpaces[i]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
+                }
+            }
+        }
+    }
+}
+
+void Voltex::saveToFile () {
+    std::cout << "Saving..." << std::endl;
+    IBitmap img = pGraphics->LoadIBitmap(BG_ID, BG_FN);
+    pGraphics->AttachControl(new IFileSelectorControl(this, *new IRECT(100, 100, 100, 100), mSaveFile, &img, kFileSave));
+}
+
+void Voltex::loadFromFile () {
+    std::cout << "Loading..." << std::endl;
 }
 
 void Voltex::updateWaveTable(int table) {
@@ -672,6 +719,10 @@ void Voltex::updateWaveTable(int table) {
 void Voltex::ProcessMidiMsg(IMidiMsg* pMsg) {
     mMIDIReceiver.onMessageReceived(pMsg);
     mVirtualKeyboard->SetDirty();
+}
+
+int Voltex::getNumParams() {
+    return kSavedParams;
 }
 
 void Voltex::processVirtualKeyboard() {

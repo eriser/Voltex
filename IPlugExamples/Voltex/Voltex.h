@@ -33,6 +33,10 @@ public:
     static const int virtualKeyboardMinimumNoteNumber = 48;
     int lastVirtualKeyboardNoteNumber;
     
+    int getNumParams();
+    
+    std::tr1::array<WaveTable*, NUM_TABLES> waveTables;
+    
 private:
     void CreatePresets();
     MIDIReceiver mMIDIReceiver;
@@ -52,7 +56,6 @@ private:
     
     VoiceManager voiceManager;
     
-    std::tr1::array<WaveTable*, NUM_TABLES> waveTables;
 
     IGraphics* pGraphics;
     
@@ -62,6 +65,10 @@ private:
     void updateWaveTable(int table);
     
     double gain;
+    
+    void processMLoad(IParam* param);
+    void saveToFile();
+    void loadFromFile();
     
     bool firstUpdate;
 };
