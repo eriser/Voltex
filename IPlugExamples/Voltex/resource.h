@@ -3,7 +3,7 @@
 
 #define PLUG_CLASS_NAME Voltex
 
-#define BUNDLE_MFR "SamuelDewan" //TODO: find out how to change this without breaking all fo the graphics
+#define BUNDLE_MFR "SamuelDewan&MaximKuzmenko" //TODO: find out how to change this without breaking all fo the graphics
 #define BUNDLE_NAME "Voltex"
 
 #define PLUG_ENTRY Voltex_Entry
@@ -71,7 +71,7 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define SIX_ID			120
 #define SEVEN_ID		121
 #define EIGHT_ID		122
-
+#define POSC_ID			123
 
 // Image resource locations for this plug.
 #define BG_FN             "resources/img/bg.png"
@@ -96,8 +96,11 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #define SIX_FN			  "resources/img/Numbers/6.png"
 #define SEVEN_FN          "resources/img/Numbers/7.png"
 #define EIGHT_FN          "resources/img/Numbers/8.png"
+#define POSC_FN	          "resources/img/periodNum.png"
+
+
 // GUI default dimensions
-#define GUI_WIDTH   960
+#define GUI_WIDTH   795
 #define GUI_HEIGHT  680
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API) && !defined(OS_IOS)

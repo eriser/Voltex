@@ -64,6 +64,8 @@ private:
     double gain;
     
     bool firstUpdate;
+	int OscLengthVal[7];
+
 };
 
 #endif

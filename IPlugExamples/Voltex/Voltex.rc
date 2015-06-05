@@ -22,6 +22,7 @@ FIVE_ID         PNG FIVE_FN
 SIX_ID          PNG SIX_FN
 SEVEN_ID        PNG SEVEN_FN
 EIGHT_ID        PNG EIGHT_FN
+POSC_ID			PNG POSC_FN
 
 TAB_ONE_ID    PNG "resources/img/Tabs/tab1.png"
 TAB_TWO_ID    PNG "resources/img/Tabs/tab2.png"

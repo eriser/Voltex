@@ -1,5 +1,5 @@
-﻿Build started 27/05/2015 3:17:23 PM.
-     1>Project "C:\wdl-ol\IPlugExamples\Voltex\WDL\lice\lice.vcxproj" on node 2 (Build target(s)).
+﻿Build started 05/06/2015 10:08:56 AM.
+     1>Project "C:\wdl-ol\IPlugExamples\Voltex\WDL\lice\lice.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../zlib /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _LIB /D PNG_USE_PNGVCRD /D PNG_LIBPNG_SPECIALBUILD /D __MMX__ /D PNG_HAVE_MMX_COMBINE_ROW /D PNG_HAVE_MMX_READ_INTERLACE /D PNG_HAVE_MMX_READ_FILTER_ROW /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /arch:SSE2 /fp:precise /Zc:wchar_t /Zc:forScope /Fo"build-win\Win32\Debug\\" /Fd"build-win\Win32\Debug\vc120.pdb" /Gd /TC /wd4996 /wd4250 /wd4018 /wd4267 /analyze- /errorReport:prompt ..\libpng\png.c ..\libpng\pngerror.c ..\libpng\pngget.c ..\libpng\pngmem.c ..\libpng\pngpread.c ..\libpng\pngread.c ..\libpng\pngrio.c ..\libpng\pngrtran.c ..\libpng\pngrutil.c ..\libpng\pngset.c ..\libpng\pngtrans.c ..\libpng\pngwio.c ..\libpng\pngwrite.c ..\libpng\pngwtran.c ..\libpng\pngwutil.c ..\zlib\adler32.c ..\zlib\compress.c ..\zlib\crc32.c ..\zlib\deflate.c ..\zlib\gzclose.c ..\zlib\gzlib.c ..\zlib\gzread.c ..\zlib\gzwrite.c ..\zlib\infback.c ..\zlib\inffast.c ..\zlib\inflate.c ..\zlib\inftrees.c ..\zlib\trees.c ..\zlib\uncompr.c ..\zlib\zutil.c
          zutil.c
@@ -93,8 +93,8 @@
          "build-win\Win32\Debug\uncompr.obj"
          "build-win\Win32\Debug\zutil.obj"
          lice.vcxproj -> C:\wdl-ol\IPlugExamples\Voltex\WDL\lice\build-win\Win32\Debug\lice.lib
-     1>Done Building Project "C:\wdl-ol\IPlugExamples\Voltex\WDL\lice\lice.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\wdl-ol\IPlugExamples\Voltex\WDL\lice\lice.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:24.45
+Time Elapsed 00:00:23.85

@@ -1,5 +1,5 @@
-﻿Build started 27/05/2015 3:17:48 PM.
-     1>Project "C:\wdl-ol\IPlugExamples\Voltex\WDL\IPlug\IPlug.vcxproj" on node 2 (Build target(s)).
+﻿Build started 05/06/2015 10:09:20 AM.
+     1>Project "C:\wdl-ol\IPlugExamples\Voltex\WDL\IPlug\IPlug.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _DEBUG /D WIN32 /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /arch:SSE2 /fp:precise /Zc:wchar_t /Zc:forScope /Fo"build-win\Win32\Debug\\" /Fd"build-win\Win32\Debug\vc120.pdb" /Gd /TP /wd4996 /wd4250 /wd4018 /wd4267 /analyze- /errorReport:prompt Hosts.cpp IBitmapMonoText.cpp IControl.cpp IGraphics.cpp IGraphicsWin.cpp IParam.cpp IPlugBase.cpp IPlugStructs.cpp IPopupMenu.cpp Log.cpp
          Log.cpp
@@ -25,8 +25,8 @@
          "build-win\Win32\Debug\IPopupMenu.obj"
          "build-win\Win32\Debug\Log.obj"
          IPlug.vcxproj -> C:\wdl-ol\IPlugExamples\Voltex\WDL\IPlug\build-win\Win32\Debug\IPlug.lib
-     1>Done Building Project "C:\wdl-ol\IPlugExamples\Voltex\WDL\IPlug\IPlug.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\wdl-ol\IPlugExamples\Voltex\WDL\IPlug\IPlug.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:12.70
+Time Elapsed 00:00:13.30

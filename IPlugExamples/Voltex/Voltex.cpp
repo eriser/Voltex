@@ -103,9 +103,12 @@ enum EParams {
     
 	mPreset,
 	mLoad,
-	mVuMeter,
+
+	mPOscLength, 
+
 
     kNumParams
+	
 };
 
 enum WaveForms {
@@ -121,14 +124,16 @@ enum WaveForms {
 enum ELayout {
 	kWidth = GUI_WIDTH,
 	kHeight = GUI_HEIGHT,
-	kKeybX = 166,
+	kKeybX = 1,
 	kKeybY = 614,
 
+	GUIShiftX = 165,
+
 	//Master Section:
-	kMasterX = 793,
+	kMasterX = 793 - GUIShiftX,
 	kMasterY = 53,
 
-	kMasterAttackX = 693,
+	kMasterAttackX = 693 - GUIShiftX,
 	kMasterDecayX = kMasterAttackX + 65,
 	kMasterSustainX = kMasterDecayX + 66,
 	kMasterReleaseX = kMasterSustainX + 66,
@@ -136,40 +141,44 @@ enum ELayout {
 	kMasterEnvelopeY = 137,
 
 	//Table:
-	kTableX = 292,
-	kTableY = 101,
+	kTableX = 298 - GUIShiftX,
+	kTableY = 106,
 	kTableSpaceX = 44,
 	kTableSpaceY = 40,
 	kTableSpaceGainY = 50,
 
 	//On/off Buttons
-	kSwitchX = 325,
+	kSwitchX = 128,
 	kSwitchY = 358,
-	kSwitchSpaceX = 86,
+	kSwitchSpaceX = 90,
 
 	//tabs
-	kTabX = 272,
+	kTabX = 75,
 	kTabY = 344,
-	kTabMaxX = 957,
+	kTabMaxX = 792,
 	kTabMaxY = 484,
 
 	//vector space
-	kVectorSpaceX = 272,
+	kVectorSpaceX = 75,
 	kVectorSpaceY = 392,
-	kVectorSpaceMaxX = 955,
+	kVectorSpaceMaxX = 790,
 	kVectorSpaceMaxY = 606,
 
 	//Buttons
-	kButtonX = 197,
-	kButtonY = 385,
+	kButtonX = 16,
+	kButtonY = 387,
 	kButtonYSpacing = 56,
 
+	//POsc 
+	kPOscX = 712,
+	kPOscY = 279,
+
 	//Load
-	kLoadX = 685,
+	kLoadX = 685 - GUIShiftX,
 	kLoadY = 212,
 
 	//Presets
-	kPresetsX = 748,
+	kPresetsX = 748 - GUIShiftX,
 	kPresetsY = 213
 };
 
@@ -228,9 +237,11 @@ void Voltex::CreateParams() {
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
         GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
         GetParam(i)->SetDisplayText(0, "Wavetable Switch");
-        
     }
     
+	//POsc
+	GetParam(mPOscLength)->InitEnum("Oscillator Period Length", 0, 5); //The value is saved before the user selects another tab. When user clicks on the same tab again, the value returns.
+
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
@@ -264,8 +275,6 @@ void Voltex::CreateParams() {
     GetParam(mToolSelection)->InitBool("Selection", false);
     GetParam(mToolDelete)->InitBool("Delete", false);
     
-	GetParam(mVuMeter)->InitDouble("Vu Meter", 0, 0.0, 1.0, parameterStep);
-
 	//Presets
 	GetParam(mPreset)->InitEnum("Preset", wBlank, numWaveForms);
 	//Load
@@ -279,92 +288,132 @@ void Voltex::CreateParams() {
     for (int i = 0; i < NUM_TABLES; i++) {
         vectorSpaces[i]->sendSignals = true;
     }
-    
 }
 
 void Voltex::CreateGraphics() {
-    //Get this plugins graphics instance and attach the background image
-    pGraphics = MakeGraphics(this, kWidth, kHeight);
-    pGraphics->AttachBackground(BG_ID, BG_FN);
-    
-    //Initialize keyboard
-    IBitmap whiteKeyImage = pGraphics->LoadIBitmap(WHITE_KEY_ID, WHITE_KEY_FN, 6);
-    IBitmap blackKeyImage = pGraphics->LoadIBitmap(BLACK_KEY_ID, BLACK_KEY_FN);
-    
-    //                            C#      D#          F#      G#        A#
-    int keyCoordinates[12] = { 0, 15, 20, 37, 46, 68, 81, 96, 103, 118, 125, 140 };
-    mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
-    pGraphics->AttachControl(mVirtualKeyboard);
-    
-    //Create on/off buttons and tabs
-    
-    IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
-    IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
-    
-    //Tabs
-    pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
-    
-    
-    //Switches
-    int x = kSwitchX, y = 0;
-    for (int v = mSwitchOne; v <= mSwitchEight; v++) {
-        if (v == mSwitchThree || v == mSwitchTwo) {
-            pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
-        } else {
-            pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
-        }
-        x = kSwitchSpaceX + x;
-    }
-    
-    //Create knobs
-    IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
-    
-    //Envelope
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterAttackX, kMasterEnvelopeY, mVolumeEnvAttack, &knobBitmap));
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterDecayX, kMasterEnvelopeY, mVolumeEnvDecay, &knobBitmap));
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterSustainX, kMasterEnvelopeY, mVolumeEnvSustain, &knobBitmap));
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterReleaseX, kMasterEnvelopeY, mVolumeEnvRelease, &knobBitmap));
-    
-    //Master
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterX, kMasterY, mGain, &knobBitmap));
-    
-    
+	//Get this plugins graphics instance and attach the background image
+	pGraphics = MakeGraphics(this, kWidth, kHeight);
+	pGraphics->AttachBackground(BG_ID, BG_FN);
+
+	//Initialize keyboard
+	IBitmap whiteKeyImage = pGraphics->LoadIBitmap(WHITE_KEY_ID, WHITE_KEY_FN, 6);
+	IBitmap blackKeyImage = pGraphics->LoadIBitmap(BLACK_KEY_ID, BLACK_KEY_FN);
+
+	//                            C#      D#          F#      G#        A#
+	int keyCoordinates[12] = { 0, 15, 20, 37, 46, 68, 81, 96, 103, 118, 125, 140 };
+	mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
+	pGraphics->AttachControl(mVirtualKeyboard);
+
+	//Create on/off buttons and tabs
+
+	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
+	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
+
+	//Tabs
+	pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
+
+	//Switches
+	int x = kSwitchX, y = 0;
+	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
+		if (v == mSwitchThree || v == mSwitchTwo) {
+			pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
+		}
+		else {
+			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
+		}
+		x = kSwitchSpaceX + x;
+	}
+
+	//Create knobs
+	IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
+
+	//Envelope
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterAttackX, kMasterEnvelopeY, mVolumeEnvAttack, &knobBitmap));
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterDecayX, kMasterEnvelopeY, mVolumeEnvDecay, &knobBitmap));
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterSustainX, kMasterEnvelopeY, mVolumeEnvSustain, &knobBitmap));
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterReleaseX, kMasterEnvelopeY, mVolumeEnvRelease, &knobBitmap));
+
+	//Master
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterX, kMasterY, mGain, &knobBitmap));
+
+	//I 706, 270 new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
+
+	IBitmap POsc = pGraphics->LoadIBitmap(POSC_ID, POSC_FN, 5);
+
+	pGraphics->AttachControl(new ISwitchControl(this, kPOscX, kPOscY, mPOscLength, &POsc));
+	
+	//pGraphics->AttachControl(presets);
     //Table:
+	int k = 1;
     x = kTableX, y = kTableY;
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else 
+		{ 
+			 x += kTableSpaceX; 
+		}
     }
+	
     x = kTableX;
     y += kTableSpaceY;
     //Decay
     for (int i = mDecayOne; i <= mDecayEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else
+		{
+			x += kTableSpaceX;
+		}
     }
+	
     x = kTableX;
     y += kTableSpaceY;
     //Sustain
-    for (int i = mSustainOne; i <= mSustainEight; i++) {
+	for (int i = mSustainOne; i <= mSustainEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else
+		{
+			x += kTableSpaceX;
+		}
     }
+	
     x = kTableX;
     y += kTableSpaceY;
     //Release
     for (int i = mReleaseOne; i <= mReleaseEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else
+		{
+			x += kTableSpaceX;
+		}
     }
+	
     x = kTableX;
     y += kTableSpaceGainY;
     //Gain
-    for (int i = mGainOne; i <= mGainEight; i++) {
-        pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
-    }
-    
+	for (int i = mGainOne; i <= mGainEight; i++) {
+		pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else
+		{
+			x += kTableSpaceX;
+		}
+	}
+
     //Vector spaces
     for (int i = 0; i < NUM_TABLES; i++) {
         pGraphics->AttachControl(vectorSpaces[i]);
@@ -419,7 +468,6 @@ void Voltex::ProcessDoubleReplacing(double** inputs, double** outputs, int nFram
         mMIDIReceiver.advance();
         //The left and right channels are equal as our synth only works in mono
         leftOutput[i] = rightOutput[i] = (voiceManager.nextSample() * gain);
-		GetGUI()->SetParameterFromPlug(mVuMeter, leftOutput[i], true);
     }
     
     mMIDIReceiver.Flush(nFrames);
@@ -624,9 +672,16 @@ void Voltex::OnParamChange(int paramIdx) {
                                 waveTables[i] = noiseTable;
                                 vectorSpaces[i]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
                             }
-                        }}
+                        }
+					}
                 }
-            }
+			}
+			else if (paramIdx == mPOscLength) {
+				int g;
+				vectorSpaces[(int)param->Value() == g];
+				OscLengthVal[g] = GetParam(mPOscLength)->Int();
+				SetValueFromPlug(mPOscLength)->Int() == OscLengthVal[g]; //Sam, please help here. the POscLength to OscLengthVal[g].
+			}
             else {
                 //oops
             }
