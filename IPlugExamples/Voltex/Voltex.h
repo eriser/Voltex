@@ -71,8 +71,6 @@ private:
     void loadFromFile();
     
     bool firstUpdate;
-	int OscLengthVal[7];
-
 };
 
 #endif

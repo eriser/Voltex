@@ -1,19 +1,9 @@
+#define PLUG_MFR "Voltex"
+#define PLUG_NAME "Voltex"
 
-#define PRESETS_ID      113
-#define LOAD_ID         114
-#define ONE_ID          115
-#define TWO_ID          116
-#define THREE_ID        117
-#define FOUR_ID         118
-#define FIVE_ID         119
-#define SIX_ID          120
-#define SEVEN_ID        121
-#define EIGHT_ID        122
-#define SAVE_MENU_ID    123
-#define LOAD_MENU_ID    124
-#define POSC_ID         125
+#define PLUG_CLASS_NAME Voltex
 
-#define BUNDLE_MFR "SamuelDewan&MaximKuzmenko" //TODO: find out how to change this without breaking all fo the graphics
+#define BUNDLE_MFR "SamuelDewan" //TODO: find out how to change this without breaking all the graphics
 #define BUNDLE_NAME "Voltex"
 
 #define PLUG_ENTRY Voltex_Entry
@@ -58,30 +48,33 @@ const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 
 #define PLUG_DOES_STATE_CHUNKS 0
 
+
 // Unique IDs for each image resource.
-#define BG_ID			101
-#define WHITE_KEY_ID	102
-#define BLACK_KEY_ID	103
-#define KNOB_ID			104
-#define SWITCHES_ID		105
-#define TAB_ID			106
-#define DBCOVERBG_ID	107
+#define BG_ID           101
+#define WHITE_KEY_ID    102
+#define BLACK_KEY_ID    103
+#define KNOB_ID         104
+#define SWITCHES_ID     105
+#define TAB_ID          106
+#define DBCOVERBG_ID    107
 #define DBCOVERRECT_ID	108
-#define CURSORCLK_ID	109
-#define PENCILCLK_ID	110
-#define SELECTCLK_ID	111
-#define TRASHCLK_ID		112
-#define PRESETS_ID		113
-#define LOAD_ID			114
-#define ONE_ID			115
-#define TWO_ID			116
-#define THREE_ID		117
-#define FOUR_ID			118
-#define FIVE_ID			119
-#define SIX_ID			120
-#define SEVEN_ID		121
-#define EIGHT_ID		122
-#define POSC_ID			123
+#define CURSORCLK_ID    109
+#define PENCILCLK_ID    110
+#define SELECTCLK_ID    111
+#define TRASHCLK_ID     112
+#define PRESETS_ID      113
+#define LOAD_ID         114
+#define ONE_ID          115
+#define TWO_ID          116
+#define THREE_ID        117
+#define FOUR_ID         118
+#define FIVE_ID         119
+#define SIX_ID          120
+#define SEVEN_ID        121
+#define EIGHT_ID        122
+#define SAVE_MENU_ID    123
+#define LOAD_MENU_ID    124
+#define POSC_ID         125
 
 // Image resource locations for this plug.
 #define BG_FN             "resources/img/bg.png"
