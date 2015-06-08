@@ -680,7 +680,7 @@ void Voltex::OnParamChange(int paramIdx) {
 				int g;
 				vectorSpaces[(int)param->Value() == g];
 				OscLengthVal[g] = GetParam(mPOscLength)->Int();
-				SetValueFromPlug(mPOscLength)->Int() == OscLengthVal[g]; //Sam, please help here. the POscLength to OscLengthVal[g].
+				//SetValueFromPlug(mPOscLength)->Int() == OscLengthVal[g]; //Sam, please help here. the POscLength to OscLengthVal[g].
 			}
             else {
                 //oops
