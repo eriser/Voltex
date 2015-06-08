@@ -19,7 +19,7 @@ using namespace std;
 
 
 
-int writeAllToFile (char filePath[], Voltex voltex, bool overWrite) {
+int writeAllToFile (char filePath[], Voltex* voltex, bool overWrite) {
     //Check if the file exists
     ifstream fileTest(filePath);
     if (fileTest.good() && !overWrite) {
@@ -28,7 +28,7 @@ int writeAllToFile (char filePath[], Voltex voltex, bool overWrite) {
     }
     fileTest.close();
     
-    voltex.GetParam(0);
+    voltex->GetParam(0);
     
     
     //Write to the file
@@ -37,18 +37,18 @@ int writeAllToFile (char filePath[], Voltex voltex, bool overWrite) {
     
     //wavetables
     for (int i = 0; i < NUM_TABLES; i++) {
-        std::tr1::array<double, TABLE_LENGTH> table = voltex.waveTables[i]->getValues();
+        std::tr1::array<double, TABLE_LENGTH> table = voltex->waveTables[i]->getValues();
         file << std::setprecision (15) << table[0];
-        for (int j = 1; j < voltex.waveTables[i]->size(); j++) {
+        for (int j = 1; j < voltex->waveTables[i]->size(); j++) {
             file << ":" << std::setprecision (15) << table[j];
         }
         file << endl;
     }
     
     //params
-    file << std::setprecision (15) << voltex.GetParam(0)->Value();
-    for (int i = 1; i < voltex.getNumParams(); i++) {
-        file << ":" << std::setprecision (15) << voltex.GetParam(i)->Value();
+    file << std::setprecision (15) << voltex->GetParam(0)->Value();
+    for (int i = 1; i < voltex->getNumParams(); i++) {
+        file << ":" << std::setprecision (15) << voltex->GetParam(i)->Value();
     }
     file << endl;
     
@@ -56,7 +56,7 @@ int writeAllToFile (char filePath[], Voltex voltex, bool overWrite) {
     return 0;
 }
 
-int readAllFromFile (char filePath[], Voltex voltex) {
+int readAllFromFile (char filePath[], Voltex* voltex) {
     ifstream file(filePath);
     if (!file.good()) {
         //opening file failed
@@ -77,11 +77,12 @@ int readAllFromFile (char filePath[], Voltex voltex) {
         std::tr1::array<double, 2048> values;
         string value;
         int j = 0;
-        for (;(j < voltex.waveTables[i]->size()) && std::getline(file, value, ':'); j++) {
+        for (;(j < voltex->waveTables[i]->size()) && std::getline(file, value, ':'); j++) {
             values[j] = getStringAsDouble(value);
             value.clear();
         }
-        if (j < voltex.waveTables[i]->size()) {
+        voltex->vectorSpaces[i]->setValues(voltex->waveTables[i]->getValues(), voltex->getVectorSpacePrecision());
+        if (j < voltex->waveTables[i]->size()) {
             return 3; //the file was not properly formated
         }
     }
@@ -90,11 +91,14 @@ int readAllFromFile (char filePath[], Voltex voltex) {
     //Load params
     string value;
     int i = 0;
-    for (;(i < voltex.getNumParams()) && std::getline(file, value, ':'); i++) {
-        voltex.GetParam(i)->Set(getStringAsDouble(value));
+    for (;(i < voltex->getNumParams()) && std::getline(file, value, ':'); i++) {
+        voltex->GetParam(i)->Set(getStringAsDouble(value));
         value.clear();
     }
-    voltex.GetGUI()->SetAllControlsDirty();
+    for (int i = 0; i < voltex->getNumParams(); i++) {
+        voltex->OnParamChange(i);
+    }
+    voltex->GetGUI()->SetAllControlsDirty();
     
     
     return 0;

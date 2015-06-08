@@ -13,8 +13,8 @@
 #include "Voltex.h" //this is just an extention of voltex.cpp since voltec.cpp is where all the params are handled
 #include <string>
 
-int writeAllToFile (char filePath[], Voltex voltex, bool overWrite = false);
-int readAllFromFile (char filePath[], Voltex voltex);
+int writeAllToFile (char filePath[], Voltex* voltex, bool overWrite = false);
+int readAllFromFile (char filePath[], Voltex* voltex);
 
 double getStringAsDouble(std::string s);
 

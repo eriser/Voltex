@@ -34,8 +34,10 @@ public:
     int lastVirtualKeyboardNoteNumber;
     
     int getNumParams();
+    int getVectorSpacePrecision();
     
     std::tr1::array<WaveTable*, NUM_TABLES> waveTables;
+    std::tr1::array<VectorSpace*, NUM_TABLES> vectorSpaces;
     
 private:
     void CreatePresets();
@@ -50,9 +52,7 @@ private:
     IControl* toolDelete;
     
 	IControl* load;
-	IControl* presets;
-
-    std::tr1::array<VectorSpace*, NUM_TABLES> vectorSpaces;
+    IControl* presets;
     
     VoiceManager voiceManager;
     

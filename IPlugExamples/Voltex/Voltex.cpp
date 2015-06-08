@@ -39,19 +39,6 @@ enum EParams {
     // Master
     mGain,
     
-    //Tabs
-    mTab,
-    
-    //Switches
-    mSwitchOne,
-    mSwitchTwo,
-    mSwitchThree,
-    mSwitchFour,
-    mSwitchFive,
-    mSwitchSix,
-    mSwitchSeven,
-    mSwitchEight,
-    
     // Table
     mAttackOne,
     mAttackTwo,
@@ -97,26 +84,35 @@ enum EParams {
     mGainSix,
     mGainSeven,
     mGainEight,
+	
+    kSavedParams,
+    
+    //all contact switches and radio buttons are after kSavedParams since we don't want to save them
+    mLoad,
+    mSaveMenu,
+    mLoadMenu,
+    
+    mPreset,
+    
+    mTab,
+    
+    //Switches
+    mSwitchOne,
+    mSwitchTwo,
+    mSwitchThree,
+    mSwitchFour,
+    mSwitchFive,
+    mSwitchSix,
+    mSwitchSeven,
+    mSwitchEight,
     
     mToolCursor,
     mToolPencil,
     mToolSelection,
     mToolDelete,
     
-	mPreset,
-	
-    kSavedParams,
-    
-    //all contact switches are after kSavedParams since we don't want to save them
-    mLoad,
-    mSaveMenu,
-    mLoadMenu,
     
     kNumParams,
-    
-    //Dummy paramaters for file selectors
-    mSaveFile,
-    mLoadFile
 };
 
 enum WaveForms {
@@ -278,6 +274,8 @@ void Voltex::CreateParams() {
         GetParam(i)->InitDouble("Gain", 75.0, 0.0, 100.0, parameterStep);
         GetParam(i)->SetShape(2);
     }
+    
+    GetParam(mTab)->InitEnum("Tab", 0, NUM_TABLES);
     
     //Tools
     GetParam(mToolCursor)->InitBool("Cursor", true);
@@ -703,13 +701,28 @@ void Voltex::processMLoad (IParam* param) {
 }
 
 void Voltex::saveToFile () {
-    std::cout << "Saving..." << std::endl;
-    IBitmap img = pGraphics->LoadIBitmap(BG_ID, BG_FN);
-    pGraphics->AttachControl(new IFileSelectorControl(this, *new IRECT(100, 100, 100, 100), mSaveFile, &img, kFileSave));
+    static WDL_String* dir = new WDL_String;
+    
+    WDL_String* mFile = new WDL_String;
+    GetGUI()->PromptForFile(mFile, kFileSave, dir, "vltx");
+    
+    //We don't have to wory about overwriting files, IPlug promts the user for us.
+    writeAllToFile(mFile->Get(), this, true);
+    
+    dir->Set(mFile);
 }
 
 void Voltex::loadFromFile () {
-    std::cout << "Loading..." << std::endl;
+    static WDL_String* dir = new WDL_String;
+    
+    std::cout << "Loading... Dir = " << dir->Get() << std::endl;
+    
+    WDL_String* mFile = new WDL_String;
+    GetGUI()->PromptForFile(mFile, kFileOpen, dir, "vltx");
+    
+    readAllFromFile(mFile->Get(), this);
+    
+    dir->Set(mFile);
 }
 
 void Voltex::updateWaveTable(int table) {
@@ -723,6 +736,10 @@ void Voltex::ProcessMidiMsg(IMidiMsg* pMsg) {
 
 int Voltex::getNumParams() {
     return kSavedParams;
+}
+
+int Voltex::getVectorSpacePrecision() {
+    return kVectorSpaceMaxY - kVectorSpaceY;
 }
 
 void Voltex::processVirtualKeyboard() {
