@@ -238,16 +238,18 @@ void Voltex::CreateParams() {
     GetParam(mGain)->SetShape(2);
     
     //Tabs
-    GetParam(mPreset)->InitEnum("Wavetable Tab", wBlank, NUM_TABLES);
-    GetParam(mPreset)->SetDisplayText(0, "Wavetable Tab");
+    GetParam(mTab)->InitEnum("Wavetable Tab", 0, NUM_TABLES);
+    GetParam(mTab)->SetDisplayText(0, "Wavetable Tab");
     
     //Switches
     for (int i = mSwitchOne; i <= mSwitchEight; i++) {
         GetParam(i)->InitEnum("Wavetable Switch", 0, 2);
         GetParam(i)->SetDisplayText(0, "Wavetable Switch");
-        
     }
     
+	//POsc
+	GetParam(mPOscLength)->InitEnum("Oscillator Period Length", 0, 5); //The value is saved before the user selects another tab. When user clicks on the same tab again, the value returns.
+
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
@@ -307,108 +309,129 @@ void Voltex::CreateParams() {
 }
 
 void Voltex::CreateGraphics() {
-    //Get this plugins graphics instance and attach the background image
-    pGraphics = MakeGraphics(this, kWidth, kHeight);
-    pGraphics->AttachBackground(BG_ID, BG_FN);
-    
-    //Initialize keyboard
-    IBitmap whiteKeyImage = pGraphics->LoadIBitmap(WHITE_KEY_ID, WHITE_KEY_FN, 6);
-    IBitmap blackKeyImage = pGraphics->LoadIBitmap(BLACK_KEY_ID, BLACK_KEY_FN);
-    
-    //                            C#      D#          F#      G#        A#
-    int keyCoordinates[12] = { 0, 15, 20, 37, 46, 68, 81, 96, 103, 118, 125, 140 };
-    mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
-    pGraphics->AttachControl(mVirtualKeyboard);
-    
-    //Create on/off buttons and tabs
-    
-    IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
-    IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
-    
-    
-    //Tabs
-    pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
-    
-    //Tab Numbers
-    
-    IBitmap one = pGraphics->LoadIBitmap(ONE_ID, ONE_FN, 1);
-    IBitmap two = pGraphics->LoadIBitmap(TWO_ID, TWO_FN, 1);
-    IBitmap three = pGraphics->LoadIBitmap(THREE_ID, THREE_FN, 1);
-    IBitmap four = pGraphics->LoadIBitmap(FOUR_ID, FOUR_FN, 1);
-    IBitmap five = pGraphics->LoadIBitmap(FIVE_ID, FIVE_FN, 1);
-    IBitmap six = pGraphics->LoadIBitmap(SIX_ID, SIX_FN, 1);
-    IBitmap seven = pGraphics->LoadIBitmap(SEVEN_ID, SEVEN_FN, 1);
-    IBitmap eight = pGraphics->LoadIBitmap(EIGHT_ID, EIGHT_FN, 1);
-    
-    pGraphics->AttachControl(new IBitmapControl(this, kNumX, kNumY, &one));
-    pGraphics->AttachControl(new IBitmapControl(this, kNumX + kNumXSpacing, kNumY, &two));
-    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (2 * kNumXSpacing), kNumY, &three));
-    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (3 * kNumXSpacing), kNumY, &four));
-    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (4 * kNumXSpacing), kNumY, &five));
-    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (5 * kNumXSpacing), kNumY, &six));
-    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (6 * kNumXSpacing), kNumY, &seven));
-    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (7 * kNumXSpacing), kNumY, &eight));
-    
-    //Switches
-    int x = kSwitchX, y = 0;
-    for (int v = mSwitchOne; v <= mSwitchEight; v++) {
-        if (v == mSwitchThree || v == mSwitchTwo) {
-            pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
-        } else {
-            pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
-        }
-        x = kSwitchSpaceX + x;
-    }
-    
-    //Create knobs
-    IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
-    
-    //Envelope
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterAttackX, kMasterEnvelopeY, mVolumeEnvAttack, &knobBitmap));
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterDecayX, kMasterEnvelopeY, mVolumeEnvDecay, &knobBitmap));
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterSustainX, kMasterEnvelopeY, mVolumeEnvSustain, &knobBitmap));
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterReleaseX, kMasterEnvelopeY, mVolumeEnvRelease, &knobBitmap));
-    
-    //Master
-    pGraphics->AttachControl(new IKnobMultiControl(this, kMasterX, kMasterY, mGain, &knobBitmap));
-    
-    
+	//Get this plugins graphics instance and attach the background image
+	pGraphics = MakeGraphics(this, kWidth, kHeight);
+	pGraphics->AttachBackground(BG_ID, BG_FN);
+
+	//Initialize keyboard
+	IBitmap whiteKeyImage = pGraphics->LoadIBitmap(WHITE_KEY_ID, WHITE_KEY_FN, 6);
+	IBitmap blackKeyImage = pGraphics->LoadIBitmap(BLACK_KEY_ID, BLACK_KEY_FN);
+
+	//                            C#      D#          F#      G#        A#
+	int keyCoordinates[12] = { 0, 15, 20, 37, 46, 68, 81, 96, 103, 118, 125, 140 };
+	mVirtualKeyboard = new IKeyboardControl(this, kKeybX, kKeybY, virtualKeyboardMinimumNoteNumber, /* octaves: */ 5, &whiteKeyImage, &blackKeyImage, keyCoordinates);
+	pGraphics->AttachControl(mVirtualKeyboard);
+
+	//Create on/off buttons and tabs
+
+	IBitmap switches = pGraphics->LoadIBitmap(SWITCHES_ID, SWITCHES_FN, 2);
+	IBitmap tab = pGraphics->LoadIBitmap(TAB_ID, TAB_FN, 2);
+
+	//Tabs
+	pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
+
+	//Switches
+	int x = kSwitchX, y = 0;
+	for (int v = mSwitchOne; v <= mSwitchEight; v++) {
+		if (v == mSwitchThree || v == mSwitchTwo) {
+			pGraphics->AttachControl(new ISwitchControl(this, x - 1, kSwitchY, v, &switches));
+		}
+		else {
+			pGraphics->AttachControl(new ISwitchControl(this, x, kSwitchY, v, &switches));
+		}
+		x = kSwitchSpaceX + x;
+	}
+
+	//Create knobs
+	IBitmap knobBitmap = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 64);
+
+	//Envelope
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterAttackX, kMasterEnvelopeY, mVolumeEnvAttack, &knobBitmap));
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterDecayX, kMasterEnvelopeY, mVolumeEnvDecay, &knobBitmap));
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterSustainX, kMasterEnvelopeY, mVolumeEnvSustain, &knobBitmap));
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterReleaseX, kMasterEnvelopeY, mVolumeEnvRelease, &knobBitmap));
+
+	//Master
+	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterX, kMasterY, mGain, &knobBitmap));
+
+	//I 706, 270 new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
+
+	IBitmap POsc = pGraphics->LoadIBitmap(POSC_ID, POSC_FN, 5);
+
+	pGraphics->AttachControl(new ISwitchControl(this, kPOscX, kPOscY, mPOscLength, &POsc));
+	
+	//pGraphics->AttachControl(presets);
     //Table:
+	int k = 1;
     x = kTableX, y = kTableY;
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else 
+		{ 
+			 x += kTableSpaceX; 
+		}
     }
+	
     x = kTableX;
     y += kTableSpaceY;
     //Decay
     for (int i = mDecayOne; i <= mDecayEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else
+		{
+			x += kTableSpaceX;
+		}
     }
+	
     x = kTableX;
     y += kTableSpaceY;
     //Sustain
-    for (int i = mSustainOne; i <= mSustainEight; i++) {
+	for (int i = mSustainOne; i <= mSustainEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else
+		{
+			x += kTableSpaceX;
+		}
     }
+	
     x = kTableX;
     y += kTableSpaceY;
     //Release
     for (int i = mReleaseOne; i <= mReleaseEight; i++) {
         pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else
+		{
+			x += kTableSpaceX;
+		}
     }
+	
     x = kTableX;
     y += kTableSpaceGainY;
     //Gain
-    for (int i = mGainOne; i <= mGainEight; i++) {
-        pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
-        x += kTableSpaceX;
-    }
-    
+	for (int i = mGainOne; i <= mGainEight; i++) {
+		pGraphics->AttachControl(new IKnobMultiControl(this, x, y, i, &knobBitmap));
+		if (i % 2 == 0) {
+			x += kTableSpaceX - k;
+		}
+		else
+		{
+			x += kTableSpaceX;
+		}
+	}
+
     //Vector spaces
     for (int i = 0; i < NUM_TABLES; i++) {
         pGraphics->AttachControl(vectorSpaces[i]);
@@ -419,6 +442,8 @@ void Voltex::CreateGraphics() {
     IBitmap pencilClick = pGraphics->LoadIBitmap(PENCILCLK_ID, PENCILCLK_FN, 2);
     IBitmap selectClick = pGraphics->LoadIBitmap(SELECTCLK_ID, SELECTCLK_FN, 2);
     IBitmap trashClick = pGraphics->LoadIBitmap(TRASHCLK_ID, TRASHCLK_FN, 2);
+    
+    //     pGraphics->AttachControl(new ISwitchControl(parent, x, t, param, img));
     
     toolCursor = new ISwitchControl(this, kButtonX, kButtonY, mToolCursor, &cursorClick);
     pGraphics->AttachControl(toolCursor);

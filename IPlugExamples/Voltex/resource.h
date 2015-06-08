@@ -41,7 +41,7 @@
 #define POSC_FN	          "resources/img/periodNum.png"
 
 // GUI default dimensions
-#define GUI_WIDTH   960
+#define GUI_WIDTH   795
 #define GUI_HEIGHT  680
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API) && !defined(OS_IOS)
