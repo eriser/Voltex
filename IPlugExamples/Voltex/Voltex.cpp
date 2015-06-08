@@ -126,68 +126,64 @@ enum WaveForms {
 
 //Layout paramaters
 enum ELayout {
-    kWidth = GUI_WIDTH,
-    kHeight = GUI_HEIGHT,
-    kKeybX = 166,
-    kKeybY = 614,
-    
-    //Master Section:
-    kMasterX = 793,
-    kMasterY = 53,
-    
-    kMasterAttackX = 693,
-    kMasterDecayX = kMasterAttackX + 65,
-    kMasterSustainX = kMasterDecayX + 66,
-    kMasterReleaseX = kMasterSustainX + 66,
-    
-    kMasterEnvelopeY = 137,
-    
-    //Table:
-    kTableX = 292,//232,
-    kTableY = 101,
-    kTableSpaceX = 44,
-    kTableSpaceY = 40,
-    kTableSpaceGainY = 50,
-    
-    //On/off Buttons
-    kSwitchX = 295,
-    kSwitchY = 358,
-    kSwitchSpaceX = 90,
-    
-    //tabs
-    kTabX = 240,
-    kTabY = 344,
-    kTabMaxX = 957,
-    kTabMaxY = 484,
-    
-    //Numbers
-    kNumX = 314,
-    kNumY = 369,
-    kNumXSpacing = 90,
-    
-    //vector space
-    kVectorSpaceX = 240,
-    kVectorSpaceY = 392,
-    kVectorSpaceMaxX = 955,
-    kVectorSpaceMaxY = 606,
-    
-    //Buttons
-    kButtonX = 181,
-    kButtonY = 387,
-    kButtonYSpacing = 56,
-    
-    //Load
-    kLoadX = 685,
-    kLoadY = 212,
-    
-    //Presets
-    kPresetsX = 748,
-    kPresetsY = 213,
-    
-    //Menus
-    kSaveMenuX = 253,
-    kLoadMenuX = 160,
-    kMenuY = 8
+	kWidth = GUI_WIDTH,
+	kHeight = GUI_HEIGHT,
+	kKeybX = 1,
+	kKeybY = 614,
+
+	GUIShiftX = 165,
+
+	//Master Section:
+	kMasterX = 793 - GUIShiftX,
+	kMasterY = 53,
+
+	kMasterAttackX = 693 - GUIShiftX,
+	kMasterDecayX = kMasterAttackX + 65,
+	kMasterSustainX = kMasterDecayX + 66,
+	kMasterReleaseX = kMasterSustainX + 66,
+
+	kMasterEnvelopeY = 137,
+
+	//Table:
+	kTableX = 298 - GUIShiftX,
+	kTableY = 106,
+	kTableSpaceX = 44,
+	kTableSpaceY = 40,
+	kTableSpaceGainY = 50,
+
+	//On/off Buttons
+	kSwitchX = 128,
+	kSwitchY = 358,
+	kSwitchSpaceX = 90,
+
+	//tabs
+	kTabX = 75,
+	kTabY = 344,
+	kTabMaxX = 792,
+	kTabMaxY = 484,
+
+	//vector space
+	kVectorSpaceX = 75,
+	kVectorSpaceY = 392,
+	kVectorSpaceMaxX = 790,
+	kVectorSpaceMaxY = 606,
+
+	//Buttons
+	kButtonX = 16,
+	kButtonY = 387,
+	kButtonYSpacing = 56,
+
+	//POsc 
+	kPOscX = 712,
+	kPOscY = 279,
+
+	//Load
+	kLoadX = 685 - GUIShiftX,
+	kLoadY = 212,
+
+	//Presets
+	kPresetsX = 748 - GUIShiftX,
+	kPresetsY = 213
 };
 
 Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
@@ -720,6 +716,108 @@ void Voltex::processMLoad (IParam* param) {
                     waveTables[i] = noiseTable;
                     vectorSpaces[i]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
                 }
+            } else if (paramIdx == mToolDelete) {
+                //Tool: Delete
+                if (param->Bool() == true) {
+                    if (!firstUpdate) {
+                        toolPencil->SetValueFromPlug(false);
+                        toolSelection->SetValueFromPlug(false);
+                        toolCursor->SetValueFromPlug(false);
+                    }
+                    VectorSpace::currentTool = VectorSpace::kToolDelete;
+                } else {
+                    if (!firstUpdate) {
+                        toolDelete->SetValueFromPlug(true);
+                    }
+                }
+            } else if (paramIdx == mLoad){
+                if (param->Bool() == true) {
+                    for (int i = 0; i < vectorSpaces.size(); i++) {
+                        if (!vectorSpaces[i]->IsHidden()) {
+                            if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wBlank) {
+                                WaveTable* emptyTable;
+                                emptyTable = new WaveTable();
+                                
+                                std::tr1::array<double, 2048> emptyValues;
+                                for (int j = 0; j < 2048; j++) {
+                                    emptyValues[j] = 0;
+                                }
+                                
+                                emptyTable->setValues(emptyValues);
+                                waveTables[i] = emptyTable;
+                                vectorSpaces[i]->clear();
+                                vectorSpaces[i]->Redraw();
+                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSine) {
+                                WaveTable* sineTable;
+                                sineTable = new WaveTable();
+                                        
+                                std::tr1::array<double, 2048> sinValues;
+                                for (int j = 0; j < 2048; j++) {
+                                    sinValues[j] = sin((j / 2048.0) * (4 * acos(0.0)));
+                                }
+                                sineTable->setValues(sinValues);
+                                waveTables[i] = sineTable;
+                                vectorSpaces[i]->setValues(sinValues, kVectorSpaceMaxY - kVectorSpaceY);
+                                vectorSpaces[i]->Redraw();
+                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wTriangle) {
+                                WaveTable* triangleTable;
+                                triangleTable = new WaveTable();
+                                        
+                                std::tr1::array<double, 2048> triangleValues;
+                                for (int j = 0; j < 2048; j++) {
+                                    int phase = j - 512;
+                                    while (phase < 0) {
+                                        phase += 2048;
+                                    }
+                                    double value = -1.0 + ((phase / 2048.0) * 2);
+                                    triangleValues[j] = 2.0 * (fabs(value) - 0.5);
+                                }
+                                triangleTable->setValues(triangleValues);
+                                waveTables[i] = triangleTable;
+                                vectorSpaces[i]->setValues(triangleValues, kVectorSpaceMaxY - kVectorSpaceY);
+                                vectorSpaces[i]->Redraw();
+                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSquare) {
+                                WaveTable* squareTable;
+                                squareTable = new WaveTable();
+                                std::tr1::array<double, 2048> squareValues;
+                                for (int j = 0; j < 2048; j++) {
+                                    if (j < 1024) {
+                                        squareValues[j] = -1;
+                                    } else {
+                                        squareValues[j] = 1;
+                                    }
+                                }
+                                squareTable->setValues(squareValues);
+                                waveTables[i] = squareTable;
+                                vectorSpaces[i]->setValues(squareValues, kVectorSpaceMaxY - kVectorSpaceY);
+                                vectorSpaces[i]->Redraw();
+                            } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wNoise) {
+                                WaveTable* noiseTable;
+                                noiseTable = new WaveTable();
+                                
+                                std::tr1::array<double, 2048> noiseValues;
+                                
+                                srand(time(NULL));
+                                for (int j = 0; j < 2048; j++) {
+                                    noiseValues[j] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2)) - 1;
+                                }
+                                
+                                noiseTable->setValues(noiseValues);
+                                waveTables[i] = noiseTable;
+                                vectorSpaces[i]->setValues(noiseValues, kVectorSpaceMaxY - kVectorSpaceY);
+                            }
+                        }
+					}
+                }
+			}
+			else if (paramIdx == mPOscLength) {
+				int g;
+				vectorSpaces[(int)param->Value() == g];
+				OscLengthVal[g] = GetParam(mPOscLength)->Int();
+				//SetValueFromPlug(mPOscLength)->Int() == OscLengthVal[g]; //Sam, please help here. the POscLength to OscLengthVal[g].
+			}
+            else {
+                //oops
             }
         }
     }
