@@ -40,11 +40,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VectorSpace.cpp"
-            timestampString = "454257011.681455"
+            timestampString = "455460584.616683"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
             landmarkName = "VectorSpace::setValues(std::tr1::array&lt;double, 2048&gt; table, int precision)"
             landmarkType = "5">
          </BreakpointContent>

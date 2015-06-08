@@ -118,8 +118,20 @@ void VectorSpace::OnMouseUp(int x, int y, IMouseMod* pMouseMod) {
         }
     } else if ((currentTool == kToolDelete && !pMouseMod->R) || (currentTool == kToolPencil && pMouseMod->R)) {
         // We delete the point
+//        if (imHere.uid > 1) {
+//            points.erase(std::remove(points.begin(), points.end(), imHere), points.end());
+//            SetDirty();
+//            if (sendSignals) {
+//                tableChanged(index);
+//            }
+//        }
         if (imHere.uid > 1) {
-            points.erase(std::remove(points.begin(), points.end(), imHere), points.end());
+            for (int i = 0; i < selected.size(); i++) {
+                points.erase(std::remove(points.begin(), points.end(), selected[i]), points.end());
+            }
+            for (std::vector<VectorPoint>::iterator i = selected.begin(); i != selected.end();) {
+                i = selected.erase(i);
+            }
             SetDirty();
             if (sendSignals) {
                 tableChanged(index);
