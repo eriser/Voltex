@@ -162,6 +162,11 @@ enum ELayout {
 	kTabY = 344,
 	kTabMaxX = 792,
 	kTabMaxY = 484,
+    
+    //Numbers
+    kNumX = 149,
+    kNumY = 369,
+    kNumXSpacing = 90,
 
 	//vector space
 	kVectorSpaceX = 75,
@@ -331,6 +336,26 @@ void Voltex::CreateGraphics() {
 
 	//Tabs
 	pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
+    
+    //Tab Numbers
+    
+    IBitmap one = pGraphics->LoadIBitmap(ONE_ID, ONE_FN, 1);
+    IBitmap two = pGraphics->LoadIBitmap(TWO_ID, TWO_FN, 1);
+    IBitmap three = pGraphics->LoadIBitmap(THREE_ID, THREE_FN, 1);
+    IBitmap four = pGraphics->LoadIBitmap(FOUR_ID, FOUR_FN, 1);
+    IBitmap five = pGraphics->LoadIBitmap(FIVE_ID, FIVE_FN, 1);
+    IBitmap six = pGraphics->LoadIBitmap(SIX_ID, SIX_FN, 1);
+    IBitmap seven = pGraphics->LoadIBitmap(SEVEN_ID, SEVEN_FN, 1);
+    IBitmap eight = pGraphics->LoadIBitmap(EIGHT_ID, EIGHT_FN, 1);
+    
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX, kNumY, &one));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + kNumXSpacing, kNumY, &two));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (2 * kNumXSpacing), kNumY, &three));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (3 * kNumXSpacing), kNumY, &four));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (4 * kNumXSpacing), kNumY, &five));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (5 * kNumXSpacing), kNumY, &six));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (6 * kNumXSpacing), kNumY, &seven));
+    pGraphics->AttachControl(new IBitmapControl(this, kNumX + (7 * kNumXSpacing), kNumY, &eight));
 
 	//Switches
 	int x = kSwitchX, y = 0;
@@ -646,14 +671,15 @@ void Voltex::OnParamChange(int paramIdx) {
 
 void Voltex::processMLoad (IParam* param) {
     if (param->Bool() == true) {
+        double period = TABLE_LENGTH / (GetParam(mPOscLength)->Int() + 1);
         for (int i = 0; i < vectorSpaces.size(); i++) {
             if (!vectorSpaces[i]->IsHidden()) {
                 if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wBlank) {
                     WaveTable* emptyTable;
                     emptyTable = new WaveTable();
                     
-                    std::tr1::array<double, 2048> emptyValues;
-                    for (int j = 0; j < 2048; j++) {
+                    std::tr1::array<double, TABLE_LENGTH> emptyValues;
+                    for (int j = 0; j < TABLE_LENGTH; j++) {
                         emptyValues[j] = 0;
                     }
                     
@@ -665,9 +691,9 @@ void Voltex::processMLoad (IParam* param) {
                     WaveTable* sineTable;
                     sineTable = new WaveTable();
                     
-                    std::tr1::array<double, 2048> sinValues;
-                    for (int j = 0; j < 2048; j++) {
-                        sinValues[j] = sin((j / 2048.0) * (4 * acos(0.0)));
+                    std::tr1::array<double, TABLE_LENGTH> sinValues;
+                    for (int j = 0; j < TABLE_LENGTH; j++) {
+                        sinValues[j] = sin((j / period) * (4 * acos(0.0)));
                     }
                     sineTable->setValues(sinValues);
                     waveTables[i] = sineTable;
@@ -677,14 +703,17 @@ void Voltex::processMLoad (IParam* param) {
                     WaveTable* triangleTable;
                     triangleTable = new WaveTable();
                     
-                    std::tr1::array<double, 2048> triangleValues;
-                    for (int j = 0; j < 2048; j++) {
-                        int phase = j - 512;
+                    std::tr1::array<double, TABLE_LENGTH> triangleValues;
+                    for (int j = 0, x = 0;  j < TABLE_LENGTH; j++, x++) {
+                        int phase = x - (period / 4);
                         while (phase < 0) {
-                            phase += 2048;
+                            phase += period;
                         }
-                        double value = -1.0 + ((phase / 2048.0) * 2);
+                        double value = -1.0 + ((phase / period) * 2);
                         triangleValues[j] = 2.0 * (fabs(value) - 0.5);
+                        if (x == period) {
+                            x = 0;
+                        }
                     }
                     triangleTable->setValues(triangleValues);
                     waveTables[i] = triangleTable;
@@ -693,12 +722,14 @@ void Voltex::processMLoad (IParam* param) {
                 } else if (static_cast<WaveForms>(GetParam(mPreset)->Int()) == wSquare) {
                     WaveTable* squareTable;
                     squareTable = new WaveTable();
-                    std::tr1::array<double, 2048> squareValues;
-                    for (int j = 0; j < 2048; j++) {
-                        if (j < 1024) {
-                            squareValues[j] = -1;
-                        } else {
-                            squareValues[j] = 1;
+                    std::tr1::array<double, TABLE_LENGTH> squareValues;
+                    for (int j = 0; j < TABLE_LENGTH; j++) {
+                        for (int x = 0; x < period; x++, j++) {
+                            if (x < (period / 2)) {
+                                squareValues[j] = -1;
+                            } else {
+                                squareValues[j] = 1;
+                            }
                         }
                     }
                     squareTable->setValues(squareValues);
@@ -709,10 +740,10 @@ void Voltex::processMLoad (IParam* param) {
                     WaveTable* noiseTable;
                     noiseTable = new WaveTable();
                     
-                    std::tr1::array<double, 2048> noiseValues;
+                    std::tr1::array<double, TABLE_LENGTH> noiseValues;
                     
                     srand(time(NULL));
-                    for (int j = 0; j < 2048; j++) {
+                    for (int j = 0; j < TABLE_LENGTH; j++) {
                         noiseValues[j] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2)) - 1;
                     }
                     

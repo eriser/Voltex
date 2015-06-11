@@ -186,10 +186,12 @@ void VectorSpace::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMouseMod
         }
         for (int i = lower; i < higher; i++) {
             VectorPoint point = getPoint(i);
-            if (!(std::find(selected.begin(), selected.end(), point) != selected.end())) {
-                selected.push_back(point);
+            if (point.x != 0 && point.x != 1) {
+                if (!(std::find(selected.begin(), selected.end(), point) != selected.end())) {
+                    selected.push_back(point);
+                }
+                SetDirty();
             }
-            SetDirty();
         }
 
     } else {
@@ -278,7 +280,7 @@ void VectorSpace::clear() {
     }
 }
 
-std::tr1::array<double, 2048> VectorSpace::getValues() {
+    std::tr1::array<double, 2048> VectorSpace::getValues() {
     std::tr1::array<double, 2048> values;
     for (int i = 0; i < 2048; i++) {
         VectorPoint a, b;

@@ -23,16 +23,6 @@ double getStringAsDouble(std::string s);
 /*
  file format:
  
- formatversion
- t:a:b:l:e:1
- t:a:b:l:e:2
- t:a:b:l:e:3
- t:a:b:l:e:4
- t:a:b:l:e:5
- t:a:b:l:e:6
- t:a:b:l:e:7
- t:a:b:l:e:8
- p:a:r:a:m:s: :i:n: :o:r:d:e:r
- EOF
+ formatversion:t:a:b:l:e:1:t:a:b:l:e:2:t:a:b:l:e:3:t:a:b:l:e:4:t:a:b:l:e:5:t:a:b:l:e:6:t:a:b:l:e:7:t:a:b:l:e:8:p:a:r:a:m:s:i:n:o:r:d:eEOF
  
  */

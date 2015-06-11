@@ -7,7 +7,7 @@
 //
 
 #define FILE_TYPE_VERSION 0.1
-#define FILE_TYPE_MIN 0.0
+#define FILE_TYPE_MIN 0.1
 #define FILE_TYPE_MAX 1.0
 
 #include "FileAccess.h"
@@ -15,8 +15,8 @@
 #include <fstream>  //ifstream/ofstream
 #include <iomanip>  //setprecision()
 #include <sstream>
+#include <string>
 using namespace std;
-
 
 
 int writeAllToFile (char filePath[], Voltex* voltex, bool overWrite) {
@@ -33,24 +33,29 @@ int writeAllToFile (char filePath[], Voltex* voltex, bool overWrite) {
     
     //Write to the file
     fstream file(filePath, ios::out /*open for output*/| ios::trunc /*If file exists, replace*/);
-    file << FILE_TYPE_VERSION << endl;
+//    file << FILE_TYPE_VERSION << endl;
+    file << FILE_TYPE_VERSION;
+    
+    //Set precision
+    file.setf(ios::fixed, ios::floatfield);
+    file.precision(15); //more than enough
     
     //wavetables
     for (int i = 0; i < NUM_TABLES; i++) {
         std::tr1::array<double, TABLE_LENGTH> table = voltex->waveTables[i]->getValues();
-        file << std::setprecision (15) << table[0];
-        for (int j = 1; j < voltex->waveTables[i]->size(); j++) {
-            file << ":" << std::setprecision (15) << table[j];
+//        file << table[0];
+        for (int j = 0; j < voltex->waveTables[i]->size(); j++) {
+            file << " " << table[j];
         }
-        file << endl;
+//        file << endl;
     }
     
     //params
-    file << std::setprecision (15) << voltex->GetParam(0)->Value();
-    for (int i = 1; i < voltex->getNumParams(); i++) {
-        file << ":" << std::setprecision (15) << voltex->GetParam(i)->Value();
+//    file << voltex->GetParam(0)->Value();
+    for (int i = 10; i < voltex->getNumParams(); i++) {
+        file << " " << voltex->GetParam(i)->Value();
     }
-    file << endl;
+//    file << endl;
     
     
     return 0;
@@ -60,12 +65,13 @@ int readAllFromFile (char filePath[], Voltex* voltex) {
     ifstream file(filePath);
     if (!file.good()) {
         //opening file failed
+        //Pressing cancel on the open dialog will cause execution to end up here
         return 1;
     }
     
     //Check file version
     string version;
-    getline(file, version);
+    std::getline(file, version, ' ');
     double ver = getStringAsDouble(version);
     if ((ver < FILE_TYPE_MIN) || (ver > FILE_TYPE_MAX)) {
         //this file is not compatable with this version of the plugin
@@ -77,10 +83,11 @@ int readAllFromFile (char filePath[], Voltex* voltex) {
         std::tr1::array<double, 2048> values;
         string value;
         int j = 0;
-        for (;(j < voltex->waveTables[i]->size()) && std::getline(file, value, ':'); j++) {
+        for (;(j < voltex->waveTables[i]->size()) && std::getline(file, value, ' '); j++) {
             values[j] = getStringAsDouble(value);
             value.clear();
         }
+        voltex->waveTables[i]->setValues(values);
         voltex->vectorSpaces[i]->setValues(voltex->waveTables[i]->getValues(), voltex->getVectorSpacePrecision());
         if (j < voltex->waveTables[i]->size()) {
             return 3; //the file was not properly formated
@@ -90,16 +97,15 @@ int readAllFromFile (char filePath[], Voltex* voltex) {
     
     //Load params
     string value;
-    int i = 0;
-    for (;(i < voltex->getNumParams()) && std::getline(file, value, ':'); i++) {
+    for (int i = 0;(i < voltex->getNumParams()) && std::getline(file, value, ' '); i++) {
         voltex->GetParam(i)->Set(getStringAsDouble(value));
+        cout << ":" << getStringAsDouble(value) << "|" << value;
         value.clear();
     }
     for (int i = 0; i < voltex->getNumParams(); i++) {
         voltex->OnParamChange(i);
     }
     voltex->GetGUI()->SetAllControlsDirty();
-    
     
     return 0;
 }
