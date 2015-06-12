@@ -38,8 +38,10 @@ double Synth::nextSample() {
     int numTables = 0;
     
     for (int i = 0 ; i < 8; i++) {
-		value += (*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() * (*tables)[i]->getMixValue(mEnvelopeStage);
-		numTables++;
+        value +=(*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() * (*tables)[i]->getMixValue(mEnvelopeStage);;
+        if ((*tables)[i]->isEnabled()) {
+            numTables++;
+        }
     }
     
     value = value / numTables; // If we didn't do this the synth would clip if there was more than one wavtable (in phase). This keeps the volume the same no matter how many tables are in use.

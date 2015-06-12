@@ -33,7 +33,6 @@ int writeAllToFile (char filePath[], Voltex* voltex, bool overWrite) {
     
     //Write to the file
     fstream file(filePath, ios::out /*open for output*/| ios::trunc /*If file exists, replace*/);
-//    file << FILE_TYPE_VERSION << endl;
     file << FILE_TYPE_VERSION;
     
     //Set precision
@@ -43,20 +42,15 @@ int writeAllToFile (char filePath[], Voltex* voltex, bool overWrite) {
     //wavetables
     for (int i = 0; i < NUM_TABLES; i++) {
         std::tr1::array<double, TABLE_LENGTH> table = voltex->waveTables[i]->getValues();
-//        file << table[0];
         for (int j = 0; j < voltex->waveTables[i]->size(); j++) {
-            file << " " << table[j];
+            file << " " << fixed << table[j];
         }
-//        file << endl;
     }
     
     //params
-//    file << voltex->GetParam(0)->Value();
-    for (int i = 10; i < voltex->getNumParams(); i++) {
-        file << " " << voltex->GetParam(i)->Value();
+    for (int i = 0; i < voltex->getNumParams(); i++) {
+        file << " " << fixed << voltex->GetParam(i)->Value();
     }
-//    file << endl;
-    
     
     return 0;
 }
@@ -99,7 +93,6 @@ int readAllFromFile (char filePath[], Voltex* voltex) {
     string value;
     for (int i = 0;(i < voltex->getNumParams()) && std::getline(file, value, ' '); i++) {
         voltex->GetParam(i)->Set(getStringAsDouble(value));
-        cout << ":" << getStringAsDouble(value) << "|" << value;
         value.clear();
     }
     for (int i = 0; i < voltex->getNumParams(); i++) {
@@ -115,7 +108,6 @@ double getStringAsDouble (string s) {
     stringstream convert;
     convert<<s; //write the string into the string stream
     convert>>i; //convert string into double and store it
-    convert.str(""); //clear the stringstream
-    convert.clear();
+    convert.clear(); //clear the stringstream
     return i;
 }

@@ -212,18 +212,16 @@ Voltex::Voltex(IPlugInstanceInfo instanceInfo) : IPLUG_CTOR(kNumParams, kNumProg
         vectorSpaces[i]->tableChanged.Connect(this, &Voltex::updateWaveTable);
     }
 	voiceManager.setWavetables(&waveTables);
-
-    firstUpdate = true;
-    
-    CreateParams();
-    CreateGraphics();
-    CreatePresets();
-    
-    firstUpdate = false;
     
     //Connect noteOn and noteOff signals to slots in the voice manager, this way they voice manager does not need to know anything about the midi reciever and vice versa.
     mMIDIReceiver.noteOn.Connect(&voiceManager, &VoiceManager::onNoteOn);
     mMIDIReceiver.noteOff.Connect(&voiceManager, &VoiceManager::onNoteOff);
+    
+    firstUpdate = true;
+    CreateParams();
+    CreateGraphics();
+    CreatePresets();
+    firstUpdate = false;
 }
 
 void Voltex::CreateParams() {
@@ -260,28 +258,29 @@ void Voltex::CreateParams() {
     //Table:
     //Attack
     for (int i = mAttackOne; i <= mAttackEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Attack", 1.0, 0.0, 1.0, parameterStep);
+        GetParam(i)->InitDouble("Table Env Attack", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Decay
     for (int i = mDecayOne; i <= mDecayEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Decay", 1.0, 0.0, 1.0, parameterStep);
+        GetParam(i)->InitDouble("Table Env Decay", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Sustain
     for (int i = mSustainOne; i <= mSustainEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Sustain", 1.0, 0.0, 1.0, parameterStep);
+        GetParam(i)->InitDouble("Table Env Sustain", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(2);
     }
     //Release
     for (int i = mReleaseOne; i <= mReleaseEight; i++) {
-        GetParam(i)->InitDouble("Volume Env Release", 1.0, 0.0, 1.0, parameterStep);
+        GetParam(i)->InitDouble("Table Env Release", 1.0, 0.0, 1.0, parameterStep);
         GetParam(i)->SetShape(3);
     }
     //Gain
     for (int i = mGainOne; i <= mGainEight; i++) {
-        GetParam(i)->InitDouble("Gain", 75.0, 0.0, 100.0, parameterStep);
+        GetParam(i)->InitDouble("Table Gain", 75.0, 0.0, 100.0, parameterStep);
         GetParam(i)->SetShape(2);
+        waveTables[i - mGainOne]->setGain(75.0); //for some reason the gains where not initializing properly on the inital param update.
     }
     
     GetParam(mTab)->InitEnum("Tab", 0, NUM_TABLES);
@@ -574,6 +573,8 @@ void Voltex::OnParamChange(int paramIdx) {
             } else {
                 if (!firstUpdate) {
                     toolCursor->SetValueFromPlug(true);
+                } else {
+                    param->Set(true);
                 }
             }
             break;
@@ -589,6 +590,8 @@ void Voltex::OnParamChange(int paramIdx) {
             } else {
                 if (!firstUpdate) {
                     toolPencil->SetValueFromPlug(true);
+                }  else {
+                    param->Set(false);
                 }
             }
             break;
@@ -604,6 +607,8 @@ void Voltex::OnParamChange(int paramIdx) {
             } else {
                 if (!firstUpdate) {
                     toolSelection->SetValueFromPlug(true);
+                } else {
+                    param->Set(false);
                 }
             }
             break;
@@ -619,6 +624,8 @@ void Voltex::OnParamChange(int paramIdx) {
             } else {
                 if (!firstUpdate) {
                     toolDelete->SetValueFromPlug(true);
+                } else {
+                    param->Set(false);
                 }
             }
             break;
@@ -650,7 +657,7 @@ void Voltex::OnParamChange(int paramIdx) {
                 waveTables[paramIdx - (mReleaseOne)]->setMixValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, param->Int());
             } else if (paramIdx >= mGainOne && paramIdx <= mGainEight) {
                 //Gain
-                waveTables[paramIdx - (mGainOne)]->setGain(param->Value());
+                waveTables[paramIdx - (mGainOne)]->setGain(param->Value() / 100);
             } else if (paramIdx == mTab) {
                 //Tabs
                 vectorSpaces[(int)param->Value()]->Hide(false);
