@@ -38,7 +38,7 @@ public:
     
     int size() {return TABLE_LENGTH;}
     
-    WaveTable(): gain(0.75) //initialization list
+    WaveTable(): gain(0.8) //initialization list
 	{
 		//Constructor Body
         values = *new std::tr1::array<double, TABLE_LENGTH>();
