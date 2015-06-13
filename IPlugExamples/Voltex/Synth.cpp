@@ -37,9 +37,10 @@ double Synth::nextSample() {
     
     int numTables = 0;
     
+    //mix all of the wavetables together
     for (int i = 0 ; i < 8; i++) {
-        value +=(*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() * (*tables)[i]->getMixValue(mEnvelopeStage);;
         if ((*tables)[i]->isEnabled()) {
+            value +=(*tables)[i]->getValueAt(mPhase) * (*tables)[i]->getGain() * (*tables)[i]->getMixValue(mEnvelopeStage);
             numTables++;
         }
     }

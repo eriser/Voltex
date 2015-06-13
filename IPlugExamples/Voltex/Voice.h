@@ -7,6 +7,9 @@
 //  Addapted from the Voice class of Martin Finke's "Making Audio Plugins"
 //      http://martin-finke.de/blog/tags/making_audio_plugins.html
 //
+//  The purpose of the voice is to bridge the VoiceManager and the Synth. The Voice
+//  completly abstracts the synth from dealling with MIDI information
+//
 
 #ifndef __SpaceBass__Voice__
 #define __SpaceBass__Voice__

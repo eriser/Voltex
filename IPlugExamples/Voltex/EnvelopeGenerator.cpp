@@ -36,7 +36,6 @@ void EnvelopeGenerator::enterStage(EnvelopeStage newStage) {
         beganEnvelopeCycle(); //Send signal
     }
     if (newStage == ENVELOPE_STAGE_OFF) {
-//        beganEnvelopeCycle();
         finishedEnvelopeCycle(); //Send signal
     }
     

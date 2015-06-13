@@ -28,9 +28,6 @@ int writeAllToFile (char filePath[], Voltex* voltex, bool overWrite) {
     }
     fileTest.close();
     
-    voltex->GetParam(0);
-    
-    
     //Write to the file
     fstream file(filePath, ios::out /*open for output*/| ios::trunc /*If file exists, replace*/);
     file << FILE_TYPE_VERSION;

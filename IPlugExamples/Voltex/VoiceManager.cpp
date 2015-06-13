@@ -56,7 +56,6 @@ double VoiceManager::nextSample() {
     for (int i = 0; i < NumberOfVoices; i++) {
         output += voices[i].nextSample();
     }
-//    printf("Voice manager return: %f\n", output);
     //Unlike inside of each synth the voices are not averaged, they are summed. This creates the effect of multiple notes being louder then a single note. There is a small chance that this could become too loud if all of the notes happen to be in phase but this is not likely (the same chance exists with a piano or other physical insturment that playes multiple notes at the same time).
     return output;
 }

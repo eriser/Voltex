@@ -4,8 +4,11 @@
 //
 //  Created by Samuel Dewan on 2015-04-11.
 //
-//  Addapted from the VoiceManager class of Martin Finke's "Making Audio Plugins"
+//  Adapted from the VoiceManager class of Martin Finke's "Making Audio Plugins"
 //      http://martin-finke.de/blog/tags/making_audio_plugins.html
+//
+//
+//  The VoiceManager is the top of the singal chain, it begins to abstract MIDI data.
 //
 
 #ifndef __SpaceBass__VoiceManager__

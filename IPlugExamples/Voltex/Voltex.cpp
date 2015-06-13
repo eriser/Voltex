@@ -1,3 +1,11 @@
+//
+//  Voltex.cpp
+//  Voltex
+//
+//  Samuel Dewan and Maxim Kuzmenko
+//
+//
+
 #include "Voltex.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmain"
@@ -28,7 +36,7 @@
 const int kNumPrograms = 5;
 const double parameterStep = 0.001;
 
-// Global paramaters
+// Global paramaters, all values are handled as paramaters by the WDL-OL library, this allows us to easily attach them to GUI controls and to intigrate them with audio plugin features
 enum EParams {
     // Volume Envelope:
     mVolumeEnvAttack = 0,
@@ -116,6 +124,7 @@ enum EParams {
     kNumParams,
 };
 
+// The waveforms that we can generate
 enum WaveForms {
     wBlank = 0,
     wSine,
@@ -337,7 +346,6 @@ void Voltex::CreateGraphics() {
 	pGraphics->AttachControl(new IRadioButtonsControl(this, *new IRECT(kTabX, kTabY, kTabMaxX, kTabMaxY), mTab, NUM_TABLES, &tab, kHorizontal, false));
     
     //Tab Numbers
-    
     IBitmap one = pGraphics->LoadIBitmap(ONE_ID, ONE_FN, 1);
     IBitmap two = pGraphics->LoadIBitmap(TWO_ID, TWO_FN, 1);
     IBitmap three = pGraphics->LoadIBitmap(THREE_ID, THREE_FN, 1);
@@ -380,13 +388,10 @@ void Voltex::CreateGraphics() {
 	//Master
 	pGraphics->AttachControl(new IKnobMultiControl(this, kMasterX, kMasterY, mGain, &knobBitmap));
 
-	//I 706, 270 new ISwitchControl(this, kPresetsX, kPresetsY, mPreset, &presetIcon);
-
 	IBitmap POsc = pGraphics->LoadIBitmap(POSC_ID, POSC_FN, 5);
 
 	pGraphics->AttachControl(new ISwitchControl(this, kPOscX, kPOscY, mPOscLength, &POsc));
 	
-	//pGraphics->AttachControl(presets);
     //Table:
 	int k = 1;
     x = kTableX, y = kTableY;
@@ -503,6 +508,8 @@ Voltex::~Voltex() {}
 
 void Voltex::CreatePresets() {
     //TODO make code be here
+    
+    // We never ended up making presets, this is because only paramaters can be ssaved as presets and we couldn't find a good way to encode a wavetable in a paramater
 }
 
 void Voltex::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames) {

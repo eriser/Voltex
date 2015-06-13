@@ -2,7 +2,8 @@
 //  MIDIReceiver.h
 //  Voltex
 //
-//
+//  Based on MIDIReceiver from Martin Finke's "Making Audio Plugins"
+//      http://martin-finke.de/blog/tags/making_audio_plugins.html
 //
 
 #ifndef __Voltex__MIDIReceiver__
